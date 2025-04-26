@@ -419,7 +419,7 @@
         .背包弹窗 {
             /* Inventory Popup */
             position: fixed;
-            bottom: -600px;
+            bottom: -700px;
             left: 50%;
             transform: translateX(-50%);
             width: 80vmin;
@@ -525,6 +525,7 @@
         }
 
         .装备按钮,
+        .上屏按钮,
         .丢弃按钮,
         .使用按钮 {
             font-family: "color-emoji";
@@ -547,6 +548,7 @@
 
         .装备按钮:active,
         .丢弃按钮:active,
+        .上屏按钮:active,
         .使用按钮:active {
             transform: scale(0.9);
             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -565,6 +567,11 @@
             box-shadow: 0 2px 6px rgba(255, 152, 0, 0.4);
         }
 
+        .上屏按钮 {
+            bottom: 3px;
+            right: 3px;
+            background: linear-gradient(145deg, #4fc3f7, #29b6f6);
+        }
 
         .丢弃按钮 {
             top: 3px;
@@ -593,6 +600,7 @@
 
         .物品条目:hover .装备按钮,
         .物品条目:hover .丢弃按钮,
+        .物品条目:hover .上屏按钮,
         .物品条目:hover .使用按钮 {
             opacity: 1;
         }
@@ -819,7 +827,7 @@
             }
 
             100% {
-                transform: translate(${Math.random() * 100 - 50}px, 100vh) scale(0);
+                transform: translate(calc(var(--random) * 100 - 50)px, 100vh) scale(0);
                 opacity: 0;
             }
         }
@@ -832,6 +840,7 @@
 
         .物品条目.active .装备按钮,
         .物品条目.active .丢弃按钮,
+        .物品条目.active .上屏按钮,
         .物品条目.active .使用按钮 {
             opacity: 1 !important;
         }
@@ -1500,7 +1509,7 @@
             z-index: 1001;
             backdrop-filter: blur(5px);
             animation: 弹窗浮现 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             flex-direction: column;
             max-height: 85vh;
         }
@@ -2487,6 +2496,26 @@
         }
 
         /* --- 传送菜单按钮 --- */
+        #传送点菜单 {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a1ae6;
+            border: 2px solid #4a4a4a;
+            border-radius: 12px;
+            padding: 20px;
+            width: 80vmin;
+            max-width: 600px;
+            color: #e0e0e0;
+            z-index: 10000;
+            box-shadow: 0 0 30px #00000080;
+            animation: 弹窗浮现 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition:
+                opacity 0.3s ease,
+                transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
         #传送点菜单 .菜单操作按钮 {
             padding: 5px 10px;
             /* 统一基础内边距 */
@@ -2553,21 +2582,165 @@
 
         /* 保存按钮 (次要绿色/或青色) */
         #传送点菜单 .传送菜单按钮-保存 {
-            background: linear-gradient(145deg, #00796B, #004D40);
+            background: linear-gradient(145deg, #4CAF50, #388E3C);
             /* 青色系 */
             border-color: #009688;
             box-shadow: 0 2px 5px rgba(0, 121, 107, 0.3);
             /* 微调标题栏内按钮的样式 */
-            padding: 4px 10px;
             font-size: 0.9em;
-            margin-left: auto;
-            margin-right: 10px;
+            margin-left: 10px;
         }
 
         #传送点菜单 .传送菜单按钮-保存:hover {
-            background: linear-gradient(145deg, #009688, #00796B);
-            border-color: #26A69A;
+            background: linear-gradient(145deg, #66BB6A, #4CAF50);
+            border-color: #81C784;
             box-shadow: 0 4px 12px rgba(0, 121, 107, 0.4);
+        }
+
+        #图鉴分区选择窗口 {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a1ae6;
+            border: 2px solid #4a4a4a;
+            border-radius: 12px;
+            padding: 20px;
+            width: 80vmin;
+            max-width: 600px;
+            color: #e0e0e0;
+            z-index: 10000;
+            box-shadow: 0 0 30px #00000080;
+            animation: 弹窗浮现 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition:
+                opacity 0.3s ease,
+                transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        #融合窗口 {
+            position: absolute;
+            bottom: 100%;
+            /* 调整垂直位置，使其在背包上方或旁边 */
+            right: 0%;
+            /* 调整水平位置 */
+            width: 330px;
+            /* 根据需要调整宽度 */
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            z-index: 1002;
+            /* 比背包高一级 */
+            display: flex;
+            /* 改为 flex 布局 */
+            flex-direction: column;
+            /* 垂直排列 */
+            align-items: center;
+            /* 居中对齐 */
+            gap: 10px;
+            /* 元素间距 */
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            /* 添加过渡效果 */
+            opacity: 0;
+            /* 初始隐藏 */
+            transform: translateX(20px);
+            /* 初始向右偏移一点，用于动画 */
+            pointer-events: none;
+            /* 初始不可交互 */
+        }
+
+        #融合窗口.显示中 {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .融合标题 {
+            color: #4caf50;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .融合区域 {
+            display: grid;
+            grid-template-columns: repeat(2, 60px);
+            /* 2x2 网格 */
+            grid-template-rows: repeat(2, 60px);
+            gap: 8px;
+            /* 格子间距 */
+            margin-bottom: 10px;
+            /* 与箭头间距 */
+            justify-content: center;
+            top: 5px;
+            position: relative;
+        }
+
+        .融合区格子,
+        .融合输出格子 {
+            width: 60px;
+            /* 格子大小 */
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px dashed #555;
+            /* 虚线边框 */
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            /* 用于定位物品 */
+            cursor: pointer;
+            /* 添加指针手势 */
+        }
+
+        .融合区格子:hover,
+        .融合输出格子:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #888;
+        }
+
+        .融合箭头 {
+            font-size: 1.8em;
+            color: #888;
+            margin: 0 10px;
+        }
+
+        #融合窗口 .物品条目 {
+            transform: scale(0.65);
+            /* 缩小物品显示 */
+            padding: 0;
+            margin: 0;
+            border: none;
+            /* 移除边框 */
+            background: transparent;
+            /* 透明背景 */
+            box-shadow: none;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            /* 明确指针 */
+        }
+
+        #融合窗口 .物品条目 .物品图标 {
+            font-size: 1.8em;
+            /* 调整图标大小 */
+            margin-bottom: 2px;
+        }
+
+        #融合窗口 .物品条目 .物品名称 {
+            font-size: 0.7em;
+            /* 调整名称大小 */
+            display: none;
+            /* 默认隐藏名称，空间太小 */
+        }
+
+        #融合窗口 .物品条目 .物品堆叠 {
+            font-size: 0.6em;
+            /* 调整堆叠数字大小 */
+            bottom: 2px;
+            right: 2px;
+            padding: 1px 4px;
         }
 
         /* -----------优化字体适配------------- */
@@ -2593,7 +2766,7 @@
 <body>
     <canvas id="dungeonCanvas"></canvas>
     <div id="图鉴分区选择遮罩" class="重铸遮罩" style="display: none; z-index: 10005;">
-        <div id="图鉴分区选择窗口" class="重铸弹窗">
+        <div id="图鉴分区选择窗口">
             <div class="重铸弹窗-header">
                 <h3>选择图鉴分区</h3>
                 <button class="关闭按钮" id="关闭图鉴选择按钮">×</button>
@@ -2612,7 +2785,7 @@
             <button id="读凭证按钮" class="菜单按钮">读取凭证</button>
             <button id="切换中文按钮" class="菜单按钮" onclick="切换中文模式()">切换显示语言</button>
         </div>
-        <div id="版本信息">v1088</div>
+        <div id="版本信息">v1103</div>
     </div>
     <div id="教程提示窗口" class="教程提示窗口">
         <p id="教程提示内容"></p>
@@ -2684,9 +2857,10 @@
         <button onclick="收纳通知()">收纳通知</button>
         <button onclick="打开传送菜单()">打开传送菜单</button>
         <button onclick="导出存档()">导出存档</button>
+        <button id="自杀按钮" onclick="玩家死亡()">自杀</button>
     </div>
     <div id="传送点遮罩" class="重铸遮罩" style="display: none; z-index: 10001;">
-        <div id="传送点菜单" class="重铸弹窗">
+        <div id="传送点菜单">
             <div class="重铸弹窗-header">
                 <h3>选择传送目标</h3>
                 <button class="关闭按钮" onclick="关闭传送菜单()">×</button>
@@ -2719,6 +2893,21 @@
         </div>
     </div>
     <div class="背包弹窗">
+        <div id="融合窗口" style="display: none;">
+            <div class="弹窗头部">
+                <h3>
+                    物品融合
+                </h3>
+            </div>
+            <div class="融合区域">
+                <div class="融合区格子" id="融合区格子1"></div>
+                <div class="融合区格子" id="融合区格子2"></div>
+                <div class="融合区格子" id="融合区格子3"></div>
+                <div class="融合区格子" id="融合区格子4"></div>
+            </div>
+            <div class="融合箭头">➡️</div>
+            <div class="融合输出格子" id="融合输出格子"></div>
+        </div>
         <div class="弹窗头部">
             <h3>
                 背包 (容量：<span id="当前容量">0</span>/<span id="最大容量">12</span>)
@@ -2726,6 +2915,7 @@
             <button onclick="切换背包显示()" class="关闭按钮">×</button>
         </div>
         <div id="背包物品栏" class="物品容器"></div>
+
     </div>
     <div id="transitionMask" class="楼层过渡遮罩">
         <div id="floorTitle" class="层数标题"></div>
@@ -2778,6 +2968,7 @@
         const 所有天气列表 = ["雷暴", "诡魅", "大风", "严寒", "深夜", "深夜"];
         const 大风吹动概率 = 0.3;
         let 互动冷却 = false;
+        const 怪物移动动画时长 = 300;
 
         const 调试序列 = ["上", "上", "下", "下", "左", "右", "左", "右"];
         // 单元格类型枚举
@@ -3019,6 +3210,13 @@
             "g": 切换日志显示,
             "z": 导出存档,
             "t": 打开传送菜单,
+            "j": () => {
+                切换装备页(-1);
+            },
+            "k": () => {
+                切换装备页(1);
+            },
+            "u": 玩家死亡,
         };
         const 物品生成配置 = {
             基础概率: {
@@ -3248,6 +3446,8 @@
         let 怪物池;
         let 所有物品定义 = []; // 用于存储图鉴的物品定义
         let 所有怪物定义 = [];
+        let 怪物动画状态 = new WeakMap();
+
         let moveQueue = [];
         let isAutoMoving = false;
         let 最高教程阶段 = 0;
@@ -3812,7 +4012,7 @@
                 const 我的状态 = 怪物状态表.get(this);
                 switch (我的状态?.类型) {
                     case "冻结":
-                        if(!当前天气效果.includes("严寒")) return;
+                        if (!当前天气效果.includes("严寒")) return;
                     case "火焰":
                         this.受伤(3, "火焰");
                         this.受伤冻结回合剩余 = 0;
@@ -3846,13 +4046,16 @@
                     }
                     //this.目标路径 = this.计算路径(this.目标.x,this.目标.y);
                     // 获取下一个移动方向
+                    const 旧X = this.x;
+                    const 旧Y = this.y;
                     const 下一步 = this.目标路径[Math.min(this.移动距离 - 1, this.目标路径.length - 1)];
+                    let 最终位置 = null;
                     if (下一步) {
                         const dx = 下一步.x - this.x;
                         const dy = 下一步.y - this.y;
 
                         // 规划实际可移动位置
-                        const 最终位置 = this.规划移动路径(dx, dy);
+                        最终位置 = this.规划移动路径(dx, dy);
                         if (!最终位置) return;
                         if (this instanceof 大魔法师 && 房间地图[最终位置.y][最终位置.x] === -1) return;
                         this.恢复背景类型();
@@ -3862,6 +4065,16 @@
                         地牢[this.y][this.x].类型 = 单元格类型.怪物;
                         地牢[this.y][this.x].关联怪物 = this;
                         this.处理地形效果();
+                        怪物动画状态.set(this, {
+                            旧逻辑X: 旧X,
+                            旧逻辑Y: 旧Y,
+                            目标逻辑X: this.x,
+                            目标逻辑Y: this.y,
+                            视觉X: 旧X,
+                            视觉Y: 旧Y,
+                            动画开始时间: Date.now(),
+                            正在动画: true
+                        });
                     }
 
                 }
@@ -4113,7 +4326,7 @@
                             const 当前能量 = parseFloat(能量条.style.width) || 100;
                             能量条.style.width = `${Math.min(100, 当前能量 + 1.5)}%`;
                             击杀提示.更新({ 内容: `已击杀怪物：${已击杀怪物数}` });
-                            const 装备宠物列表 = [...玩家装备.values()].filter(装备 => 装备 instanceof 宠物);
+                            const 装备宠物列表 = Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).filter(装备 => 装备 instanceof 宠物);
                             装备宠物列表.forEach(宠物 => {
                                 // 获得的经验与怪物基础生命值相关
                                 const 经验值 = Math.floor(this.基础生命值 / 10);
@@ -4229,47 +4442,64 @@
                         return;
                     }
                 }
+                const 动画状态 = 怪物动画状态.get(this);
+                let 绘制逻辑X = this.x;
+                let 绘制逻辑Y = this.y;
+                const 正在动画 = 动画状态?.正在动画;
+
+                if (正在动画) {
+                    绘制逻辑X = 动画状态.视觉X !== undefined ? 动画状态.视觉X : this.x;
+                    绘制逻辑Y = 动画状态.视觉Y !== undefined ? 动画状态.视觉Y : this.y;
+                }
+
+                // --- 计算血条屏幕坐标 (基于绘制逻辑坐标和插值相机) ---
                 const 画布Rect = canvas.getBoundingClientRect();
-                const 小数偏移X = (当前相机X % 1) * 单元格大小;
-                const 小数偏移Y = (当前相机Y % 1) * 单元格大小;
-                const 屏幕X = (this.x - 视口偏移X) * 单元格大小 - 小数偏移X;
-                const 屏幕Y = (this.y - 视口偏移Y) * 单元格大小 - 小数偏移Y;
+                // 使用 当前相机X/Y (插值后的相机位置)
+                const 屏幕X = (绘制逻辑X - 当前相机X) * 单元格大小;
+                const 屏幕Y = (绘制逻辑Y - 当前相机Y) * 单元格大小;
                 const 宽度 = 单元格大小;
-                // 判断是否在屏幕可见区域
-                const 在视口内 =
-                    屏幕X + 单元格大小 > 0 &&
-                    屏幕X + 单元格大小 < 画布Rect.width &&
-                    屏幕Y + 单元格大小 > 0 &&
-                    屏幕Y + 单元格大小 < 画布Rect.height;
-                if (this.状态 === 怪物状态.活跃 && 在视口内 && (房间地图[this.y][this.x] === -1 || 已访问房间.has(房间地图[this.y][this.x]))) {
+
+                // --- 可见性判断 ---
+                // 检查逻辑位置是否在迷雾/深夜范围外
+                const 逻辑位置可见 = !当前天气效果.includes('深夜') || 是否在光源范围内(this.x, this.y);
+                // 检查视觉位置是否在屏幕边界内
+                const 视觉位置在屏内 =
+                    屏幕X + 宽度 > 0 &&
+                    屏幕X < 画布Rect.width &&
+                    屏幕Y + 单元格大小 > 0 && // 考虑怪物本身
+                    屏幕Y - 12 < 画布Rect.height; // 考虑血条在上方
+                // 怪物是否活跃且在已访问区域
+                const 活跃且区域可见 = this.状态 === 怪物状态.活跃 &&
+                    (房间地图[this.y][this.x] === -1 || 已访问房间.has(房间地图[this.y][this.x]));
+
+
+                if (逻辑位置可见 && 视觉位置在屏内 && 活跃且区域可见) {
                     if (!this.血条元素) {
                         this.血条元素 = document.createElement("div");
                         this.血条元素.className = "怪物血条";
                         document.body.appendChild(this.血条元素);
                     }
 
+                    // 更新血条位置 (基于视觉坐标计算的屏幕坐标)
                     this.血条元素.style.cssText = `
-                                                                        left: ${屏幕X +
-                        画布Rect.left
-                        }px;
-                                                                        top: ${屏幕Y -
-                        12 +
-                        画布Rect.top
-                        }px;
-                                                                        width: ${宽度}px;
-                                                                        display: block;
-                                                                    `;
+                left: ${屏幕X + 画布Rect.left}px;
+                top: ${屏幕Y - 12 + 画布Rect.top}px; /* 血条在视觉位置上方 */
+                width: ${宽度}px;
+                display: block;
+                transition: left ${1 / 60}s linear, top ${1 / 60}s linear; /* 添加平滑过渡 */
+            `;
 
                     const 血量百分比 = Math.max(
                         0,
-                        this.当前生命值 / this.生命值 * 100
+                        (this.当前生命值 / this.生命值) * 100
                     );
                     this.血条元素.innerHTML = `
-                                                                        <div class="血条背景">
-                                                                            <div class="当前血量" style="width:${血量百分比}%"></div>
-                                                                        </div>
-                                                                    `;
+                <div class="血条背景">
+                    <div class="当前血量" style="width:${血量百分比}%"></div>
+                </div>
+            `;
                 } else {
+                    // 如果不可见，隐藏血条
                     if (this.血条元素) {
                         this.血条元素.style.display = "none";
                     }
@@ -4936,7 +5166,7 @@
                             if (单元格.关联怪物 && 单元格.关联怪物.类型 !== "冰冻怪物" && 单元格.关联怪物.类型 !== "大魔法师") {
                                 new 状态效果("冻结", "#2196F3", "冻", 3, null, null, 单元格.关联怪物);
                             }
-                            if (x === 玩家.x && y === 玩家.y && ![...玩家装备.values()].some((item) => item.名称 === '冰盾')) {
+                            if (x === 玩家.x && y === 玩家.y && !Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).some((item) => item.名称 === '冰盾')) {
                                 伤害玩家(this.攻击力, this);
                                 new 状态效果("冻结", "#2196F3", 图标映射.冰冻怪物, 3, 3);
                             }
@@ -4952,9 +5182,9 @@
                                 }
                             }
                             if (单元格.关联物品 instanceof 火焰物品) {
-                                    单元格.关联物品 = null;
-                                    if (单元格.类型 === 单元格类型.物品) 单元格.类型 = null;
-                                    单元格.颜色索引 = 颜色表.length;
+                                单元格.关联物品 = null;
+                                if (单元格.类型 === 单元格类型.物品) 单元格.类型 = null;
+                                单元格.颜色索引 = 颜色表.length;
                             }
                         }
                         if (单元格.关联怪物?.类型 !== "大魔法师") {
@@ -5015,7 +5245,8 @@
                     }
                 }
 
-
+                const 旧X = this.x;
+                const 旧Y = this.y;
                 if (可达点.length > 0) {
                     const 目标点 = 可达点[Math.floor(Math.random() * 可达点.length)];
                     this.恢复背景类型();
@@ -5027,36 +5258,36 @@
                     添加日志(`${this.类型} 使用了传送术!`, "信息");
                     this.技能冷却.传送术 = 7;
                     this.处理地形效果();
-                    绘制();
+                    怪物动画状态.set(this, {
+                        旧逻辑X: 旧X,
+                        旧逻辑Y: 旧Y,
+                        目标逻辑X: this.x,
+                        目标逻辑Y: this.y,
+                        视觉X: 旧X,
+                        视觉Y: 旧Y,
+                        动画开始时间: Date.now(),
+                        正在动画: true
+                    });
                 }
             }
             受伤(伤害, 来源 = null) {
-                if (来源==="火焰") return false;
+                if (来源 !== "玩家") return false;
                 if (this.当前生命值 > 0) {
                     this.当前生命值 -= 伤害;
-                    if (!(来源 instanceof 怪物)) {
-                        this.受伤冻结回合剩余 = this.受伤冻结回合;
-                    }
                     if (中文模式) this.触发受击动画();
 
                     if (this.当前生命值 <= 0) {
-                        if (来源 === "玩家") {
-                            已击杀怪物数++;
-                            const 能量条 = document.querySelector(".power-bar");
-                            const 当前能量 = parseFloat(能量条.style.width) || 100;
-                            能量条.style.width = `${Math.min(100, 当前能量 + 7)}%`;
-                            击杀提示.更新({ 内容: `已击杀怪物：${已击杀怪物数} ` });
-                            const 装备宠物列表 = [...玩家装备.values()].filter(装备 => 装备 instanceof 宠物);
-                            装备宠物列表.forEach(宠物 => {
+                        已击杀怪物数++;
+                        const 能量条 = document.querySelector(".power-bar");
+                        const 当前能量 = parseFloat(能量条.style.width) || 100;
+                        能量条.style.width = `${Math.min(100, 当前能量 + 7)}%`;
+                        击杀提示.更新({ 内容: `已击杀怪物：${已击杀怪物数} ` });
+                        const 装备宠物列表 = Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).filter(装备 => 装备 instanceof 宠物);
+                        装备宠物列表.forEach(宠物 => {
 
-                                const 经验值 = Math.floor(this.基础生命值 / 10);
-                                宠物.获得经验(经验值);
-                            });
-                        }
-                        if (来源 instanceof 宠物) {
                             const 经验值 = Math.floor(this.基础生命值 / 10);
-                            来源.获得经验(经验值);
-                        }
+                            宠物.获得经验(经验值);
+                        });
 
                         this.恢复背景类型();
                         this.血条元素.remove();
@@ -5140,7 +5371,7 @@
 
                 const 腐蚀量 = 1 + Math.floor(this.腐蚀强度 / 2);
                 let 实际腐蚀 = false;
-                [...玩家装备.values()].forEach(装备 => {
+                Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(装备 => {
                     if (装备.自定义数据?.has('耐久') && !装备.自定义数据.get('不可破坏')) {
                         const 原耐久 = 装备.自定义数据.get('耐久');
                         装备.自定义数据.set('耐久', Math.max(0, 原耐久 - 腐蚀量));
@@ -5207,7 +5438,7 @@
                     }
 
                     if (Math.random() < this.偷窃武器几率) {
-                        const 玩家装备武器 = [...玩家装备.values()].filter(item => item instanceof 武器类);
+                        const 玩家装备武器 = Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).filter(item => item instanceof 武器类);
 
                         if (玩家装备武器.length > 1) {
 
@@ -5410,7 +5641,7 @@
                                     添加日志(`${单元格.关联怪物.类型} 吸入了剧毒云雾！`, "信息");
                                 }
 
-                                [...玩家装备.values()].forEach(装备 => {
+                                Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(装备 => {
                                     if (装备 instanceof 宠物 && 装备.x === x && 装备.y === y && !装备.自定义数据.get("休眠中")) {
 
 
@@ -5499,12 +5730,13 @@
                     if (逃离点) {
                         this.目标路径 = this.计算路径(逃离点.x, 逃离点.y);
                         if (this.目标路径) super.尝试移动();
-                        else { /* 无法逃离则不动 */ }
-                    } else { /* 无法选择逃离点则不动 */ }
+                        else { }
+                    } else { }
                 } else {
 
-
-                    if (Math.random() < 0.2) {
+                    const 旧X = this.x;
+                    const 旧Y = this.y;
+                    if (Math.random() < 0.3) {
                         const 方向 = [[0, -1], [0, 1], [-1, 0], [1, 0]];
                         const [dx, dy] = 方向[Math.floor(Math.random() * 4)];
                         const 新X = this.x + dx;
@@ -5515,6 +5747,16 @@
                             this.x = 新X; this.y = 新Y;
                             地牢[新Y][新X].类型 = 单元格类型.怪物;
                             地牢[新Y][新X].关联怪物 = this;
+                            怪物动画状态.set(this, {
+                                旧逻辑X: 旧X,
+                                旧逻辑Y: 旧Y,
+                                目标逻辑X: this.x,
+                                目标逻辑Y: this.y,
+                                视觉X: 旧X,
+                                视觉Y: 旧Y,
+                                动画开始时间: Date.now(),
+                                正在动画: true
+                            });
                         }
                     }
                 }
@@ -5918,9 +6160,9 @@
                     基础生命值: 25 + (配置.强化 ? 15 : 0),
                     基础攻击力: 2 + (配置.强化 ? 3 : 0),
                     移动率: 1,
-                    掉落物: new 跃迁卷轴({ 数量: 1 , 强化: 配置.强化 ?? false}),
+                    掉落物: new 跃迁卷轴({ 数量: 1, 强化: 配置.强化 ?? false }),
                     掉落概率: 0.4,
-                    基础攻击范围: 3,
+                    基础攻击范围: 2,
                     受伤冻结回合: 0, // 受伤不冻结，可能直接瞬移走
                     ...配置,
                 });
@@ -6029,10 +6271,18 @@
                     地牢[this.y][this.x].类型 = 单元格类型.怪物;
                     地牢[this.y][this.x].关联怪物 = this;
                     this.处理地形效果();
+                    怪物动画状态.set(this, {
+                        旧逻辑X: 旧X,
+                        旧逻辑Y: 旧Y,
+                        目标逻辑X: this.x,
+                        目标逻辑Y: this.y,
+                        视觉X: 旧X,
+                        视觉Y: 旧Y,
+                        动画开始时间: Date.now(),
+                        正在动画: true
+                    });
                     添加日志(`${this.类型} 瞬移了！`, "信息");
-                    绘制(); // 瞬移后立即重绘
                 }
-                // 如果没有可达位置，则不瞬移
             }
             瞬移逃跑() {
                 const 范围 = 8; // 逃跑瞬移范围更大
@@ -6077,14 +6327,23 @@
                     地牢[this.y][this.x].关联怪物 = this;
                     添加日志(`${this.类型} 瞬移逃跑了！`, "信息")
                     this.处理地形效果();
-                    绘制();
+                    怪物动画状态.set(this, {
+                        旧逻辑X: 旧X,
+                        旧逻辑Y: 旧Y,
+                        目标逻辑X: this.x,
+                        目标逻辑Y: this.y,
+                        视觉X: 旧X,
+                        视觉Y: 旧Y,
+                        动画开始时间: Date.now(),
+                        正在动画: true
+                    });
                 }
                 // 如果没有可达的逃跑位置，则不瞬移
             }
 
             受伤(伤害, 来源 = null) {
                 const 原始血量 = this.当前生命值;
-                
+
                 // 有几率瞬移逃跑
                 if (原始血量 > 0 && this.当前生命值 > 0 && Math.random() < this.受击瞬移几率) {
                     this.瞬移逃跑();
@@ -6380,7 +6639,8 @@
                     return;
                 }
 
-
+                const 旧X = this.x;
+                const 旧Y = this.y;
                 const 下一步 = this.目标路径[Math.min(this.移动距离 - 1, this.目标路径.length - 1)];
                 if (下一步) {
                     const dx = 下一步.x - this.x;
@@ -6395,6 +6655,16 @@
                     this.y = 最终位置.y;
                     地牢[this.y][this.x].类型 = 单元格类型.怪物;
                     地牢[this.y][this.x].关联怪物 = this;
+                    怪物动画状态.set(this, {
+                        旧逻辑X: 旧X,
+                        旧逻辑Y: 旧Y,
+                        目标逻辑X: this.x,
+                        目标逻辑Y: this.y,
+                        视觉X: 旧X,
+                        视觉Y: 旧Y,
+                        动画开始时间: Date.now(),
+                        正在动画: true
+                    });
                 }
                 if (this.x === x && this.y === y) {
                     this.触发效果();
@@ -6590,7 +6860,7 @@
                 if (super.尝试攻击()) {
                     if (怪物状态表.get(this)?.类型 === "魅惑") {
                         new 状态效果("冻结", "#2196F3", "冻", 3, null, null, this.魅惑目标怪物);
-                    } else if (![...玩家装备.values()].some(
+                    } else if (!Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).some(
                         (item) => item.名称 === '冰盾')) {
                         new 状态效果("冻结", "#2196F3", 图标映射.冰冻怪物, 3, 3); // 添加冻结效果
                     }
@@ -6646,14 +6916,9 @@
             }
             装备() {
                 if (this.已装备) return false;
-
-                // 寻找空装备槽
-                const 空槽 = [1, 2, 3, 4].find(
-                    (id) =>
-                        ![...玩家装备.values()].some(
-                            (item) => item.装备槽位 === id
-                        )
-                );
+                const 空槽 = Array.from({ length: 4 }, (_, i) => i + 1).find(
+                    (id) => !玩家装备.has(id + 当前装备页 * 4)
+                ) + 当前装备页 * 4;
 
                 if (空槽) {
                     this.已装备 = true;
@@ -6667,6 +6932,7 @@
 
             取消装备() {
                 if (!this.已装备) return false;
+                //卸下装备槽物品(this.装备槽位); stackoverflow，小子
                 玩家装备.delete(this.装备槽位);
                 this.已装备 = false;
                 this.装备槽位 = null;
@@ -6781,8 +7047,17 @@
                             : ""
                         }
                                                                     `;
+                } else if (用途 === "融合"){
+                    元素.innerHTML = `
+                                                                        <div class="物品图标">${this
+                            .显示图标
+                        }</div>
+                                                                        <div class="物品名称">${this
+                            .显示名称
+                        }</div>
+                                                                    `;
                 }
-                if (this.isActive) {
+                if (this.isActive && 用途==="背包") {
                     元素.classList.add("active");
                 }
 
@@ -6816,42 +7091,6 @@
                     ]
                     };
                                                                     `;
-
-                const 丢弃按钮 = document.createElement("button");
-                丢弃按钮.className = "丢弃按钮";
-                丢弃按钮.innerHTML = "↓";
-                丢弃按钮.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    this.isActive = true;
-                    元素.classList.add("active");
-                    document.querySelectorAll(".物品条目").forEach((el) => {
-                        if (el !== 元素 && el.__物品实例) {
-                            el.classList.remove("active");
-                            el.__物品实例.isActive = false;
-                        }
-                    });
-                    处理丢弃物品(this.唯一标识);
-                });
-                元素.prepend(丢弃按钮);
-
-                // 使用按钮
-                const 使用按钮 = document.createElement("button");
-                使用按钮.className = "使用按钮";
-                使用按钮.innerHTML = "⚡";
-                使用按钮.onclick = (e) => {
-                    e.stopPropagation();
-                    this.isActive = true;
-                    元素.classList.add("active");
-                    document.querySelectorAll(".物品条目").forEach((el) => {
-                        if (el !== 元素 && el.__物品实例) {
-                            el.classList.remove("active");
-                            el.__物品实例.isActive = false;
-                        }
-                    });
-                    使用背包物品(this.唯一标识);
-                };
-                元素.prepend(使用按钮);
-
                 元素.addEventListener("mousemove", (e) => {
                     const 提示框 = document.getElementById("浮动提示框");
                     提示框.innerHTML = this.获取提示().replace(
@@ -6871,43 +7110,89 @@
                         元素.__物品实例.isActive = false;
                     }
                 });
-                this.装备按钮 = null;
-                this.装备按钮 = document.createElement("button");
-                this.装备按钮.className = "装备按钮";
-                this.装备按钮.innerHTML = 图标映射.装备按钮;
-                this.装备按钮.onclick = (e) => {
-                    e.stopPropagation();
-                    this.isActive = true;
-                    元素.classList.add("active");
-                    document.querySelectorAll(".物品条目").forEach((el) => {
-                        if (el !== 元素 && el.__物品实例) {
-                            el.classList.remove("active");
-                            el.__物品实例.isActive = false;
-                        }
+                if (用途 === "背包") {
+                    const 上屏按钮 = document.createElement("button");
+                    上屏按钮.className = "上屏按钮";
+                    上屏按钮.innerHTML = "↑";
+                    上屏按钮.onclick = (e) => {
+                        e.stopPropagation();
+                        添加到融合区(this.唯一标识);
+                    };
+                    元素.appendChild(上屏按钮);
+                    const 丢弃按钮 = document.createElement("button");
+                    丢弃按钮.className = "丢弃按钮";
+                    丢弃按钮.innerHTML = "↓";
+                    丢弃按钮.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        this.isActive = true;
+                        元素.classList.add("active");
+                        document.querySelectorAll(".物品条目").forEach((el) => {
+                            if (el !== 元素 && el.__物品实例) {
+                                el.classList.remove("active");
+                                el.__物品实例.isActive = false;
+                            }
+                        });
+                        处理丢弃物品(this.唯一标识);
                     });
-                    if (this.已装备) {
-                        this.取消装备();
-                        显示通知("已卸下", "成功");
-                    } else {
-                        if (this.装备()) {
-                            显示通知("已装备", "成功");
+                    元素.prepend(丢弃按钮);
+
+                    // 使用按钮
+                    const 使用按钮 = document.createElement("button");
+                    使用按钮.className = "使用按钮";
+                    使用按钮.innerHTML = "⚡";
+                    使用按钮.onclick = (e) => {
+                        e.stopPropagation();
+                        this.isActive = true;
+                        元素.classList.add("active");
+                        document.querySelectorAll(".物品条目").forEach((el) => {
+                            if (el !== 元素 && el.__物品实例) {
+                                el.classList.remove("active");
+                                el.__物品实例.isActive = false;
+                            }
+                        });
+                        使用背包物品(this.唯一标识);
+                    };
+                    元素.prepend(使用按钮);
+
+
+                    this.装备按钮 = null;
+                    this.装备按钮 = document.createElement("button");
+                    this.装备按钮.className = "装备按钮";
+                    this.装备按钮.innerHTML = 图标映射.装备按钮;
+                    this.装备按钮.onclick = (e) => {
+                        e.stopPropagation();
+                        this.isActive = true;
+                        元素.classList.add("active");
+                        document.querySelectorAll(".物品条目").forEach((el) => {
+                            if (el !== 元素 && el.__物品实例) {
+                                el.classList.remove("active");
+                                el.__物品实例.isActive = false;
+                            }
+                        });
+                        if (this.已装备) {
+                            this.取消装备();
+                            显示通知("已卸下", "成功");
                         } else {
-                            显示通知("槽位已满", "错误");
+                            if (this.装备()) {
+                                显示通知("已装备", "成功");
+                            } else {
+                                显示通知("槽位已满", "错误");
+                            }
                         }
-                    }
+                        this.装备按钮.style.background = this.已装备
+                            ? "#f44336"
+                            : "#FF9800";
+                        更新装备显示();
+                        更新背包显示();
+
+                        document.getElementById("浮动提示框").style.display =
+                            "none";
+                    };
                     this.装备按钮.style.background = this.已装备
                         ? "#f44336"
                         : "#FF9800";
-                    更新装备显示();
-                    更新背包显示();
-
-                    document.getElementById("浮动提示框").style.display =
-                        "none";
-                };
-                this.装备按钮.style.background = this.已装备
-                    ? "#f44336"
-                    : "#FF9800";
-                元素.prepend(this.装备按钮);
+                    元素.prepend(this.装备按钮);
+                }
                 return 元素;
             }
             可堆叠于(其他物品) {
@@ -7083,7 +7368,7 @@
                         显示通知(`${this.名称} 造成 ${总有效伤害.toFixed(1)} 点伤害！`, "成功");
                     }
                 }
-                this.触发通用附魔();
+                this.触发通用附魔(目标怪物列表);
                 if (总有效伤害 > 0 && 目标路径) {
                     目标路径.forEach((攻击路径) => {
                         计划显示格子特效(攻击路径);
@@ -7247,9 +7532,9 @@
             安全销毁() {
                 if (当前激活卷轴列表.has(this)) 当前激活卷轴列表.delete(this);
                 let ret = super.安全销毁();
-                document.getElementById("卷轴按钮").style.display = [
-                    ...玩家装备.values(),
-                ].some((item) => item.类型 === "卷轴")
+                document.getElementById("卷轴按钮").style.display = Array.from({ length: 4 }, (_, i) => i + 1).some(
+                    (id) => 玩家装备.get(id + 当前装备页 * 4)?.类型 === "卷轴"
+                )
                     ? "flex"
                     : "none";
                 return ret;
@@ -7314,8 +7599,8 @@
                     更新背包显示();
                     if (this instanceof 卷轴类) {
                         document.getElementById("卷轴按钮").style.display =
-                            [...玩家装备.values()].some(
-                                (item) => item.类型 === "卷轴"
+                            Array.from({ length: 4 }, (_, i) => i + 1).some(
+                                (id) => 玩家装备.get(id + 当前装备页 * 4)?.类型 === "卷轴"
                             )
                                 ? "flex"
                                 : "none";
@@ -7334,9 +7619,9 @@
                     this.卸下();
                 }
                 let ret = super.取消装备();
-                document.getElementById("卷轴按钮").style.display = [
-                    ...玩家装备.values(),
-                ].some((item) => item.类型 === "卷轴")
+                document.getElementById("卷轴按钮").style.display = Array.from({ length: 4 }, (_, i) => i + 1).some(
+                    (id) => 玩家装备.get(id + 当前装备页 * 4)?.类型 === "卷轴"
+                )
                     ? "flex"
                     : "none";
                 return ret;
@@ -7547,32 +7832,32 @@
                         return false; // 不在棋盘上，不消耗
                     }
                 } else {
-                     // 非玩家使用（例如编辑器放置）的逻辑 - 可能不需要修改消耗
-                     放置成功 = true; // 假设非玩家使用总是“成功”放置，不涉及消耗
+                    // 非玩家使用（例如编辑器放置）的逻辑 - 可能不需要修改消耗
+                    放置成功 = true; // 假设非玩家使用总是“成功”放置，不涉及消耗
                 }
 
 
                 if (放置成功 && 玩家使用) { // 只有玩家成功放置才消耗
-                     this.堆叠数量 -= 1; // 消耗一个棋子
-                     if (this.堆叠数量 <= 0) {
-                         // 如果是最后一个棋子，从背包或装备中移除
-                         if (this.已装备) {
-                             玩家装备.delete(this.装备槽位);
-                             this.已装备 = false;
-                             this.装备槽位 = null;
-                             更新装备显示();
-                         }
-                         玩家背包.delete(this.唯一标识);
-                         更新背包显示(); // 更新UI显示数量或移除条目
-                     } else {
-                         // 如果还有棋子，仅更新UI显示数量
-                         更新背包显示();
-                         更新装备显示();
-                     }
-                     return true; // 返回放置结果（放置逻辑已处理）
+                    this.堆叠数量 -= 1; // 消耗一个棋子
+                    if (this.堆叠数量 <= 0) {
+                        // 如果是最后一个棋子，从背包或装备中移除
+                        if (this.已装备) {
+                            玩家装备.delete(this.装备槽位);
+                            this.已装备 = false;
+                            this.装备槽位 = null;
+                            更新装备显示();
+                        }
+                        玩家背包.delete(this.唯一标识);
+                        更新背包显示(); // 更新UI显示数量或移除条目
+                    } else {
+                        // 如果还有棋子，仅更新UI显示数量
+                        更新背包显示();
+                        更新装备显示();
+                    }
+                    return true; // 返回放置结果（放置逻辑已处理）
                 } else if (!玩家使用 && 放置成功) {
-                     // 非玩家使用，可能不需要消耗或UI更新，直接返回true
-                     return true;
+                    // 非玩家使用，可能不需要消耗或UI更新，直接返回true
+                    return true;
                 }
 
 
@@ -7740,6 +8025,7 @@
                     return false;
                 }
                 this.是否隐藏 = true;
+                this.取消装备()
                 if (this.激活中) {
                     显示通知(
                         `${this.自定义数据.get("效果类型")} 效果已存在`,
@@ -8763,7 +9049,7 @@
                 }
                 显示通知(消息, "成功");
 
-                [...玩家装备.values()].forEach(装备 => {
+                Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(装备 => {
                     if (装备 instanceof 宠物 && !装备.自定义数据.get("休眠中")) {
                         装备.当玩家攻击([目标怪物]);
                     }
@@ -8949,7 +9235,7 @@
 
                 // --- 宠物协同和附魔 ---
                 if (总有效伤害 > 0) {
-                    [...玩家装备.values()].forEach(装备 => {
+                    Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(装备 => {
                         if (装备 instanceof 宠物 && !装备.自定义数据.get("休眠中")) {
                             装备.当玩家攻击([目标怪物]);
                         }
@@ -9216,7 +9502,7 @@
 
                     if (总有效伤害 > 0) {
                         const 所有击中怪物 = Array.from(击中怪物_去程);
-                        [...玩家装备.values()].forEach(装备 => {
+                        Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(装备 => {
                             if (装备 instanceof 宠物 && !装备.自定义数据.get("休眠中")) {
                                 装备.当玩家攻击(所有击中怪物);
                             }
@@ -9508,7 +9794,7 @@
                 if (击中怪物.size > 0) {
                     显示通知(`${this.名称} 震击了 ${击中怪物.size} 个目标，共造成 ${总有效伤害.toFixed(1)} 点伤害！`, "成功");
                     const 所有击中怪物 = Array.from(击中怪物);
-                    [...玩家装备.values()].forEach(装备 => {
+                    Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(装备 => {
                         if (装备 instanceof 宠物 && !装备.自定义数据.get("休眠中")) {
                             装备.当玩家攻击(所有击中怪物);
                         }
@@ -9720,7 +10006,7 @@
                 if (击中怪物.size > 0) {
                     显示通知(`${this.名称} 穿透了 ${击中怪物.size} 个目标，共造成 ${总有效伤害.toFixed(1)} 点伤害！`, "成功");
                     const 所有击中怪物 = Array.from(击中怪物);
-                    [...玩家装备.values()].forEach(装备 => {
+                    Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(装备 => {
                         if (装备 instanceof 宠物 && !装备.自定义数据.get("休眠中")) {
                             装备.当玩家攻击(所有击中怪物);
                         }
@@ -10111,7 +10397,7 @@
 
             添加装备到弹窗(弹窗) {
                 const 容器 = 弹窗.querySelector(".附魔装备容器");
-                [...玩家装备.values()].forEach(装备 => {
+                Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(装备 => {
                     const 克隆元素 = 装备.生成显示元素("装备").cloneNode(true);
                     克隆元素.style.margin = "-5px 0";
                     克隆元素.classList.remove("active");
@@ -10336,7 +10622,7 @@
                 const 每次解密消耗 = 30;
 
                 // 遍历玩家装备，尝试解锁卷轴
-                [...玩家装备.values()].forEach(item => {
+                Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(item => {
                     if (item instanceof 卷轴类 && !item.自定义数据.get("已解锁")) {
                         if (当前能量 >= 每次解密消耗) {
                             当前能量 -= 每次解密消耗; // 扣除能量
@@ -10380,7 +10666,7 @@
 
             使用() {
                 if (!this.消耗能量()) return false;
-                let 销毁列表 = [...玩家装备.values()];
+                let 销毁列表 = Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null);
 
                 销毁列表.forEach((item) => {
                     // 传奇自爆兵
@@ -11332,7 +11618,7 @@
                 }
                 if (当前生命 > 75) {
                     伤害玩家(75, this.名称);
-                    [...玩家装备.values()].forEach((装备) => {
+                    Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach((装备) => {
                         if (装备.自定义数据.get("原耐久")) 装备.自定义数据.set("耐久", 装备.自定义数据.get("原耐久"))
                     });
                     显示通知("耐久祭坛献祭成功！", "成功");
@@ -12703,45 +12989,6 @@
                     if (this.关联物品) {
                         this.绘制物品(屏幕X, 屏幕Y);
                     }
-                    if (this.关联怪物) {
-                        ctx.fillStyle = "#FFFFFF";
-                        ctx.font = `${单元格大小 * 0.8}px color-emoji`;
-                        ctx.textAlign = "center";
-                        ctx.textBaseline = "middle";
-                        if (this.关联怪物.隐身中) {
-                            return;
-                        }
-                        this.关联怪物.绘制血条();
-                        if (this.关联怪物.受击动画) {
-                            ctx.fillStyle = "#FF0000"; // 受击时变红
-                        } else {
-                            ctx.fillStyle = this.关联怪物.颜色 || "#FFFFFF";
-                        }
-                        ctx.fillText(
-                            this.关联怪物.图标,
-                            (this.关联怪物.x - 当前相机X) * 单元格大小 +
-                            单元格大小 / 2,
-                            (this.关联怪物.y - 当前相机Y) * 单元格大小 +
-                            单元格大小 / 2
-                        );
-                        if (怪物状态表.get(this.关联怪物)) {
-                            ctx.fillStyle = 怪物状态表.get(this.关联怪物)?.颜色;
-                            ctx.font = `${单元格大小 * 0.5}px Arial`;
-                            ctx.fillText(
-                                怪物状态表.get(this.关联怪物)?.图标,
-                                (this.x - 当前相机X) * 单元格大小 + 单元格大小 * 0.7, // 右上角位置...暂时没想好单怪物多效果...
-                                (this.y - 当前相机Y) * 单元格大小 + 单元格大小 * 0.3
-                            );
-                        } else if (this.关联怪物.强化) {
-                            ctx.fillStyle = "#FF0000";
-                            ctx.font = `${单元格大小 * 0.5}px Arial`;
-                            ctx.fillText(
-                                "强",
-                                (this.关联怪物.x - 当前相机X) * 单元格大小 + 单元格大小 * 0.7,
-                                (this.关联怪物.y - 当前相机Y) * 单元格大小 + 单元格大小 * 0.3
-                            );
-                        }
-                    }
                 }
             }
             绘制物品(屏幕X, 屏幕Y) {
@@ -13451,9 +13698,12 @@
             }
         }
         function 玩家死亡() {
-            if (死亡界面已显示) return;
+            if (死亡界面已显示 || 游戏状态 === "图鉴") return;
             死亡界面已显示 = true;
-
+            const 设置菜单 = document.getElementById("设置菜单");
+            if (设置菜单 && 设置菜单.classList.contains("显示")) {
+                关闭设置菜单();
+            }
             const 死亡遮罩 = document.createElement("div");
             死亡遮罩.id = "死亡遮罩";
             死亡遮罩.innerHTML = `
@@ -13718,6 +13968,7 @@
                     0.4
                     };
                                                                     `;
+                粒子.style.setProperty('--random', Math.random());
                 容器.appendChild(粒子);
             }
         }
@@ -13778,9 +14029,9 @@
                 更新界面状态();
                 更新物体指示器();
             }
-            document.getElementById("卷轴按钮").style.display = [
-                ...玩家装备.values(),
-            ].some((item) => item.类型 === "卷轴")
+            document.getElementById("卷轴按钮").style.display = Array.from({ length: 4 }, (_, i) => i + 1).some(
+                (id) => 玩家装备.get(id + 当前装备页 * 4)?.类型 === "卷轴"
+            )
                 ? "flex"
                 : "none";
             // 恢复控制
@@ -13924,7 +14175,6 @@
 
             传送点列表.push(新传送点);
             显示通知(`传送点 "${新传送点.名称}" 已保存！`, "成功");
-            console.log("当前传送点列表:", 传送点列表);
         }
         function 打开传送菜单() {
             if (当前天气效果.includes("诡魅")) {
@@ -13935,61 +14185,20 @@
             const 菜单 = document.getElementById("传送点菜单");
             const 列表容器 = document.getElementById("传送点列表容器");
 
-            列表容器.innerHTML = ""; // 清空旧列表
-
-            // --- 修改：创建并添加保存按钮到标题栏 ---
+            列表容器.innerHTML = "";
             const 标题栏 = 菜单.querySelector(".重铸弹窗-header");
             // 检查按钮是否已存在，防止重复添加
             let 保存按钮 = 标题栏.querySelector('#保存当前传送点按钮'); // 先查找
             if (!保存按钮) { // 不存在则创建
                 保存按钮 = document.createElement("button");
-                保存按钮.textContent = "💾 保存"; // 使用图标
+                保存按钮.textContent = "保存"; // 使用图标
                 保存按钮.className = "菜单操作按钮 传送菜单按钮-保存"; // 使用新基础类和特定类
                 保存按钮.id = "保存当前传送点按钮"
                 保存按钮.onclick = (事件) => {
                     事件.stopPropagation();
                     保存传送点(); // 调用现有的保存函数
                     列表容器.innerHTML = ""; // 清空旧列表
-                    传送点列表.forEach(点 => {
-                        const 条目元素 = document.createElement("div");
-                        条目元素.className = "重铸物品"; // 复用样式
-                        条目元素.style.display = "flex";
-                        条目元素.style.justifyContent = "space-between";
-                        条目元素.style.alignItems = "center";
-                        条目元素.style.padding = "10px 15px";
-
-                        const 名称元素 = document.createElement("span");
-                        名称元素.textContent = `${点.名称}`;
-                        名称元素.style.flexGrow = "1";
-                        名称元素.style.marginRight = "10px";
-
-                        const 操作容器 = document.createElement("div");
-                        操作容器.style.display = "flex";
-                        操作容器.style.gap = "8px"; // 稍微增大按钮间距
-
-                        const 传送按钮 = document.createElement("button");
-                        传送按钮.innerHTML = "➡️ 传送"; // 使用图标
-                        传送按钮.className = "菜单操作按钮 传送菜单按钮-传送";
-                        传送按钮.onclick = (事件) => {
-                            事件.stopPropagation();
-                            执行传送(点.id);
-                        };
-
-                        const 删除按钮 = document.createElement("button");
-                        删除按钮.innerHTML = "🗑️ 删除"; // 使用图标
-                        删除按钮.className = "菜单操作按钮 传送菜单按钮-删除"
-                        删除按钮.onclick = (事件) => {
-                            事件.stopPropagation();
-                            删除传送点(点.id);
-                        };
-
-                        操作容器.appendChild(传送按钮);
-                        操作容器.appendChild(删除按钮);
-
-                        条目元素.appendChild(名称元素);
-                        条目元素.appendChild(操作容器);
-                        列表容器.appendChild(条目元素);
-                    });
+                    刷新传送菜单();
                 };
                 const 关闭按钮实例 = 标题栏.querySelector(".关闭按钮");
                 if (关闭按钮实例) {
@@ -13997,8 +14206,26 @@
                 } else {
                     标题栏.appendChild(保存按钮);
                 }
-            }
 
+            }
+            刷新传送菜单();
+
+
+            遮罩.style.display = "block";
+            菜单.style.opacity = 0;
+            菜单.style.transform = "translate(-50%, -50%) scale(0.9)";
+            requestAnimationFrame(() => {
+                菜单.style.transition = 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55)';
+                菜单.style.opacity = 1;
+                菜单.style.transform = "translate(-50%, -50%) scale(1)";
+            });
+            玩家属性.允许移动 += 1;
+        }
+        function 刷新传送菜单() {
+            const 遮罩 = document.getElementById("传送点遮罩");
+            const 菜单 = document.getElementById("传送点菜单");
+            const 列表容器 = document.getElementById("传送点列表容器");
+            列表容器.innerHTML = "";
             if (传送点列表.length === 0) {
                 列表容器.innerHTML = "<p style='text-align: center; color: #888;'>没有已保存的传送点。</p>";
             } else {
@@ -14020,7 +14247,7 @@
                     操作容器.style.gap = "8px"; // 稍微增大按钮间距
 
                     const 传送按钮 = document.createElement("button");
-                    传送按钮.innerHTML = "➡️ 传送"; // 使用图标
+                    传送按钮.innerHTML = "传送"; // 使用图标
                     传送按钮.className = "菜单操作按钮 传送菜单按钮-传送";
                     传送按钮.onclick = (事件) => {
                         事件.stopPropagation();
@@ -14028,56 +14255,13 @@
                     };
 
                     const 删除按钮 = document.createElement("button");
-                    删除按钮.innerHTML = "🗑️ 删除"; // 使用图标
+                    删除按钮.innerHTML = "删除"; // 使用图标
                     删除按钮.className = "菜单操作按钮 传送菜单按钮-删除"
                     删除按钮.onclick = (事件) => {
                         事件.stopPropagation();
                         删除传送点(点.id);
                         列表容器.innerHTML = "";
-                        if (传送点列表.length === 0) {
-                            列表容器.innerHTML = "<p style='text-align: center; color: #888;'>没有已保存的传送点。</p>";
-                        } else {
-                            传送点列表.forEach(点 => {
-                                const 条目元素 = document.createElement("div");
-                                条目元素.className = "重铸物品"; // 复用样式
-                                条目元素.style.display = "flex";
-                                条目元素.style.justifyContent = "space-between";
-                                条目元素.style.alignItems = "center";
-                                条目元素.style.padding = "10px 15px";
-
-                                const 名称元素 = document.createElement("span");
-                                名称元素.textContent = `${点.名称}`;
-                                名称元素.style.flexGrow = "1";
-                                名称元素.style.marginRight = "10px";
-
-                                const 操作容器 = document.createElement("div");
-                                操作容器.style.display = "flex";
-                                操作容器.style.gap = "8px"; // 稍微增大按钮间距
-
-                                const 传送按钮 = document.createElement("button");
-                                传送按钮.innerHTML = "➡️ 传送"; // 使用图标
-                                传送按钮.className = "菜单操作按钮 传送菜单按钮-传送";
-                                传送按钮.onclick = (事件) => {
-                                    事件.stopPropagation();
-                                    执行传送(点.id);
-                                };
-
-                                const 删除按钮 = document.createElement("button");
-                                删除按钮.innerHTML = "🗑️ 删除"; // 使用图标
-                                删除按钮.className = "菜单操作按钮 传送菜单按钮-删除"
-                                删除按钮.onclick = (事件) => {
-                                    事件.stopPropagation();
-                                    删除传送点(点.id);
-                                };
-
-                                操作容器.appendChild(传送按钮);
-                                操作容器.appendChild(删除按钮);
-
-                                条目元素.appendChild(名称元素);
-                                条目元素.appendChild(操作容器);
-                                列表容器.appendChild(条目元素);
-                            });
-                        }
+                        刷新传送菜单();
                     };
 
                     操作容器.appendChild(传送按钮);
@@ -14088,17 +14272,8 @@
                     列表容器.appendChild(条目元素);
                 });
             }
-
-            遮罩.style.display = "block";
-            菜单.style.opacity = 0;
-            菜单.style.transform = "translate(-50%, -50%) scale(0.9)";
-            requestAnimationFrame(() => {
-                菜单.style.transition = 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55)';
-                菜单.style.opacity = 1;
-                菜单.style.transform = "translate(-50%, -50%) scale(1)";
-            });
-            玩家属性.允许移动 += 1;
         }
+
         function 关闭传送菜单() {
             const 遮罩 = document.getElementById("传送点遮罩");
             const 菜单 = document.getElementById("传送点菜单");
@@ -14959,11 +15134,11 @@
                 }
             }
             if (互动) return;
-            const 武器 = [...玩家装备.values()].filter(
+            const 武器 = Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).filter(
                 (i) =>
-                    i.类型 === "武器" &&
-                    i.堆叠数量 > 0 &&
-                    i.自定义数据.get("冷却剩余") == 0
+                    i?.类型 === "武器" &&
+                    i?.堆叠数量 > 0 &&
+                    i?.自定义数据.get("冷却剩余") == 0
             );
             if (武器) {
                 let maxCount = 0;
@@ -14993,7 +15168,7 @@
                         if (目标怪物 !== null) {
                             if (可用武器.使用(目标怪物, 目标路径)) {
 
-                                [...玩家装备.values()].forEach(装备 => {
+                                Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(装备 => {
                                     if (装备 instanceof 宠物 && !装备.自定义数据.get("休眠中")) {
                                         装备.当玩家攻击(目标怪物);
                                     }
@@ -15041,7 +15216,7 @@
             }
             let 攻击范围 = 0;
             if (范围 === null) {
-                const 当前武器 = [...玩家装备.values()].find(
+                const 当前武器 = Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).find(
                     (i) =>
                         i.类型 === "武器" &&
                         i.堆叠数量 > 0 &&
@@ -15281,16 +15456,16 @@
             }
         }
         function 显示格子特效(路径, 颜色 = 'FF0000', 间隔 = 100) {
-            const 画布Rect = canvas.getBoundingClientRect(); // 获取画布位置
+            const 画布Rect = canvas.getBoundingClientRect();
 
             路径.forEach((节点, index) => {
-                // 使用 当前相机X/Y 进行初始定位，更平滑
+
                 const 屏幕X = (节点.x - 当前相机X) * 单元格大小;
                 const 屏幕Y = (节点.y - 当前相机Y) * 单元格大小;
 
                 const 特效 = document.createElement("div");
-                特效.className = "攻击路径特效"; // 可根据需要保留或修改类名
-                // --- CSS 样式设置保持不变 ---
+                特效.className = "攻击路径特效";
+
                 特效.style.cssText = `
             position: absolute;
             left: ${屏幕X + 画布Rect.left}px;
@@ -15305,22 +15480,21 @@
             opacity: 0.7;
             pointer-events: none;
             z-index: 998;
-            /* 可选：添加过渡效果使位置更新更平滑 */
-            /* transition: left 0.05s linear, top 0.05s linear; */
+            transition: left 0.05s linear, top 0.05s linear;
         `;
 
-                // --- 新增：存储世界坐标和元素引用 ---
+
                 const worldX = 节点.x;
                 const worldY = 节点.y;
                 const effectData = { element: 特效, worldX: worldX, worldY: worldY };
 
                 document.body.appendChild(特效);
-                活动DOM特效.push(effectData); // 在元素添加到 DOM 后再加入跟踪数组
+                活动DOM特效.push(effectData);
 
-                const removalDelay = 200 + index * 间隔; // 保持原有的动画/显示时长
+                const removalDelay = 200 + index * 间隔;
                 setTimeout(function () {
                     特效.remove();
-                    // --- 新增：从跟踪数组中移除 ---
+
                     活动DOM特效 = 活动DOM特效.filter(item => item.element !== 特效);
                 }, removalDelay);
             });
@@ -15346,28 +15520,28 @@
             }
         }
         function 尝试执行吹动(实例, 移动计划, 已执行, 风向DX, 风向DY) {
-            // 基本情况：已处理过 或 无需移动
-            if (已执行.has(实例)) return true; // 已经移动过了
-            if (!移动计划.has(实例)) return true; // 本来就没计划移动
+
+            if (已执行.has(实例)) return true;
+            if (!移动计划.has(实例)) return true;
 
             const { 新X, 新Y, 旧X, 旧Y, 类型 } = 移动计划.get(实例);
 
-            // 1. 检查目标格子基本有效性（边界、墙壁）
+
             if (新X < 0 || 新X >= 地牢大小 || 新Y < 0 || 新Y >= 地牢大小 ||
-                !检查直线移动可行性(旧X, 旧Y, 新X, 新Y, true) || // 检查直线路径
+                !检查直线移动可行性(旧X, 旧Y, 新X, 新Y, true) ||
                 [单元格类型.墙壁, 单元格类型.上锁的门].includes(地牢[新Y][新X]?.背景类型)) {
-                // 标记为执行过（虽然失败了），防止无限递归
+
                 已执行.add(实例);
-                return false; // 目标无效，移动失败
+                return false;
             }
 
-            // 2. 检查目标格子占用情况
+
             const 占用单元格 = 地牢[新Y]?.[新X];
             const 占用者 = 占用单元格?.关联物品 || 占用单元格?.关联怪物;
 
             if (占用者) {
-                // 检查占用者是否是不可移动类型
-                const 不可移动类型列表 = ['楼梯', '地形', '祭坛', '折跃门']; // '工具' 通常指重铸台等
+
+                const 不可移动类型列表 = ['楼梯', '地形', '祭坛', '折跃门'];
                 const 物品是否不可移动 = 占用者 instanceof 物品 && (不可移动类型列表.includes(占用者.类型));
 
                 if (物品是否不可移动) {
@@ -15383,66 +15557,72 @@
                     }
                     return false;
                 }
-
-
-                // 检查占用者是否也在移动计划中
                 if (移动计划.has(占用者)) {
-                    // 递归尝试移动占用者
                     const 占用者移动成功 = 尝试执行吹动(占用者, 移动计划, 已执行, 风向DX, 风向DY);
                     if (!占用者移动成功) {
-                        已执行.add(实例); // 占用者移动失败，当前实例也失败
+                        已执行.add(实例);
                         return false;
                     }
-                    // 占用者成功移开后，目标格子现在应该是空的了
                 } else {
-                    // 目标格子被一个不在移动计划中的东西占用了（可能是后来生成的或其他情况）
-                    已执行.add(实例); // 标记为执行过（失败）
-                    return false; // 移动失败
+                    已执行.add(实例);
+                    return false;
                 }
             }
-            // 4. 执行移动
+
             try {
                 if (类型 === '物品') {
-                    // 清理旧格子
+
                     if (地牢[旧Y]?.[旧X]?.关联物品 === 实例) {
                         地牢[旧Y][旧X].关联物品 = null;
                         if (地牢[旧Y]?.[旧X]?.类型 === 单元格类型.物品) 地牢[旧Y][旧X].类型 = null;
                         地牢[旧Y][旧X].颜色索引 = 颜色表.length;
                     }
-                    // 更新物品实例坐标
+
                     实例.x = 新X;
                     实例.y = 新Y;
-                    // 更新新格子
+
                     地牢[新Y][新X].类型 = 单元格类型.物品;
                     地牢[新Y][新X].关联物品 = 实例;
                     地牢[新Y][新X].颜色索引 = 实例.颜色索引;
 
                     添加日志(`${实例.名称} 被大风吹到了 (${新X},${新Y})！`, "信息");
                 } else if (类型 === '怪物') {
-                    实例.恢复背景类型(); // 清理旧格子
+                    const 旧X = 实例.x;
+                    const 旧Y = 实例.y;
+                    实例.恢复背景类型();
                     实例.x = 新X;
                     实例.y = 新Y;
-                    实例.保存新位置类型(新X, 新Y); // 保存新格子背景
-                    地牢[新Y][新X].类型 = 单元格类型.怪物; // 标记新格子
+                    实例.保存新位置类型(新X, 新Y);
+                    地牢[新Y][新X].类型 = 单元格类型.怪物;
                     地牢[新Y][新X].关联怪物 = 实例;
                     添加日志(`${实例.类型} 被大风吹到了 (${新X},${新Y})！`, "信息");
-                    实例.处理地形效果(); // 处理新位置地形效果
+                    实例.处理地形效果();
+                    怪物动画状态.set(实例, {
+                        旧逻辑X: 旧X,
+                        旧逻辑Y: 旧Y,
+                        目标逻辑X: this.x,
+                        目标逻辑Y: this.y,
+                        视觉X: 旧X,
+                        视觉Y: 旧Y,
+                        动画开始时间: Date.now(),
+                        正在动画: true
+                    });
                 }
-                已执行.add(实例); // 标记为成功执行
+                已执行.add(实例);
                 return true;
             } catch (错误) {
                 console.error(`执行移动实例 ${实例?.名称 || '未知'} 到 (${新X}, ${新Y}) 时出错: `, 错误);
-                已执行.add(实例); // 出错也标记为已处理
+                已执行.add(实例);
                 return false;
             }
         }
 
         function 处理大风效果() {
-            // 1. 确定本回合风向
+
             const 方向列表 = [{ dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }];
             const { dx: 风向DX, dy: 风向DY } = 方向列表[Math.floor(Math.random() * 4)];
 
-            // 2. 获取视口范围 (同前)
+
             const 画布 = document.getElementById("dungeonCanvas");
             const 画布Rect = 画布.getBoundingClientRect();
             const 视口起始X = Math.floor(当前相机X);
@@ -15452,11 +15632,11 @@
             const 视口结束X = Math.min(地牢大小 - 1, 视口起始X + 视口宽度格);
             const 视口结束Y = Math.min(地牢大小 - 1, 视口起始Y + 视口高度格);
 
-            // 3. 规划阶段：确定哪些实体 *可能* 被吹动
-            const 移动计划 = new Map(); // 存储 { 实例: { 新X, 新Y, 旧X, 旧Y, 类型 } }
+
+            const 移动计划 = new Map();
             const 不可移动类型列表 = ['楼梯', '地形', '祭坛', '折跃门'];
 
-            // 3.1 规划物品移动
+
             for (let y = 视口起始Y; y <= 视口结束Y; y++) {
                 for (let x = 视口起始X; x <= 视口结束X; x++) {
                     const 物品 = 地牢[y]?.[x]?.关联物品;
@@ -15464,7 +15644,7 @@
                         if (Math.random() < 大风吹动概率) {
                             const 新X = x + 风向DX;
                             const 新Y = y + 风向DY;
-                            // 基础检查：界内 & 非阻挡背景 & 直线路径
+
                             if (新X >= 0 && 新X < 地牢大小 && 新Y >= 0 && 新Y < 地牢大小 &&
                                 !([单元格类型.墙壁, 单元格类型.上锁的门].includes(地牢[新Y][新X]?.背景类型)) &&
                                 检查直线移动可行性(x, y, 新X, 新Y, true) && (已访问房间.has(房间地图[y][x]) || 房间地图[y][x] === -1)) {
@@ -15475,7 +15655,7 @@
                 }
             }
 
-            // 3.2 规划怪物移动
+
             所有怪物.forEach(怪物 => {
                 const { x, y } = 怪物;
                 if (怪物.状态 === 怪物状态.活跃 &&
@@ -15484,7 +15664,7 @@
                     if (Math.random() < 大风吹动概率) {
                         const 新X = x + 风向DX;
                         const 新Y = y + 风向DY;
-                        // 基础检查：界内 & 非阻挡背景 & 直线路径
+
                         if (新X >= 0 && 新X < 地牢大小 && 新Y >= 0 && 新Y < 地牢大小 &&
                             !([单元格类型.墙壁, 单元格类型.上锁的门].includes(地牢[新Y][新X]?.背景类型)) &&
                             检查直线移动可行性(x, y, 新X, 新Y, true)) {
@@ -15494,13 +15674,13 @@
                 }
             });
 
-            // 3.3 规划玩家移动
+
             if (玩家.x >= 视口起始X && 玩家.x <= 视口结束X &&
                 玩家.y >= 视口起始Y && 玩家.y <= 视口结束Y) {
                 if (Math.random() < 大风吹动概率) {
                     const 新X = 玩家.x + 风向DX;
                     const 新Y = 玩家.y + 风向DY;
-                    // 基础检查：界内 & 非阻挡背景 & 直线路径
+
                     if (新X >= 0 && 新X < 地牢大小 && 新Y >= 0 && 新Y < 地牢大小 &&
                         !([单元格类型.墙壁, 单元格类型.上锁的门].includes(地牢[新Y][新X]?.背景类型)) &&
                         检查直线移动可行性(玩家.x, 玩家.y, 新X, 新Y, true)) {
@@ -15510,11 +15690,11 @@
             }
 
 
-            // --- 4. 执行阶段：使用递归函数处理移动和碰撞 ---
-            const 已执行 = new Set();
-            const 待处理实例列表 = Array.from(移动计划.keys()); // 获取所有计划移动的实例
 
-            // 先处理物品，再处理怪物，减少物品被怪物意外覆盖的可能
+            const 已执行 = new Set();
+            const 待处理实例列表 = Array.from(移动计划.keys());
+
+
             待处理实例列表.filter(实例 => 实例 instanceof 物品).forEach(物品实例 => {
                 尝试执行吹动(物品实例, 移动计划, 已执行, 风向DX, 风向DY);
             });
@@ -15524,15 +15704,15 @@
             });
 
 
-            // --- 5. 单独处理玩家移动（最后执行，覆盖一切） ---
+
             let 玩家被吹动 = false;
             let 玩家目标X = 玩家.x;
             let 玩家目标Y = 玩家.y;
 
-            if (移动计划.has(玩家) && !已执行.has(玩家)) { // 检查玩家是否计划移动且未被其他逻辑阻止
+            if (移动计划.has(玩家) && !已执行.has(玩家)) {
                 const { 新X, 新Y } = 移动计划.get(玩家);
 
-                // 最终检查玩家目标格子是否有效（可能被不可移动物品阻挡）
+
                 const 最终目标单元格 = 地牢[新Y]?.[新X];
                 const 最终占用者 = 最终目标单元格?.关联物品;
                 const 最终占用者不可移动 = 最终占用者 && (不可移动类型列表.includes(最终占用者.类型) || 最终占用者.能否拾起 === false);
@@ -15544,37 +15724,37 @@
                     玩家目标X = 新X;
                     玩家目标Y = 新Y;
                     添加日志("你被大风吹动了！", "警告");
-                    已执行.add(玩家); // 标记玩家已处理
+                    已执行.add(玩家);
                 } else {
                     添加日志("你试图被风吹动，但撞到了障碍物！", "信息");
                 }
             }
 
 
-            // --- 6. 玩家移动后的交互处理 (同前) ---
+
             if (玩家被吹动) {
                 const 目标单元格 = 地牢[玩家目标Y]?.[玩家目标X];
                 if (目标单元格) {
-                    // 拾取物品
+
                     if (目标单元格.关联物品 && 目标单元格.类型 === 单元格类型.物品 && 目标单元格.关联物品.能否拾起 !== false) {
                         if (尝试收集物品(目标单元格.关联物品)) {
                             目标单元格.类型 = null;
                             目标单元格.关联物品 = null;
                         }
                     }
-                    // 使用楼梯
+
                     else if ([单元格类型.楼梯下楼, 单元格类型.楼梯上楼].includes(目标单元格.类型)) {
                         if (目标单元格.关联物品?.使用) {
                             目标单元格.关联物品.使用();
-                            return; // 切换楼层会中断后续逻辑
+                            return;
                         }
                     }
-                    // 使用折跃门
+
                     else if (目标单元格.关联物品 instanceof 折跃门) {
                         目标单元格.关联物品.使用();
-                        return; // 传送可能中断后续逻辑
+                        return;
                     }
-                    // 进入新房间
+
                     const 目标房间ID = 房间地图[玩家目标Y][玩家目标X];
                     if (目标房间ID !== -1 && !已访问房间.has(目标房间ID)) {
                         moveQueue = [];
@@ -15583,9 +15763,9 @@
                 }
             }
 
-            // --- 7. 更新UI ---
+
             更新物体指示器();
-            所有怪物.forEach(m => m.绘制血条()); // 确保所有怪物血条位置更新
+            所有怪物.forEach(m => m.绘制血条());
         }
 
         function 获取方向中文(dx, dy) {
@@ -15603,9 +15783,9 @@
             处理天气效果();
             更新物体指示器();
             const 能量条 = document.querySelector(".power-bar");
-            const 当前能量 = parseFloat(能量条?.style.width) || 100; // 添加空值检查
-            if (当前能量 < 70 && 能量条) { // 添加空值检查
-                能量条.style.width = `${Math.min(70, 当前能量 + Math.round(Math.random()*5)/5)}%`;
+            const 当前能量 = parseFloat(能量条?.style.width) || 100;
+            if (当前能量 < 70 && 能量条) {
+                能量条.style.width = `${Math.min(70, 当前能量 + Math.round(Math.random() * 5) / 5)}%`;
             }
             玩家状态.forEach((item) => {
                 item.更新状态();
@@ -15613,7 +15793,7 @@
             所有计时器.forEach((item) => {
                 item.更新倒计时();
             });
-            [...玩家装备.values()].forEach(装备 => {
+            Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(装备 => {
                 if (装备 instanceof 宠物) {
                     装备.恢复生命值();
                 }
@@ -15624,17 +15804,17 @@
             const 目标单元格 = 地牢[y]?.[x];
             if (!目标单元格) return false;
 
-            // 拾取物品
+
             if (目标单元格.关联物品 && 目标单元格.类型 === 单元格类型.物品 && 目标单元格.关联物品.能否拾起 && !目标单元格.关联物品.是否被丢弃) {
                 if (尝试收集物品(目标单元格.关联物品)) {
-                    目标单元格.类型 = null; // 清空格子状态
+                    目标单元格.类型 = null;
                     目标单元格.关联物品 = null;
-                    // 注意：这里不调用绘制，由外部调用者负责
+
                 }
             }
-            // 使用楼梯
+
             else if ([单元格类型.楼梯下楼, 单元格类型.楼梯上楼].includes(目标单元格.类型)) {
-                if (是否为教程层 && 目标单元格.类型 === 单元格类型.楼梯下楼) { // 特殊处理教程楼梯
+                if (是否为教程层 && 目标单元格.类型 === 单元格类型.楼梯下楼) {
                     是否为教程层 = false;
                     所有怪物.forEach((m) => {
                         m.绘制血条(true);
@@ -15643,71 +15823,71 @@
                     所有怪物 = [];
                     document.getElementById("跳过教程按钮").style.display = "none";
                     重置玩家状态();
-                    切换楼层(0); // 切换到正常地牢
-                    return true; // 切换楼层，中断后续
+                    切换楼层(0);
+                    return true;
                 } else if (目标单元格.关联物品?.使用) {
-                    目标单元格.关联物品.使用(); // 这会触发切换楼层
-                    return true; // 切换楼层，中断后续
-                }
-            }
-            // 使用折跃门
-            else if (目标单元格.关联物品 instanceof 折跃门) {
-                if (目标单元格.关联物品.使用()) {
-                    return true; // 传送成功，可能中断后续
+                    目标单元格.关联物品.使用();
+                    return true;
                 }
             }
 
-            // 进入新房间
+            else if (目标单元格.关联物品 instanceof 折跃门) {
+                if (目标单元格.关联物品.使用()) {
+                    return true;
+                }
+            }
+
+
             const 目标房间ID = 房间地图[y][x];
             if (目标房间ID !== -1 && !已访问房间.has(目标房间ID)) {
-                moveQueue = []; // 清空自动寻路队列
+                moveQueue = [];
                 已访问房间.add(目标房间ID);
                 const 能量条 = document.querySelector(".power-bar");
                 const 当前能量 = parseFloat(能量条?.style.width) || 100;
-                if (能量条) 能量条.style.width = `${Math.min(100, 当前能量 + 1.5)}%`; // 恢复能量
+                if (能量条) 能量条.style.width = `${Math.min(100, 当前能量 + 1.5)}%`;
 
-                if (是否为教程层) { // 触发教程提示
+                if (是否为教程层) {
                     教程阶段 = 目标房间ID;
                     教程提示已显示 = false;
-                    显示教程提示(); // 显示提示会暂停游戏
+                    显示教程提示();
                 }
             }
 
-            // 尝试进入特殊房间（连接逻辑）
-            尝试进入特殊房间(x, y); // 这个函数内部会处理绘制
 
-            return false; // 没有触发中断性操作
+            尝试进入特殊房间(x, y);
+
+            return false;
         }
         async function 移动玩家(dx, dy, 冷却 = true) {
             if (玩家属性.允许移动 > 0 || (游戏状态 !== "游戏中" && 游戏状态 !== "图鉴")) return false;
             if (冷却) {
                 const now = Date.now();
-                if (now - 上次移动 < 50) return; // 强制50ms移动间隔 just appreciate more , fidget less
+                if (now - 上次移动 < 50) return;
                 上次移动 = now;
             }
             const 能量条 = document.querySelector(".power-bar");
             const 当前能量 = parseFloat(能量条.style.width) || 100;
-            const 眩晕状态 = 玩家状态.some(s => s.类型 === "眩晕"); // 检查眩晕状态
+            const 眩晕状态 = 玩家状态.some(s => s.类型 === "眩晕");
             const 冻结状态 = 玩家状态.some(s => s.类型 === "冻结");
             const 缓慢状态 = 玩家状态.some(s => s.类型 === "缓慢");
 
             let 移动方向X = dx;
             let 移动方向Y = dy;
 
-            // 如果眩晕，随机化移动方向
+
             if (眩晕状态 && (dx !== 0 || dy !== 0)) {
                 添加日志("你晕头转向，胡乱移动！", "警告");
                 const 随机方向 = Math.floor(Math.random() * 4);
                 switch (随机方向) {
-                    case 0: dx = 0; dy = -1; break; // 上
-                    case 1: dx = 1; dy = 0; break; // 右
-                    case 2: dx = 0; dy = 1; break; // 下
-                    case 3: dx = -1; dy = 0; break; // 左
+                    case 0: dx = 0; dy = -1; break;
+                    case 1: dx = 1; dy = 0; break;
+                    case 2: dx = 0; dy = 1; break;
+                    case 3: dx = -1; dy = 0; break;
                 }
-                // 确保移动步数正确应用到随机方向
+
                 dx *= 玩家属性.移动步数;
                 dy *= 玩家属性.移动步数;
-                // 如果缓慢，只移动一格
+
                 if (缓慢状态) {
                     dx = Math.sign(dx);
                     dy = Math.sign(dy);
@@ -15734,7 +15914,7 @@
                 let 当前单元格 = 地牢[玩家.y][玩家.x];
                 if (!检查移动可行性(玩家.x, 玩家.y, 目标X, 目标Y)) break;
                 if (!目标单元格) {
-                    // 更新视口和状态
+
                     更新视口();
                     绘制();
                     return;
@@ -15749,7 +15929,7 @@
                 }
                 实际移动++;
                 剩余步数--;
-                // 消耗能量检查
+
                 if (当前激活卷轴列表.size > 0 && 实际移动 > 0) {
                     当前激活卷轴列表.forEach(卷轴 => {
                         卷轴.消耗能量();
@@ -15768,11 +15948,11 @@
                                 Math.sign(dx) === 1 ? "右" : "";
                 移动历史.push(方向);
 
-                // 保持历史长度不超过序列长度
+
                 if (移动历史.length > 调试序列.length) {
                     移动历史.shift();
                 }
-                [...玩家装备.values()].forEach(item => {
+                Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(item => {
                     if (item instanceof 寻宝戒指) {
                         if (item.自定义数据.get("生效层数") === 当前层数 && !item.自定义数据.get("已生成折跃门")) {
                             item.尝试生成折跃门();
@@ -15781,7 +15961,7 @@
                 });
 
 
-                // 检测序列
+
                 if (移动历史.join(",") === 调试序列.join(",")) {
                     const 当前房间ID = 房间地图[玩家.y][玩家.x];
                     if (当前房间ID !== -1) {
@@ -15888,15 +16068,15 @@
                             彩蛋3触发 = true;
                         }
                     }
-                    移动历史 = []; // 重置以防重复触发
+                    移动历史 = [];
                 }
                 更新视口();
                 if (当前天气效果.includes("诡魅")) {
-                    处理诡魅房间刷新(玩家.x - dx, 玩家.y - dy, 玩家.x, 玩家.y); // 传入移动前的玩家位置
+                    处理诡魅房间刷新(玩家.x - dx, 玩家.y - dy, 玩家.x, 玩家.y);
                 }
             }
             if (isAutoMoving && (玩家.x !== 新X || 玩家.y !== 新Y)) {
-                moveQueue = []; // 移动被阻挡则停止
+                moveQueue = [];
                 isAutoMoving = false;
             }
             更新界面状态();
@@ -15938,11 +16118,11 @@
                 dy: dy !== 0 ? (dy > 0 ? 1 : -1) : 0,
             };
             if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
-                // 多格移动需要直线路径
-                if (dx !== 0 && dy !== 0) return false; // 禁止斜向多格移动
+
+                if (dx !== 0 && dy !== 0) return false;
                 return 快速直线检查(fromX, fromY, toX, toY, Math.max(Math.abs(dx), Math.abs(dy)));
             }
-            // 检查路径上的每个单元格
+
             let currentX = fromX;
             let currentY = fromY;
 
@@ -15954,7 +16134,7 @@
                 const 前一单元格 =
                     地牢[currentY - 方向.dy][currentX - 方向.dx];
 
-                // 检查物理障碍
+
                 const 垂直移动 = 方向.dy !== 0;
                 const 墙方向 = 垂直移动
                     ? 方向.dy > 0
@@ -15980,7 +16160,7 @@
                     }
                 }
 
-                // 检查单元格类型
+
                 if (
                     [单元格类型.墙壁, 单元格类型.上锁的门].includes(
                         当前单元格.背景类型
@@ -16044,11 +16224,11 @@
             更新装备显示();
             显示通知(`丢弃了 ${物品实例.获取名称()}`, "信息");
             document.getElementById("浮动提示框").style.display = "none";
-            document.getElementById("卷轴按钮").style.display = [
-                        ...玩家装备.values(),
-                    ].some((item) => item.类型 === "卷轴")
-                        ? "flex"
-                        : "none";
+            document.getElementById("卷轴按钮").style.display = Array.from({ length: 4 }, (_, i) => i + 1).some(
+                (id) => 玩家装备.get(id + 当前装备页 * 4)?.类型 === "卷轴"
+            )
+                ? "flex"
+                : "none";
 
             return true;
         }
@@ -16069,7 +16249,7 @@
 
             if (目标X === 玩家.x && 目标Y === 玩家.y) {
                 if (玩家状态.some(s => s.类型 === '火焰')) return true;
-                if ([...玩家装备.values()].some(装备 =>
+                if (Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).some(装备 =>
                     装备 instanceof 火把 && 装备.自定义数据?.get("耐久") > 0
                 )) return true;
             }
@@ -16228,6 +16408,195 @@
                 绘制();
             }
         }
+        let 融合区物品 = [null, null, null, null]; // 存储物品的唯一标识 Symbol
+        let 融合结果 = null; // 存储融合结果的物品实例
+
+        const 融合配方列表 = [
+            {
+                输入: ['治疗药水', '治疗药水'].sort(),
+                输出类: "治疗药水",
+                输出数量: 1,
+                输出配置: { 强化: true }
+            },
+            {
+                输入: ['钢制长剑', '火焰'].sort(),
+                输出类: "吸血剑",
+                输出数量: 1
+            },
+            {
+                输入: ['金币', '金币', '金币'].sort(),
+                输出类: "炸弹",
+                输出数量: 1,
+                输出配置: { 品质: 1, 数量: 1 }
+            },
+        ];
+
+
+        function 添加到融合区(物品唯一标识) {
+            const 物品实例 = 玩家背包.get(物品唯一标识);
+            if (!物品实例) {
+                console.warn("添加到融合区：未找到物品", 物品唯一标识);
+                return;
+            }
+
+            // 查找第一个空格子
+            const 空格子索引 = 融合区物品.findIndex(格子 => 格子 === null);
+            if (空格子索引 === -1) {
+                显示通知("融合区已满！", "错误");
+                return;
+            }
+
+            if (物品实例.堆叠数量 > 1) {
+                物品实例.堆叠数量 -= 1;
+            } else {
+                物品实例.是否隐藏 = true;
+            }
+
+            融合区物品[空格子索引] = 物品实例.唯一标识;
+
+            检查融合配方();
+            更新融合窗口();
+            更新背包显示();
+        }
+
+
+        function 从融合区移除(格子索引) {
+            const 物品标识 = 融合区物品[格子索引];
+            if (物品标识 === null) return; // 格子是空的
+            document.getElementById("浮动提示框").style.display = "none";
+            let 物品实例 = 玩家背包.get(物品标识);
+            if (物品实例.是否隐藏) {
+                物品实例.是否隐藏 = false;
+                融合区物品[格子索引] = null; // 成功放回后清空格子
+                检查融合配方();
+                更新融合窗口();
+                更新背包显示();
+                return;
+            }
+            物品实例 = 克隆物品(物品实例);
+            物品实例.堆叠数量 = 1;
+
+
+            // 尝试将物品放回背包
+            if (尝试收集物品(物品实例, true)) { // true表示直接收集，不显示特效
+                融合区物品[格子索引] = null; // 成功放回后清空格子
+                检查融合配方();
+                更新融合窗口();
+                更新背包显示();
+            } else {
+                显示通知("背包已满，无法将物品移回！", "错误");
+            }
+        }
+
+        function 检查融合配方() {
+            const 当前输入物品 = 融合区物品.map(标识 => {
+                if (标识 === null) return null;
+                const 物品实例 = 玩家背包.get(标识)
+                return 物品实例 ? 物品实例.名称 : null; // 使用名称匹配
+            }).filter(name => name !== null); // 过滤掉 null
+
+            if (当前输入物品.length === 0) {
+                融合结果 = null;
+                更新融合窗口();
+                return;
+            }
+
+            当前输入物品.sort(); // 排序以忽略顺序
+
+            for (const 配方 of 融合配方列表) {
+                const 配方输入 = 配方.输入.filter(name => name !== null).sort();
+                if (配方输入.length !== 当前输入物品.length) continue; // 数量必须一致
+
+                // 比较排序后的数组
+                if (JSON.stringify(当前输入物品) === JSON.stringify(配方输入)) {
+                    // 找到匹配配方
+                    try {
+                        const 构造器 = window[配方.输出类]; // 获取构造函数
+                        if (构造器) {
+                            const 输出配置 = {
+                                数量: 配方.输出数量 || 1,
+                                ...(配方.输出配置 || {}) // 应用配方指定的额外配置
+                            };
+                            融合结果 = new 构造器(输出配置);
+                            更新融合窗口();
+                            return; // 找到配方就停止
+                        } else {
+                            console.error(`找不到输出类构造器: ${配方.输出类}`);
+                        }
+                    } catch (e) {
+                        console.error(`创建融合结果实例失败: ${配方.输出类}`, e);
+                    }
+                }
+            }
+
+            // 没有找到匹配配方
+            融合结果 = null;
+            更新融合窗口();
+        }
+
+
+        function 执行融合() {
+            if (!融合结果) return;
+            
+
+            if (尝试收集物品(融合结果, true)) {
+                显示通知(`成功融合出 ${融合结果.获取名称()}！`, "成功");
+                融合区物品 = [null, null, null, null];
+                融合结果 = null;
+                更新融合窗口();
+                更新背包显示();
+            } else {
+                显示通知("尝试添加融合结果到背包失败！", "错误");
+                更新融合窗口();
+            }
+        }
+
+        function 更新融合窗口() {
+            const 窗口 = document.getElementById('融合窗口');
+            if (!窗口) return;
+
+            // 清空输入格子
+            for (let i = 1; i <= 4; i++) {
+                const 格子 = document.getElementById(`融合区格子${i}`);
+                格子.innerHTML = '';
+                格子.onclick = () => 从融合区移除(i - 1); // 绑定移除事件
+            }
+
+            // 填充输入格子
+            融合区物品.forEach((物品标识, index) => {
+                if (物品标识 !== null) {
+                    const 物品实例 = 玩家背包.get(物品标识); // 需要全局映射来获取完整实例
+                    if (物品实例) {
+                        const 格子 = document.getElementById(`融合区格子${index + 1}`);
+                        const 物品元素 = 物品实例.生成显示元素("融合"); // 使用特殊类型生成缩小版
+                        物品元素.style.cursor = 'pointer'; // 明确可点击移除
+                        格子.appendChild(物品元素);
+                    } else {
+                        console.warn(`更新融合窗口：找不到标识为 ${物品标识.toString()} 的物品实例`);
+                        融合区物品[index] = null; // 如果实例丢失，清空该格
+                    }
+                }
+            });
+
+            // 更新输出格子
+            const 输出格子 = document.getElementById('融合输出格子');
+            输出格子.innerHTML = '';
+            输出格子.onclick = null; // 清除旧的点击事件
+            if (融合结果) {
+                const 结果元素 = 融合结果.生成显示元素("融合"); // 使用特殊类型生成缩小版
+                结果元素.style.cursor = 'pointer'; // 明确可点击取出
+                输出格子.appendChild(结果元素);
+                输出格子.onclick = 执行融合; // 绑定取出事件
+            }
+        }
+        function 清空融合区() {
+            for (let i = 0; i < 融合区物品.length; i++) {
+                从融合区移除(i);
+            }
+            融合结果 = null;
+            更新融合窗口();
+            更新背包显示();
+        }
         function 伤害玩家(原始攻击力, 伤害来源 = null) {
             let 最终攻击力 = 原始攻击力;
             if (伤害来源 instanceof 怪物) {
@@ -16235,7 +16604,7 @@
             } else {
                 伤害来源_ = 伤害来源;
             }
-            [...玩家装备.values()].forEach((装备) => {
+            Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach((装备) => {
                 if (装备 instanceof 宠物 && !装备.自定义数据.get("休眠中")) {
                     最终攻击力 = 装备.当玩家被攻击(最终攻击力, 伤害来源);
                 }
@@ -16409,10 +16778,13 @@
         }
         function 切换背包显示() {
             const 弹窗 = document.querySelector(".背包弹窗");
+            const 融合窗口 = document.getElementById("融合窗口");
             const 当前状态 = 弹窗.classList.contains("显示中");
             // 关闭背包时清除所有选中状态
             if (当前状态) {
                 玩家属性.允许移动 -= 1;
+                document.getElementById("浮动提示框").style.display = "none";
+                清空融合区();
                 document.querySelectorAll(".物品条目").forEach((el) => {
                     el.classList.remove("active");
                     if (el.__物品实例) {
@@ -16421,6 +16793,15 @@
                 });
             } else {
                 玩家属性.允许移动 += 1;
+                更新融合窗口();
+                融合窗口.style.display = 'flex';
+                requestAnimationFrame(() => {
+                    融合窗口.classList.add("显示中");
+                    融合窗口.style.opacity = 1;
+                    融合窗口.style.transform = 'translateX(0)';
+                    融合窗口.style.pointerEvents = 'auto';
+                    融合窗口.style['flex-direction'] = 'row';
+                });
             }
             // 更新全局状态
             界面可见性.背包 = !当前状态;
@@ -16438,7 +16819,8 @@
             if (
                 界面可见性.背包 &&
                 !e.target.closest(".背包弹窗") &&
-                !e.target.closest("#背包按钮")
+                !e.target.closest("#背包按钮") &&
+                !e.target.closest(".物品图标")
             ) {
                 切换背包显示();
             } else if (教程提示已显示 && !e.target.closest("#教程提示窗口")) {
@@ -16575,28 +16957,28 @@
             }
             return false; // 不在任何光源范围内
         }
-        const 图标映射_原始 = {...图标映射};
-function 切换中文模式() {
-    图标映射 = 中文模式 ? 图标映射_原始 : 中文对照图标映射; // 需要先备份原始图标映射
-    楼梯图标 = {
-        下楼: 图标映射.下楼楼梯,
-        上楼: 图标映射.上楼楼梯,
-    };
-    中文模式 = !中文模式; // 切换状态
+        const 图标映射_原始 = { ...图标映射 };
+        function 切换中文模式() {
+            图标映射 = 中文模式 ? 图标映射_原始 : 中文对照图标映射; // 需要先备份原始图标映射
+            楼梯图标 = {
+                下楼: 图标映射.下楼楼梯,
+                上楼: 图标映射.上楼楼梯,
+            };
+            中文模式 = !中文模式; // 切换状态
 
-    // --- 更新主菜单按钮文本 ---
-    const 主菜单切换按钮 = document.getElementById("切换中文按钮");
-    if (主菜单切换按钮) {
-         主菜单切换按钮.textContent = 中文模式 ? "已切换为中文" : "已切换为 Emoji";
-    }
+            // --- 更新主菜单按钮文本 ---
+            const 主菜单切换按钮 = document.getElementById("切换中文按钮");
+            if (主菜单切换按钮) {
+                主菜单切换按钮.textContent = 中文模式 ? "已切换为中文" : "已切换为 Emoji";
+            }
 
-         document.querySelector("#背包按钮").innerHTML = `${图标映射.背包按钮}`;
-         document.querySelector("#互动按钮").innerHTML = `${图标映射.互动按钮}`;
-         document.querySelector("#卷轴按钮").innerHTML = `${图标映射.卷轴按钮}`;
-         切换HUD模式();
-}
+            document.querySelector("#背包按钮").innerHTML = `${图标映射.背包按钮}`;
+            document.querySelector("#互动按钮").innerHTML = `${图标映射.互动按钮}`;
+            document.querySelector("#卷轴按钮").innerHTML = `${图标映射.卷轴按钮}`;
+            切换HUD模式();
+        }
         function 使用装备槽物品(槽位编号) {
-            const 物品实例 = [...玩家装备.values()].find(item => item.装备槽位 === 槽位编号);
+            const 物品实例 = 玩家装备.get(槽位编号);
 
             if (!物品实例) return;
 
@@ -16613,7 +16995,7 @@ function 切换中文模式() {
                     if (怪物 !== null) {
 
                         if (物品实例.使用(怪物, 路径)) {
-                            [...玩家装备.values()].forEach(装备 => {
+                            Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(装备 => {
                                 if (装备 instanceof 宠物 && !装备.自定义数据.get("休眠中")) {
                                     装备.当玩家攻击(怪物);
                                 }
@@ -16662,7 +17044,7 @@ function 切换中文模式() {
 
 
         function 卸下装备槽物品(槽位编号) {
-            const 当前物品 = [...玩家装备.values()].find(item => item.装备槽位 === 槽位编号);
+            const 当前物品 = 玩家装备.get(槽位编号);
 
             if (当前物品) {
                 当前物品.取消装备();
@@ -16851,7 +17233,7 @@ function 切换中文模式() {
                     );
                     if (怪物 !== null) {
                         if (物品实例.使用(怪物, 路径)) {
-                            [...玩家装备.values()].forEach(装备 => {
+                            Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).forEach(装备 => {
                                 if (装备 instanceof 宠物 && !装备.自定义数据.get("休眠中")) {
                                     装备.当玩家攻击(怪物);
                                 }
@@ -16915,132 +17297,168 @@ function 切换中文模式() {
 
             document.getElementById("当前容量").textContent = [...玩家背包.values()].reduce((sum, i) => sum + (i.是否隐藏 ? 0 : 1), 0);
         }
+        function 切换装备页(方向) {
+            const 旧页 = 当前装备页;
+            当前装备页 += 方向;
 
+
+            let 最高槽位 = 0;
+            for (const key of 玩家装备.keys()) {
+                if (key > 最高槽位) 最高槽位 = key;
+            }
+            const 最大有效页 = Math.max(0, Math.ceil(最高槽位 / 4) - 1);
+            const 允许最大页 = Math.ceil(最大装备槽数量 / 4) - 1;
+
+            当前装备页 = Math.max(0, Math.min(当前装备页, 允许最大页));
+
+            if (当前装备页 !== 旧页) {
+                更新装备显示();
+                document.getElementById("卷轴按钮").style.display = Array.from({ length: 4 }, (_, i) => i + 1).some(
+                    (id) => 玩家装备.get(id + 当前装备页 * 4)?.类型 === "卷轴"
+                )
+                    ? "flex"
+                    : "none";
+                const 装备栏元素 = document.querySelector(".装备栏");
+                if (装备栏元素) {
+                    装备栏元素.style.transition = 'transform 0.1s ease-out';
+                    装备栏元素.style.transform = `translateX(${方向 > 0 ? '-' : ''}5px) translateY(-50%)`;
+                    setTimeout(() => {
+                        装备栏元素.style.transform = 'translateY(-50%)';
+                    }, 100);
+                }
+            }
+        }
+        let 当前装备页 = 0;
+        let 最大装备页 = 6;
+        let 最大装备槽数量 = 24;
+        let 触摸起始X = 0;
+        let 触摸移动X = 0;
+        let 装备栏滑动中 = false;
         function 初始化装备系统() {
-            document.querySelectorAll(".装备槽").forEach((槽位, index) => {
+            const 装备栏元素 = document.querySelector(".装备栏");
 
-                // --- 修改：合并 click 和 touchstart 处理，使用状态标志 ---
-                let isTouching = false;
-                let longPressTimer = null;
-                let hasMoved = false; // 标记触摸期间是否移动
-                let startX, startY; // 记录触摸起始位置
-                const longPressDuration = 9999999;
-                const moveThreshold = 5; // 移动阈值 (像素)
 
-                // --- Touch Start ---
-                槽位.addEventListener("touchstart", (e) => {
-                    // 阻止默认行为可能影响滚动，仅在需要时阻止
-                    // e.preventDefault();
-                    isTouching = true;
-                    hasMoved = false;
-                    startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                    clearTimeout(longPressTimer); // 清除之前的计时器
+            if ('ontouchstart' in window && 装备栏元素) {
+                装备栏元素.addEventListener('touchstart', (e) => {
+                    触摸起始X = e.touches[0].clientX;
+                    触摸移动X = 触摸起始X;
+                    装备栏滑动中 = false;
 
-                    longPressTimer = setTimeout(() => {
-                        if (isTouching && !hasMoved) { // 只有触摸中且未移动才触发长按
-                            // 长按触发 - 卸下装备
-                            卸下装备槽物品(index + 1);
-                            isTouching = false; // 标记长按已处理，避免后续触发点击
-                        }
-                    }, longPressDuration);
-                }, { passive: false }); // 设置 passive: false 允许 preventDefault
+                }, { passive: true });
 
-                // --- Touch Move ---
-                槽位.addEventListener("touchmove", (e) => {
-                    if (!isTouching || hasMoved) return; // 如果已移动或触摸结束，则忽略
-                    const currentX = e.touches[0].clientX;
-                    const currentY = e.touches[0].clientY;
-                    // 计算移动距离
-                    const dx = Math.abs(currentX - startX);
-                    const dy = Math.abs(currentY - startY);
-                    // 如果移动超过阈值，则取消长按
-                    if (dx > moveThreshold || dy > moveThreshold) {
-                        hasMoved = true; // 标记为已移动
-                        clearTimeout(longPressTimer); // 清除长按计时器
-                        // console.log("Touch moved, long press cancelled.");
+                装备栏元素.addEventListener('touchmove', (e) => {
+                    if (!触摸起始X) return;
+                    触摸移动X = e.touches[0].clientX;
+                    const deltaX = 触摸移动X - 触摸起始X;
+
+                    if (Math.abs(deltaX) > 20) {
+                        装备栏滑动中 = true;
+
+
                     }
+
                 });
 
-
-                // --- Touch End / Cancel ---
-                const handleTouchEnd = () => {
-                    clearTimeout(longPressTimer); // 清除计时器
-                    if (isTouching && !hasMoved) { // 如果触摸结束且未移动，则视为单击
-                        // 单击触发 - 使用物品
-                        const 槽位编号 = index + 1;
-                        const 当前物品 = [...玩家装备.values()].find(
-                            (item) => item.装备槽位 === 槽位编号
-                        );
-
-                        if (当前物品) {
-                            // --- 卷轴模式逻辑 (保持不变) ---
-                            if (卷轴模式激活 && 当前物品 instanceof 卷轴类) {
-                                当前激活卷轴列表.add(当前物品);
-                                if (当前物品.使用()) 显示通知("已启用卷轴", "成功");;
-                                恢复卷轴模式();
-                                document
-                                    .querySelectorAll(".装备槽")
-                                    .forEach((槽位) => {
-                                        const 物品 =
-                                            槽位.querySelector(".物品条目");
-                                        if (物品?.__物品实例 instanceof 卷轴类) {
-                                            if (当前激活卷轴列表.has(物品?.__物品实例)) {
-                                                物品.classList.add("卷轴闪烁");
-                                            }
-                                        }
-                                    });
-                                return; // 结束处理
-                            }
-                            if (
-                                当前物品 instanceof 卷轴类 &&
-                                当前激活卷轴列表.has(当前物品) &&
-                                !卷轴模式激活
-                            ) {
-                                当前激活卷轴列表.delete(当前物品);
-                                document
-                                    .querySelectorAll(".装备槽")
-                                    .forEach((槽位) => {
-                                        const 物品 =
-                                            槽位.querySelector(".物品条目");
-                                        if (物品?.__物品实例 instanceof 卷轴类) {
-                                            if (物品?.__物品实例 === 当前物品) {
-                                                物品.classList.remove("卷轴闪烁");
-                                                物品?.__物品实例.卸下();
-                                            }
-                                        }
-                                    });
-
-                                显示通知("已禁用卷轴", "成功");
-                                return; // 结束处理
-                            }
-                            // --- 结束卷轴模式逻辑 ---
-
-                            // --- 正常使用物品逻辑 ---
-                            使用装备槽物品(槽位编号);
-                        }
+                装备栏元素.addEventListener('touchend', (e) => {
+                    if (!触摸起始X || !装备栏滑动中) {
+                        触摸起始X = 0;
+                        return;
                     }
-                    // 重置状态
-                    isTouching = false;
-                    hasMoved = false;
+
+                    const deltaX = 触摸移动X - 触摸起始X;
+                    const 滑动阈值 = 50;
+
+                    if (deltaX < -滑动阈值) {
+
+                        切换装备页(1);
+                    } else if (deltaX > 滑动阈值) {
+
+                        切换装备页(-1);
+                    }
+
+
+                    触摸起始X = 0;
+                    触摸移动X = 0;
+                    装备栏滑动中 = false;
+
+
+
+
+                });
+                装备栏元素.addEventListener('touchcancel', (e) => {
+
+                    触摸起始X = 0;
+                    触摸移动X = 0;
+                    装备栏滑动中 = false;
+
+                });
+            }
+            document.querySelectorAll(".装备槽").forEach((槽位, index) => {
+
+                const handleTouchEnd = () => {
+
+                    const 实际槽位编号 = 当前装备页 * 4 + (index + 1);
+                    const 当前物品 = 玩家装备.get(实际槽位编号);
+
+                    if (当前物品) {
+
+                        if (卷轴模式激活 && 当前物品 instanceof 卷轴类) {
+                            当前激活卷轴列表.add(当前物品);
+                            if (当前物品.使用()) 显示通知("已启用卷轴", "成功");;
+                            恢复卷轴模式();
+                            document
+                                .querySelectorAll(".装备槽")
+                                .forEach((槽位) => {
+                                    const 物品 =
+                                        槽位.querySelector(".物品条目");
+                                    if (物品?.__物品实例 instanceof 卷轴类) {
+                                        if (当前激活卷轴列表.has(物品?.__物品实例)) {
+                                            物品.classList.add("卷轴闪烁");
+                                        }
+                                    }
+                                });
+                            return;
+                        }
+                        if (
+                            当前物品 instanceof 卷轴类 &&
+                            当前激活卷轴列表.has(当前物品) &&
+                            !卷轴模式激活
+                        ) {
+                            当前激活卷轴列表.delete(当前物品);
+                            document
+                                .querySelectorAll(".装备槽")
+                                .forEach((槽位) => {
+                                    const 物品 =
+                                        槽位.querySelector(".物品条目");
+                                    if (物品?.__物品实例 instanceof 卷轴类) {
+                                        if (物品?.__物品实例 === 当前物品) {
+                                            物品.classList.remove("卷轴闪烁");
+                                            物品?.__物品实例.卸下();
+                                        }
+                                    }
+                                });
+
+                            显示通知("已禁用卷轴", "成功");
+                            return;
+                        }
+
+
+
+                        使用装备槽物品(实际槽位编号);
+                    }
                 };
 
                 槽位.addEventListener("touchend", handleTouchEnd);
-                槽位.addEventListener("touchcancel", handleTouchEnd); // TouchCancel 也应结束触摸状态
+                槽位.addEventListener("touchcancel", handleTouchEnd);
 
-                // --- 保留 contextmenu 用于 PC 右键卸下 ---
-                if (!('ontouchstart' in window)) { // 只为非触摸设备添加右键菜单
+                if (!('ontouchstart' in window)) {
                     槽位.addEventListener("contextmenu", (e) => {
                         e.preventDefault();
-                        卸下装备槽物品(index + 1);
+                        卸下装备槽物品(当前装备页 * 4 + (index + 1));
                     });
-                    // --- 为PC添加左键点击使用 ---
                     槽位.addEventListener("click", (e) => {
-                        // 和 touchend 里逻辑类似，但不检查 isTouching 和 hasMoved
-                        const 槽位编号 = index + 1;
-                        const 当前物品 = [...玩家装备.values()].find(
-                            (item) => item.装备槽位 === 槽位编号
-                        );
+                        const 实际槽位编号 = 当前装备页 * 4 + (index + 1);
+                        const 当前物品 = 玩家装备.get(实际槽位编号);
 
                         if (当前物品) {
                             if (卷轴模式激活 && 当前物品 instanceof 卷轴类) {
@@ -17082,21 +17500,21 @@ function 切换中文模式() {
                                 显示通知("已禁用卷轴", "成功");
                                 return;
                             }
-                            使用装备槽物品(槽位编号);
+                            使用装备槽物品(实际槽位编号);
                         }
                     });
                 }
             });
         }
         function 更新装备显示() {
-            for (let i = 1; i <= 4; i++) {
-                const 槽位 = document.getElementById(`装备槽${i}`);
+            for (let i = 1 + 当前装备页 * 4; i <= 4 + 当前装备页 * 4; i++) {
+                const 槽位 = document.getElementById(`装备槽${((i - 1) % 4) + 1}`);
 
-                const 装备物品 = [...玩家装备.values()].find(
-                    (item) => item.装备槽位 === i
+                const 装备物品 = Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).find(
+                    (item) => item?.装备槽位 === i
                 );
 
-                if (装备物品) {
+                if (装备物品 && !装备物品.是否隐藏) {
                     const 克隆元素 = 装备物品
                         .生成显示元素("装备")
                         .cloneNode(true);
@@ -17150,7 +17568,6 @@ function 切换中文模式() {
                         )}`;
                         克隆元素.appendChild(耐久标签);
                     }
-
                     if (装备物品.类型 === "卷轴" && 卷轴模式激活) {
                         克隆元素.classList.add("卷轴闪烁");
                     }
@@ -17588,7 +18005,7 @@ function 切换中文模式() {
         }
         function 激活卷轴模式() {
             if (!卷轴模式激活) {
-                const 装备卷轴 = [...玩家装备.values()].filter(
+                const 装备卷轴 = Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).filter(
                     (i) => i instanceof 卷轴类
                 );
                 if (装备卷轴.length === 0) return;
@@ -18118,7 +18535,7 @@ function 切换中文模式() {
                     指示器缓存.delete(key);
                 }
             });
-            const 玩家寻宝戒指列表 = [...玩家装备.values()].filter(item => item instanceof 寻宝戒指);
+            const 玩家寻宝戒指列表 = Array.from({ length: 4 }, (_, i) => 玩家装备.get(当前装备页 * 4 + i + 1)).filter(v => v != null).filter(item => item instanceof 寻宝戒指);
             let 玩家寻宝戒指 = null;
             if (玩家寻宝戒指列表) {
                 玩家寻宝戒指 = 玩家寻宝戒指列表.find(item => item.自定义数据.get("生效层数") === 当前层数);
@@ -18407,6 +18824,7 @@ function 切换中文模式() {
                 return;
             }
             玩家属性.允许移动 += 1;
+
             当前NPC = npc;
             const 窗口 = document.getElementById("交易窗口");
             窗口.querySelector("#交易次数").textContent = npc.自定义数据.get("刷新次数");
@@ -18418,18 +18836,19 @@ function 切换中文模式() {
             库存容器.innerHTML = "";
 
             npc.自定义数据.get("库存").forEach(物品 => {
+                let 价格 = npc.获取价格(物品);
                 const 元素 = document.createElement("div");
                 元素.className = "交易物品条目";
                 元素.innerHTML = `
             <div class="物品头">
                 <span style="color:${物品.颜色表[物品.颜色索引]}; font-family: color-emoji">${物品.图标}</span>
                 ${物品.获取名称()}
-                <span class="物品价格">${npc.获取价格(物品)} 金币</span>
+                <span class="物品价格">${价格} 金币</span>
             </div>
             <div class="物品描述">${物品.效果描述 || "神秘物品"}</div>
         `;
 
-                元素.addEventListener("click", () => 尝试购买(物品));
+                元素.addEventListener("click", () => 尝试购买(物品, 价格));
                 库存容器.appendChild(元素);
             });
 
@@ -18438,9 +18857,8 @@ function 切换中文模式() {
             document.body.appendChild(窗口);
         }
 
-        function 尝试购买(物品) {
+        function 尝试购买(物品, 价格) {
             const npc = 当前NPC;
-            const 价格 = npc.获取价格(物品);
             const 金币列表 = [...玩家背包.values()].filter((i) => i instanceof 金币);
             const 总金币 = 金币列表.reduce((sum, i) => sum + i.堆叠数量, 0);
 
@@ -18476,7 +18894,7 @@ function 切换中文模式() {
             setTimeout(() => {
                 document.getElementById("交易窗口").style.display = "none";
                 玩家属性.允许移动 -= 1;
-            }, 700);
+            }, 300);
 
             当前NPC = null;
             NPC互动中 = false;
@@ -18491,7 +18909,6 @@ function 切换中文模式() {
             setTimeout(() => {
                 显示教程提示();
             }, 200);
-            // 确保其他 UI 元素正确显示或隐藏
             更新物体指示器();
             所有怪物.forEach((m) => { m.绘制血条(); });
             绘制();
@@ -18503,11 +18920,11 @@ function 切换中文模式() {
             所有怪物.forEach((m) => {
                 m.绘制血条(true);
                 if (地牢[m.y] && 地牢[m.y][m.x]) 地牢[m.y][m.x].关联怪物 = null;
-            }); // 隐藏教程层怪物血条
+            });
             所有怪物 = [];
             重置玩家状态();
-            最高教程阶段 = 6; // 跳过后默认解锁所有教程阶段以供回放（如果需要）
-            切换楼层(0); // 切换到正常地牢的第 0 层
+            最高教程阶段 = 6;
+            切换楼层(0);
         }
 
         function 重置玩家状态() {
@@ -18633,6 +19050,7 @@ function 切换中文模式() {
 
             提示内容元素.innerHTML = 提示文本;
             提示窗口.style.display = "block";
+            玩家属性.允许移动++;
             教程提示已显示 = true;
         }
 
@@ -18748,7 +19166,7 @@ function 切换中文模式() {
                     - 装备武器：点击武器，再点击“装备”按钮（${图标映射.装备按钮}）。<br>
                    
                 - 装备栏 (屏幕右下角的“田”字格)：<br>
-                    - 单击装备槽内物品以使用，长按卸下<br>
+                    - 单击装备槽内物品以使用，左右滑动可以换页<br>
                 请尝试打开背包，装备上你找到的钢制长剑。` :
                         `<b>背包与装备：</b><br>
                 - 打开背包：按 E 键。<br>
@@ -18757,7 +19175,7 @@ function 切换中文模式() {
                     - 装备武器：点击武器，再点击“装备”按钮（${图标映射.装备按钮}）。<br>
                   
                 - 装备栏 (屏幕右下角的“田”字格)：<br>
-                    - 使用数字键 1-4 使用对应槽位物品，右键卸下。<br>
+                    - 使用数字键 1-4 使用对应槽位物品，右键卸下，J、K键可以换页。<br>
                 请尝试打开背包，装备上你找到的钢制长剑。`;
                     break;
                 case 2: // 进入房间时的提示
@@ -18845,6 +19263,7 @@ function 切换中文模式() {
                         `<b>开始游戏：</b><br>
                 按 G 键可以打开日志界面。<br>
                 按 Z 键可以导出存档。<br>
+                按 U 键可以自杀。<br>
                 - 地牢有很多层，每层都有不同的怪物和宝藏。<br>
                 - 找到并走下楼梯 ${图标映射.下楼楼梯} 即可进入下一层，开始你的冒险！`;
                     break;
@@ -18861,6 +19280,8 @@ function 切换中文模式() {
                 setTimeout(() => {
                     提示窗口.style.display = "none";
                     提示窗口.classList.remove("关闭中");
+                    玩家属性.允许移动 -= 1;
+                    玩家属性.允许移动 = Math.max(0, 玩家属性.允许移动);
                 }, 300);
             }
         }
@@ -19042,7 +19463,7 @@ function 切换中文模式() {
 
             当前相机X += dx * 相机移动速度;
             当前相机Y += dy * 相机移动速度;
-
+            const 当前时间 = Date.now();
             // 检测移动完成
             if (Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1) {
                 当前相机X = 相机目标X;
@@ -19076,7 +19497,25 @@ function 切换中文模式() {
                     }
                 });
             }
+            所有怪物.forEach(怪物 => {
+                const 动画状态 = 怪物动画状态.get(怪物);
+                if (动画状态?.正在动画) {
+                    const 已过时间 = 当前时间 - 动画状态.动画开始时间;
+                    const t = Math.min(1, 已过时间 / 怪物移动动画时长); // 插值因子 (0 到 1)
 
+                    // 使用线性插值计算视觉逻辑坐标
+                    动画状态.视觉X = 动画状态.旧逻辑X + (动画状态.目标逻辑X - 动画状态.旧逻辑X) * t;
+                    动画状态.视觉Y = 动画状态.旧逻辑Y + (动画状态.目标逻辑Y - 动画状态.旧逻辑Y) * t;
+
+                    // 如果动画完成
+                    if (t >= 1) {
+                        动画状态.正在动画 = false;
+                        动画状态.视觉X = 动画状态.目标逻辑X; // 确保最终位置精确
+                        动画状态.视觉Y = 动画状态.目标逻辑Y;
+                    }
+
+                }
+            });
             if (待显示爆炸范围.爆炸范围.length > 0) {
                 const 画布RectExplosion = canvas.getBoundingClientRect(); // 获取当前画布位置
 
@@ -19118,7 +19557,7 @@ function 切换中文模式() {
 
                 待显示爆炸范围 = { 爆炸范围: [], 爆炸距离: null }; // 清空计划中的爆炸
             }
-            const 当前时间 = Date.now();
+
             if ((游戏状态 === "图鉴" || 游戏状态 === "游戏中") && 当前时间 - 上次自动回合时间 >= 自动回合间隔) {
                 if (!死亡界面已显示 && 玩家属性.允许移动 === 0) {
                     处理回合逻辑();
@@ -19164,7 +19603,58 @@ function 切换中文模式() {
                     }
                 }
             }
+            所有怪物.forEach(怪物实例 => {
+                const 动画状态 = 怪物动画状态.get(怪物实例);
+                let 绘制逻辑X = 怪物实例.x;
+                let 绘制逻辑Y = 怪物实例.y;
 
+                if (动画状态?.正在动画) {
+                    绘制逻辑X = 动画状态.视觉X !== undefined ? 动画状态.视觉X : 怪物实例.x;
+                    绘制逻辑Y = 动画状态.视觉Y !== undefined ? 动画状态.视觉Y : 怪物实例.y;
+                }
+
+                const 怪物视口X = 绘制逻辑X - 视口偏移X;
+                const 怪物视口Y = 绘制逻辑Y - 视口偏移Y;
+                if (
+                    怪物视口X >= -缓冲区域 && 怪物视口X < 相机显示边长 + 缓冲区域 &&
+                    怪物视口Y >= -缓冲区域 && 怪物视口Y < 相机显示边长 + 缓冲区域 &&
+                    (怪物实例.隐身中 ?? false) === false &&
+                    (房间地图[怪物实例.y][怪物实例.x] === -1 || 已访问房间.has(房间地图[怪物实例.y][怪物实例.x]) || 游戏状态 === "图鉴")
+                ) {
+                    const 怪物屏幕X = (绘制逻辑X - 当前相机X + 0.5) * 单元格大小;
+                    const 怪物屏幕Y = (绘制逻辑Y - 当前相机Y + 0.5) * 单元格大小;
+
+                    ctx.font = `${单元格大小 * 0.8}px color-emoji`;
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+
+                    // 设置绘制颜色
+                    if (怪物实例.受击动画) {
+                        ctx.fillStyle = "#FF0000";
+                    } else {
+                        ctx.fillStyle = 怪物实例.颜色 || "#FFFFFF";
+                    }
+
+                    // 绘制怪物图标
+                    ctx.fillText(怪物实例.图标, 怪物屏幕X, 怪物屏幕Y);
+
+                    const 怪物当前状态 = 怪物状态表.get(怪物实例);
+                    if (怪物当前状态) {
+                        ctx.fillStyle = 怪物当前状态.颜色 || '#FFFFFF';
+                        ctx.font = `${单元格大小 * 0.5}px Arial`;
+                        const 状态图标X = 怪物屏幕X + 单元格大小 * 0.3;
+                        const 状态图标Y = 怪物屏幕Y - 单元格大小 * 0.3;
+                        ctx.fillText(怪物当前状态.图标 || '?', 状态图标X, 状态图标Y);
+                    } else if (怪物实例.强化) {
+                        ctx.fillStyle = "#FF0000";
+                        ctx.font = `${单元格大小 * 0.5}px Arial`;
+                        const 强化标记X = 怪物屏幕X + 单元格大小 * 0.3;
+                        const 强化标记Y = 怪物屏幕Y - 单元格大小 * 0.3;
+                        ctx.fillText("强", 强化标记X, 强化标记Y);
+                    }
+                    怪物实例.绘制血条();
+                }
+            });
             const 玩家屏幕X = (玩家.x - 当前相机X + 0.5) * 单元格大小;
             const 玩家屏幕Y = (玩家.y - 当前相机Y + 0.5) * 单元格大小;
             if (moveQueue.length > 0) {
@@ -19430,9 +19920,9 @@ function 切换中文模式() {
                     最高教程阶段 = 存档数据.教程?.最高阶段 || 6;
                     是否为教程层 = false;
                     document.getElementById("跳过教程按钮").style.display = "none";
-                    document.getElementById("卷轴按钮").style.display = [
-                        ...玩家装备.values(),
-                    ].some((item) => item.类型 === "卷轴")
+                    document.getElementById("卷轴按钮").style.display = Array.from({ length: 4 }, (_, i) => i + 1).some(
+                        (id) => 玩家装备.get(id + 当前装备页 * 4)?.类型 === "卷轴"
+                    )
                         ? "flex"
                         : "none";
                     动画帧();
@@ -19463,6 +19953,9 @@ function 切换中文模式() {
 
         function 重置所有游戏状态() {
             所有怪物.forEach((m) => { m.绘制血条(true); });
+            所有怪物.forEach(怪物 => {
+                怪物动画状态.delete(怪物);
+            });
             地牢 = [];
             房间列表 = [];
             上锁房间列表 = [];
@@ -19656,11 +20149,12 @@ function 切换中文模式() {
                         x: 玩家.x, y: 玩家.y, 属性: { ...玩家属性 }, 最大背包容量: 最大背包容量,
                         背包: 序列化玩家背包, 装备: 序列化玩家装备, 状态: 序列化玩家状态,
                         当前生命值百分比: 当前生命值百分比, 当前能量值百分比: 当前能量值百分比,
+                        最大背包容量: 最大背包容量, 最大装备槽数量: 最大装备槽数量,
                     },
                     教程: { 阶段: 教程阶段, 最高阶段: 最高教程阶段, 是否教程层: 是否为教程层 },
                     UI: {
                         hud模式: hud模式, 显示模式: 显示模式, 卷轴模式激活: 卷轴模式激活,
-                        激活卷轴列表: 序列化激活卷轴, 日志历史: 日志历史
+                        激活卷轴列表: 序列化激活卷轴, 日志历史: 日志历史, 当前装备页: 当前装备页,
                     },
                     游戏统计: { 已击杀怪物数: 已击杀怪物数 },
                     所有地牢层数据: 序列化所有楼层数据,
@@ -20683,6 +21177,8 @@ function 切换中文模式() {
                 卷轴模式激活 = 存档数据.UI?.卷轴模式激活 ?? false;
                 已击杀怪物数 = 存档数据.游戏统计?.已击杀怪物数 ?? 0;
                 日志历史 = 存档数据.UI?.日志历史 || [];
+                最大装备槽数量 = 存档数据.玩家?.最大装备槽数量 ?? 8;
+                当前装备页 = 存档数据.UI?.当前装备页 ?? 0;
 
                 日志历史.forEach(log => 添加日志(log.内容, log.类型));
                 击杀提示.更新({ 内容: `已击杀怪物: ${已击杀怪物数}` });
@@ -21025,7 +21521,7 @@ function 切换中文模式() {
 
             // 1. 创建中心走廊 (长度根据当前分区条目数计算)
             const 走廊起始X = 5; // 走廊开始的X坐标
-            const 走廊结束X = Math.min(地牢大小 - 2, 走廊起始X + 当前分区条目数 * (房间尺寸 + 间距) +4);
+            const 走廊结束X = Math.min(地牢大小 - 2, 走廊起始X + 当前分区条目数 * (房间尺寸 + 间距) + 4);
             for (let x = 走廊起始X; x <= 走廊结束X; x++) {
                 for (let dy = -Math.ceil(走廊宽度 / 2); dy <= Math.floor(走廊宽度 / 2); dy++) {
                     const y = 中心Y + dy;
@@ -21150,45 +21646,45 @@ function 切换中文模式() {
             // 上楼楼梯 (放在走廊起点)
             if (分区索引 > 0) { // 只有非第一分区才有上楼梯
                 const 上楼梯实例 = {
-                     图标: 楼梯图标.上楼,
-                     显示图标: 楼梯图标.上楼,
-                     类型: '楼梯', // 确保类型正确
-                     使用: () => {
+                    图标: 楼梯图标.上楼,
+                    显示图标: 楼梯图标.上楼,
+                    类型: '楼梯', // 确保类型正确
+                    使用: () => {
                         进入图鉴地牢(分区索引 - 1, 每层条目数);
-                     },
-                      获取名称: () => "上一个分区",
-                      唯一标识: Symbol('图鉴上楼梯'), // 给个唯一标识
-                      自定义数据: new Map(),
-                      品质: 1, 颜色索引: 颜色表.length, 堆叠数量:1, 最大堆叠数量:1, 能否拾起: false, 是否正常物品: false, 是否隐藏:false, 是否为隐藏物品: false, 效果描述: null, 已装备: false, 装备槽位: null, 颜色表: 颜色表,
+                    },
+                    获取名称: () => "上一个分区",
+                    唯一标识: Symbol('图鉴上楼梯'), // 给个唯一标识
+                    自定义数据: new Map(),
+                    品质: 1, 颜色索引: 颜色表.length, 堆叠数量: 1, 最大堆叠数量: 1, 能否拾起: false, 是否正常物品: false, 是否隐藏: false, 是否为隐藏物品: false, 效果描述: null, 已装备: false, 装备槽位: null, 颜色表: 颜色表,
                 };
-                 // 确保放置位置有效
+                // 确保放置位置有效
                 if (地牢[楼梯上Y]?.[楼梯上X] && 地牢[楼梯上Y][楼梯上X].背景类型 === 单元格类型.走廊) {
-                      放置物品到单元格(上楼梯实例, 楼梯上X, 楼梯上Y, 单元格类型.楼梯上楼);
+                    放置物品到单元格(上楼梯实例, 楼梯上X, 楼梯上Y, 单元格类型.楼梯上楼);
                 } else {
-                      console.warn(`无法在 (${楼梯上X}, ${楼梯上Y}) 放置上楼梯`);
+                    console.warn(`无法在 (${楼梯上X}, ${楼梯上Y}) 放置上楼梯`);
                 }
             }
 
             // 下楼楼梯 (放在走廊终点)
             if (分区索引 < 总分区数 - 1) { // 只有非最后一分区才有下楼梯
-                 const 下楼梯实例 = {
-                      图标: 楼梯图标.下楼,
-                      显示图标: 楼梯图标.下楼,
-                      类型: '楼梯', // 确保类型正确
-                      使用: () => {
-                         进入图鉴地牢(分区索引 + 1, 每层条目数);
-                      },
-                      获取名称: () => "下一个分区",
-                       唯一标识: Symbol('图鉴下楼梯'), // 给个唯一标识
-                      自定义数据: new Map(),
-                      品质: 1, 颜色索引: 颜色表.length, 堆叠数量:1, 最大堆叠数量:1, 能否拾起: false, 是否正常物品: false, 是否隐藏:false, 是否为隐藏物品: false, 效果描述: null, 已装备: false, 装备槽位: null, 颜色表: 颜色表,
-                 };
-                 // 确保放置位置有效
-                 if (地牢[楼梯下Y]?.[楼梯下X] && 地牢[楼梯下Y][楼梯下X].背景类型 === 单元格类型.走廊) {
-                     放置物品到单元格(下楼梯实例, 楼梯下X, 楼梯下Y, 单元格类型.楼梯下楼);
-                 } else {
-                     console.warn(`无法在 (${楼梯下X}, ${楼梯下Y}) 放置下楼梯`);
-                 }
+                const 下楼梯实例 = {
+                    图标: 楼梯图标.下楼,
+                    显示图标: 楼梯图标.下楼,
+                    类型: '楼梯', // 确保类型正确
+                    使用: () => {
+                        进入图鉴地牢(分区索引 + 1, 每层条目数);
+                    },
+                    获取名称: () => "下一个分区",
+                    唯一标识: Symbol('图鉴下楼梯'), // 给个唯一标识
+                    自定义数据: new Map(),
+                    品质: 1, 颜色索引: 颜色表.length, 堆叠数量: 1, 最大堆叠数量: 1, 能否拾起: false, 是否正常物品: false, 是否隐藏: false, 是否为隐藏物品: false, 效果描述: null, 已装备: false, 装备槽位: null, 颜色表: 颜色表,
+                };
+                // 确保放置位置有效
+                if (地牢[楼梯下Y]?.[楼梯下X] && 地牢[楼梯下Y][楼梯下X].背景类型 === 单元格类型.走廊) {
+                    放置物品到单元格(下楼梯实例, 楼梯下X, 楼梯下Y, 单元格类型.楼梯下楼);
+                } else {
+                    console.warn(`无法在 (${楼梯下X}, ${楼梯下Y}) 放置下楼梯`);
+                }
             }
             const 初始武器 = new 钢制长剑({ 不可破坏: true });
             放置物品到单元格(初始武器, 玩家.x + 2, 玩家.y);
@@ -21213,7 +21709,7 @@ function 切换中文模式() {
             document.querySelector(".health-bar").style.width = "100%";
             document.querySelector(".power-bar").style.width = "100%";
 
-            
+
             if (window.innerWidth < 769) {
                 document.getElementById("小地图容器").classList.add("隐藏");
                 document.querySelector(".装备栏")?.classList.remove("隐藏");
