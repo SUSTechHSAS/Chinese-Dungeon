@@ -2784,6 +2784,7 @@
             <button id="图鉴按钮" class="菜单按钮">图鉴</button>
             <button id="读凭证按钮" class="菜单按钮">读取凭证</button>
             <button id="切换中文按钮" class="菜单按钮" onclick="切换中文模式()">切换显示语言</button>
+            <button id="切换动画按钮" class="菜单按钮" onclick="切换动画模式()">切换动画模式</button>
         </div>
         <div id="版本信息">v1103</div>
     </div>
@@ -3749,7 +3750,7 @@
                 this.状态 = 配置.状态 || 怪物状态.休眠;
                 this.基础生命值 = 配置.基础生命值 || 23;
                 this.基础攻击力 = 配置.基础攻击力 || 3;
-                this.移动率 = 配置.移动率 || 1;
+                this.移动率 = 配置.移动率 || 0.7;
                 this.图标 = 配置.图标 || 图标映射.怪物; //图标即名称
                 this.类型 = 配置.类型 || "怪物";
                 this.掉落物 =
@@ -4038,7 +4039,7 @@
                     }
                     if (
                         this.目标路径.length === 0 ||
-                        Math.random() > 移动率 ||
+                        (Math.random() > 移动率 && !切换动画) ||
                         this.跟踪距离 < this.目标路径.length
                     ) {
                         this.追击玩家中 = false;
@@ -4520,7 +4521,7 @@
                     图标: 图标映射.幽灵仆从,
                     基础生命值: 15 + (配置.强化 ? 10 : 0),
                     基础攻击力: 4 + (配置.强化 ? 2 : 0),
-                    移动率: 1.0,
+                    移动率: 0.8,
                     掉落概率: 0.1, // 低概率掉落特殊物品
                     掉落物: new 灵能盾牌({}),
                     基础攻击范围: 1,
@@ -4778,7 +4779,7 @@
                 }
                 if (
                     this.目标路径.length === 0 ||
-                    Math.random() > this.移动率 ||
+                    (Math.random() > this.移动率 && !切换动画) ||
                     this.跟踪距离 < this.目标路径.length
                 ) {
                     this.追击玩家中 = false;
@@ -5343,7 +5344,6 @@
                     类型: "腐蚀怪物",
                     基础生命值: 35 + (配置.强化 ? 15 : 0),
                     基础攻击力: 4 + (配置.强化 ? 2 : 0),
-                    移动率: 1.0,
                     掉落物: new 重铸台({ 耐久: 1 }),
                     掉落概率: 0.1,
                     攻击冷却: 1,
@@ -5400,7 +5400,7 @@
                     类型: "盗贼怪物",
                     基础生命值: 25 + (配置.强化 ? 10 : 0),
                     基础攻击力: 4 + (配置.强化 ? 1 : 0),
-                    移动率: 1.0,
+                    移动率: 0.8,
                     基础移动距离: 2,
                     掉落物: new 金币({ 数量: 1 }),
                     掉落概率: 0.3,
@@ -5554,7 +5554,6 @@
                     类型: "吸能怪物",
                     基础生命值: 28 + (配置.强化 ? 12 : 0),
                     基础攻击力: 4 + (配置.强化 ? 2 : 0),
-                    移动率: 1.0,
                     掉落物: new 能量药水({ 数量: 1 }),
                     掉落概率: 0.4,
                     基础攻击范围: 1,
@@ -5592,7 +5591,7 @@
                     类型: "剧毒云雾怪物",
                     基础生命值: 25 + (配置.强化 ? 15 : 0),
                     基础攻击力: 5 + (配置.强化 ? 2 : 0),
-                    移动率: 1.0,
+                    移动率: 0.8,
                     掉落物: new 治疗药水({ 数量: 1 }),
                     掉落概率: 0.3,
                     基础攻击范围: 1,
@@ -5665,7 +5664,7 @@
                     类型: "召唤师怪物",
                     基础生命值: 30 + (配置.强化 ? 15 : 0),
                     基础攻击力: 3 + (配置.强化 ? 1 : 0),
-                    移动率: 1.0,
+                    移动率: 0.8,
                     掉落物: new 能量药水({ 数量: 1 }),
                     掉落概率: 0.3,
                     基础攻击范围: 4,
@@ -6039,7 +6038,7 @@
                     类型: "大史莱姆",
                     基础生命值: 40 + (配置.强化 ? 20 : 0),
                     基础攻击力: 5 + (配置.强化 ? 2 : 0),
-                    移动率: 1.0, // 移动较慢
+                    移动率: 0.6, // 移动较慢
                     掉落物: new 金币({ 数量: Math.floor(Math.random() * 8) + 3 }),
                     掉落概率: 0.8,
                     攻击冷却: 1,
@@ -6159,7 +6158,7 @@
                     类型: "瞬移怪物",
                     基础生命值: 25 + (配置.强化 ? 15 : 0),
                     基础攻击力: 2 + (配置.强化 ? 3 : 0),
-                    移动率: 1,
+                    移动率: 0.85,
                     掉落物: new 跃迁卷轴({ 数量: 1, 强化: 配置.强化 ?? false }),
                     掉落概率: 0.4,
                     基础攻击范围: 2,
@@ -6402,7 +6401,7 @@
                 if (!this.伪装状态) return;
                 this.伪装状态 = false;
                 this.图标 = 图标映射.伪装怪物;
-                this.移动率 = 1.0; // 恢复正常移动率
+                this.移动率 = 0.7; // 恢复正常移动率
                 this.状态 = 怪物状态.活跃; // 变为活跃状态
                 显示通知(`一个${this.类型}显现了！`, "警告");
                 添加日志(`伪装的 ${this.图标} 原来是 ${this.类型}！`, "警告");
@@ -6452,7 +6451,6 @@
                     状态: 配置.状态 || 怪物状态.休眠,
                     生命值: 配置.基础生命值 || 45,
                     基础攻击力: 配置.基础攻击力 || 3,
-                    移动率: 配置.移动率 || 0.7,
                 });
                 this.携带炸弹 = true;
             }
@@ -6489,7 +6487,7 @@
                     类型: "旋风怪物",
                     基础生命值: 38 + (配置.强化 ? 18 : 0),
                     基础攻击力: 3 + (配置.强化 ? 1 : 0), // 直接攻击力不高
-                    移动率: 1.0,
+                    移动率: 0.75,
                     掉落物: new 金币({ 数量: Math.floor(Math.random() * 10) + 5 }),
                     掉落概率: 0.6,
                     基础攻击范围: 1, // 主要靠旋风
@@ -6632,7 +6630,7 @@
                 if (房间地图[玩家.y][玩家.x] === 0) return;
                 if (
                     this.目标路径.length === 0 ||
-                    Math.random() > this.移动率 ||
+                    (Math.random() > this.移动率 && !切换动画) ||
                     this.跟踪距离 < this.目标路径.length
                 ) {
                     this.追击玩家中 = false;
@@ -6980,23 +6978,46 @@
 
             // 通用方法：获取悬停提示信息
             获取提示() {
-                if (this.效果描述 !== null) {
-                    return [
-                        `${this.获取名称()} `,
-                        `类型：${this.类型} `,
-                        `品质：${"★".repeat(this.品质)} `,
-                        `堆叠：${this.堆叠数量} `,
-                        `效果描述：${this.效果描述} `,
-                    ].join("\n");
-                } else {
-                    return [
-                        `${this.获取名称()} `,
-                        `类型：${this.类型} `,
-                        `品质：${"★".repeat(this.品质)} `,
-                        `堆叠：${this.堆叠数量} `,
-                    ].join("\n");
+                const 基本提示 = [ // 先构建基础提示
+                    `${this.获取名称()} `,
+                    `类型：${this.类型} `,
+                    `品质：${"★".repeat(this.品质)} `,
+                    this.最大堆叠数量 > 1 ? `堆叠：${this.堆叠数量} / ${this.最大堆叠数量}` : null,
+                    this.效果描述 ? `效果描述：${this.效果描述} ` : null,
+                ].filter(行 => 行 !== null); // 过滤掉空行
+
+                // --- 添加融合 Buff 显示 ---
+                const 融合Buffs = this.自定义数据?.get('fusedBuffs'); // 使用中文变量名
+                if (融合Buffs && 融合Buffs.length > 0) {
+                    基本提示.push('--- 强化效果 ---');
+                    融合Buffs.forEach(buff => {
+                        基本提示.push(格式化Buff提示(buff)); // 使用中文函数名
+                    });
+                }
+                // --- 结束融合 Buff 显示 ---
+
+                // --- 添加附魔描述 (如果需要) ---
+                if (this.自定义数据?.has('附魔')) {
+                    const 附魔描述 = 获取附魔描述(this.自定义数据.get('附魔')); // 假设这个函数存在
+                    if (附魔描述) 基本提示.push(附魔描述);
+                }
+                // --- 添加耐久显示 (如果需要) ---
+                if (this.自定义数据?.has('耐久') && this.自定义数据?.has('原耐久')) {
+                    基本提示.push(`耐久：${this.自定义数据.get("耐久")} / ${this.自定义数据.get("原耐久")}`);
+                }
+                // --- 添加冷却显示 (如果需要) ---
+                if (this.自定义数据?.has('冷却剩余') && this.自定义数据?.has('冷却回合')) {
+                    if (this.自定义数据.get('冷却回合') > 0) { // 只显示有冷却的
+                        基本提示.push(`冷却：${this.自定义数据.get("冷却剩余")} / ${this.自定义数据.get("冷却回合")}回合`);
+                    }
+                }
+                // --- 添加不可破坏标记 ---
+                if (this.自定义数据?.get('不可破坏')) {
+                    基本提示.push('[不可破坏]');
                 }
 
+
+                return 基本提示.join("\n");
             }
             安全销毁() {
                 this.取消装备();
@@ -7033,6 +7054,7 @@
                                                                     `;
                     this.显示元素 = 元素;
                 } else if (用途 === "装备") {
+                    元素.className = "物品条目";
                     元素.innerHTML = `
                                                                         <div class="物品图标">${this
                             .显示图标
@@ -7047,7 +7069,8 @@
                             : ""
                         }
                                                                     `;
-                } else if (用途 === "融合"){
+                } else if (用途 === "融合") {
+                    元素.className = "物品条目";
                     元素.innerHTML = `
                                                                         <div class="物品图标">${this
                             .显示图标
@@ -7057,22 +7080,29 @@
                         }</div>
                                                                     `;
                 }
-                if (this.isActive && 用途==="背包") {
+                if (this.isActive && 用途 === "背包") {
                     元素.classList.add("active");
                 }
+                if (用途 === "背包") {
+                    元素.addEventListener("click", () => {
+                        this.isActive = true;
+                        元素.classList.add("active");
 
-                元素.addEventListener("click", () => {
-                    this.isActive = true;
-                    元素.classList.add("active");
-
-                    // 点击时其他元素取消激活
-                    document.querySelectorAll(".物品条目").forEach((el) => {
-                        if (el !== 元素 && el.__物品实例) {
-                            el.classList.remove("active");
-                            el.__物品实例.isActive = false;
-                        }
+                        // 点击时其他元素取消激活
+                        document.querySelectorAll(".物品条目").forEach((el) => {
+                            if (el !== 元素 && el.__物品实例) {
+                                el.classList.remove("active");
+                                el.__物品实例.isActive = false;
+                            }
+                        });
                     });
-                });
+                }
+                if (用途 === "融合") {
+                    元素.addEventListener("click", () => {
+                        document.getElementById("浮动提示框").style.display =
+                            "none";
+                    });
+                }
                 元素.__物品实例 = this;
                 // 图标样式
                 const 图标元素 = 元素.querySelector(".物品图标");
@@ -7468,24 +7498,46 @@
                 return 可连锁目标;
             }
             获取提示() {
-                return this.效果描述 === null ? [`${this.获取名称()} `,
-                `品质：${"★".repeat(this.品质)} `,
-                `攻击力：${this.攻击力} `,
-                `耐久：${this.自定义数据.get("耐久")} `,
-                `冷却：${this.自定义数据.get("冷却剩余")} 回合`,
-                `范围：${this.自定义数据.get("攻击范围")} 格`,
-                获取附魔描述(this.自定义数据.get("附魔")),
-                this.自定义数据.get("不可破坏") ? '不可破坏' : '',
-                ].join("\n") : [
+                const 基本提示 = [ // 先构建基础提示
                     `${this.获取名称()} `,
-                    `攻击力：${this.攻击力} `,
-                    `耐久：${this.自定义数据.get("耐久")} `,
-                    `冷却：${this.自定义数据.get("冷却剩余")} 回合`,
-                    `范围：${this.自定义数据.get("攻击范围")} 格`,
-                    `效果描述：${this.效果描述} `,
-                    获取附魔描述(this.自定义数据.get("附魔")),
-                    this.自定义数据.get("不可破坏") ? '不可破坏' : '',
-                ].join("\n");
+                    `类型：${this.类型} `,
+                    `品质：${"★".repeat(this.品质)} `,
+                    this.最大堆叠数量 > 1 ? `堆叠：${this.堆叠数量} / ${this.最大堆叠数量}` : null,
+                    this.效果描述 ? `效果描述：${this.效果描述} ` : null,
+                ].filter(行 => 行 !== null); // 过滤掉空行
+
+                // --- 添加融合 Buff 显示 ---
+                const 融合Buffs = this.自定义数据?.get('fusedBuffs'); // 使用中文变量名
+                if (融合Buffs && 融合Buffs.length > 0) {
+                    基本提示.push('--- 强化效果 ---');
+                    融合Buffs.forEach(buff => {
+                        基本提示.push(格式化Buff提示(buff)); // 使用中文函数名
+                    });
+                }
+                // --- 结束融合 Buff 显示 ---
+
+                // --- 添加附魔描述 (如果需要) ---
+                if (this.自定义数据?.has('附魔')) {
+                    const 附魔描述 = 获取附魔描述(this.自定义数据.get('附魔')); // 假设这个函数存在
+                    if (附魔描述) 기본提示.push(附魔描述);
+                }
+                // --- 添加耐久显示 (如果需要) ---
+                if (this.自定义数据?.has('耐久') && this.自定义数据?.has('原耐久')) {
+                    基本提示.push(`耐久：${this.自定义数据.get("耐久")} / ${this.自定义数据.get("原耐久")}`);
+                }
+                // --- 添加冷却显示 (如果需要) ---
+                if (this.自定义数据?.has('冷却剩余') && this.自定义数据?.has('冷却回合')) {
+                    if (this.自定义数据.get('冷却回合') > 0) { // 只显示有冷却的
+                        基本提示.push(`冷却：${this.自定义数据.get("冷却剩余")} / ${this.自定义数据.get("冷却回合")}回合`);
+                    }
+                }
+                // --- 添加不可破坏标记 ---
+                if (this.自定义数据?.get('不可破坏')) {
+                    基本提示.push('[不可破坏]');
+                }
+
+
+                return 基本提示.join("\n");
             }
             获取名称() {
                 return (
@@ -7497,11 +7549,21 @@
             }
 
             get 攻击力() {
-                return (
-                    this.自定义数据.get("基础攻击力") +
-                    (this.强化 ? 2 : 0) + 玩家属性.攻击加成 +
-                    (this.自定义数据.get("附魔").find((item) => item.种类 === "锋利附魔")?.等级 * 2 || 0)
-                );
+                let 基础攻击 = this.自定义数据.get("基础攻击力") + (this.强化 ? 2 : 0) + 玩家属性.攻击加成;
+                const buffs = this.自定义数据.get("fusedBuffs") || []; // 获取融合 buffs
+
+                buffs.forEach(buff => {
+                    if (buff.type === 融合Buff类型.攻击加成) { // 使用中文常量名
+                        基础攻击 += buff.value;
+                    } else if (buff.type === 融合Buff类型.攻击倍率) {
+                        基础攻击 *= (1 + buff.value);
+                    }
+                });
+
+                // 添加原有的附魔效果
+                基础攻击 += (this.自定义数据.get("附魔")?.find((item) => item.种类 === "锋利附魔")?.等级 * 2 || 0);
+
+                return Math.max(1, Math.round(基础攻击));
             }
             get 耐久消耗() {
                 if (this.自定义数据.get("不可破坏")) return 0;
@@ -7669,7 +7731,21 @@
                 return false;
             }
             get 最终防御力() {
-                return this.自定义数据.get("防御力") + (this.强化 ? 2 : 0) + (this.自定义数据.get("附魔").find((item) => item.种类 === "保护附魔")?.等级 || 0);
+                let 基础防御 = (this.自定义数据.get("防御力") || 0) + (this.强化 ? 2 : 0);
+                const buffs = this.自定义数据.get("fusedBuffs") || []; // 获取融合 buffs
+
+                buffs.forEach(buff => {
+                    if (buff.type === 融合Buff类型.防御加成) {
+                        基础防御 += buff.value;
+                    } else if (buff.type === 融合Buff类型.防御倍率) {
+                        基础防御 *= (1 + buff.value);
+                    }
+                });
+
+                // 添加原有的附魔效果
+                基础防御 += (this.自定义数据.get("附魔")?.find((item) => item.种类 === "保护附魔")?.等级 || 0);
+
+                return Math.max(0, Math.round(基础防御));
             }
             get 耐久消耗() {
                 if (this.自定义数据.get("不可破坏")) return 0;
@@ -7713,25 +7789,46 @@
             }
 
             获取提示() {
-                if (this.效果描述 !== null) {
-                    return [
-                        `${this.获取名称()} `,
-                        `防御力：${this.最终防御力} `,
-                        `耐久：${this.自定义数据.get("耐久")} `,
-                        `效果描述：${this.效果描述} `,
-                        获取附魔描述(this.自定义数据.get("附魔")),
-                        this.自定义数据.get("不可破坏") ? '不可破坏' : '',
-                    ].join("\n");
-                } else {
-                    return [
-                        `${this.获取名称()} `,
-                        `防御力：${this.最终防御力} `,
-                        `耐久：${this.自定义数据.get("耐久")} `,
-                        `品质：${"★".repeat(this.品质)} `,
-                        获取附魔描述(this.自定义数据.get("附魔")),
-                        this.自定义数据.get("不可破坏") ? '不可破坏' : '',
-                    ].join("\n");
+                const 基本提示 = [ // 先构建基础提示
+                    `${this.获取名称()} `,
+                    `类型：${this.类型} `,
+                    `品质：${"★".repeat(this.品质)} `,
+                    this.最大堆叠数量 > 1 ? `堆叠：${this.堆叠数量} / ${this.最大堆叠数量}` : null,
+                    this.效果描述 ? `效果描述：${this.效果描述} ` : null,
+                ].filter(行 => 行 !== null); // 过滤掉空行
+
+                // --- 添加融合 Buff 显示 ---
+                const 融合Buffs = this.自定义数据?.get('fusedBuffs'); // 使用中文变量名
+                if (融合Buffs && 融合Buffs.length > 0) {
+                    基本提示.push('--- 强化效果 ---');
+                    融合Buffs.forEach(buff => {
+                        基本提示.push(格式化Buff提示(buff)); // 使用中文函数名
+                    });
                 }
+                // --- 结束融合 Buff 显示 ---
+
+                // --- 添加附魔描述 (如果需要) ---
+                if (this.自定义数据?.has('附魔')) {
+                    const 附魔描述 = 获取附魔描述(this.自定义数据.get('附魔')); // 假设这个函数存在
+                    if (附魔描述) 기본提示.push(附魔描述);
+                }
+                // --- 添加耐久显示 (如果需要) ---
+                if (this.自定义数据?.has('耐久') && this.自定义数据?.has('原耐久')) {
+                    基本提示.push(`耐久：${this.自定义数据.get("耐久")} / ${this.自定义数据.get("原耐久")}`);
+                }
+                // --- 添加冷却显示 (如果需要) ---
+                if (this.自定义数据?.has('冷却剩余') && this.自定义数据?.has('冷却回合')) {
+                    if (this.自定义数据.get('冷却回合') > 0) { // 只显示有冷却的
+                        基本提示.push(`冷却：${this.自定义数据.get("冷却剩余")} / ${this.自定义数据.get("冷却回合")}回合`);
+                    }
+                }
+                // --- 添加不可破坏标记 ---
+                if (this.自定义数据?.get('不可破坏')) {
+                    基本提示.push('[不可破坏]');
+                }
+
+
+                return 基本提示.join("\n");
             }
         }
         class 吸血剑 extends 武器类 {
@@ -12527,7 +12624,10 @@
                 if (
                     当前天气效果.includes("严寒")
                 ) {
-                    显示通知("温度过低，炸弹打不着火了！", "警告")
+                    if (!玩家使用) {
+                        this.能否拾起 = true;
+                    }
+                    显示通知("温度过低，炸弹打不着火了！", "警告");
                     return 0;
                 }
                 super.使用();
@@ -15935,6 +16035,12 @@
                         卷轴.消耗能量();
                     });
                 }
+                if (!切换动画) {
+                    处理回合逻辑();
+                }
+            }
+            if (冻结状态) {
+                处理回合逻辑();
             }
             if (地牢[玩家.y][玩家.x].关联物品 instanceof 折跃门) {
                 地牢[玩家.y][玩家.x].关联物品.使用();
@@ -16450,6 +16556,9 @@
                 物品实例.堆叠数量 -= 1;
             } else {
                 物品实例.是否隐藏 = true;
+                物品实例.isActive = false;
+                物品实例.显示元素.classList.remove("active")
+                document.getElementById("浮动提示框").style.display = "none";
             }
 
             融合区物品[空格子索引] = 物品实例.唯一标识;
@@ -16467,6 +16576,7 @@
             let 物品实例 = 玩家背包.get(物品标识);
             if (物品实例.是否隐藏) {
                 物品实例.是否隐藏 = false;
+                物品实例.isActive = false;
                 融合区物品[格子索引] = null; // 成功放回后清空格子
                 检查融合配方();
                 更新融合窗口();
@@ -16488,67 +16598,200 @@
             }
         }
 
-        function 检查融合配方() {
-            const 当前输入物品 = 融合区物品.map(标识 => {
-                if (标识 === null) return null;
-                const 物品实例 = 玩家背包.get(标识)
-                return 物品实例 ? 物品实例.名称 : null; // 使用名称匹配
-            }).filter(name => name !== null); // 过滤掉 null
 
-            if (当前输入物品.length === 0) {
+        function 检查融合配方() {
+            const 武器槽标识 = 融合区物品[0]; // 假设武器总在第一个格子
+            const 材料标识列表 = [融合区物品[1], 融合区物品[2], 融合区物品[3]];
+            const 输出格子 = document.getElementById('融合输出格子');
+
+            输出格子.innerHTML = ''; // 清空旧预览
+            融合结果 = null;          // 清空旧结果状态
+            输出格子.onclick = null; // 移除旧的确认点击事件
+
+            if (!武器槽标识) return; // 没有武器
+
+            const 武器实例 = 玩家背包.get(武器槽标识);
+            if (!武器实例 || !是否为有效融合武器(武器实例)) {
+                console.warn("融合区第一个格子不是有效的武器或防具");
+                return; // 第一个格子必须是武器/防具
+            }
+
+            // 分离材料和金币
+            const 材料实例列表 = [];
+            let 金币总量 = 0;
+            材料标识列表.forEach(标识 => {
+                if (标识) {
+                    const 物品 = 玩家背包.get(标识);
+                    if (物品) {
+                        if (物品 instanceof 金币) {
+                            金币总量 += 物品.堆叠数量;
+                        } else if (是否为有效融合材料(物品)) {
+                            材料实例列表.push(物品);
+                        }
+                    }
+                }
+            });
+
+            // 必须至少有一个非金币材料才能触发融合预览
+            if (材料实例列表.length === 0) {
+                return;
+            }
+
+            // 计算 Buff
+            const buffs = 计算融合Buff(武器实例, 材料实例列表, 金币总量);
+
+            // 克隆武器用于预览
+            融合结果 = 克隆物品(武器实例); // 使用全局变量 融合结果 存储预览物品
+            融合结果.唯一标识 = Symbol("FusionPreview_" + Date.now()); // 临时 ID
+
+            if (buffs.length > 0) {
+                融合结果.自定义数据.set('fusedBuffs', buffs);
+            } else {
+                融合结果.自定义数据.delete('fusedBuffs'); // 确保没有残留
+            }
+
+            // 更新输出格子UI
+            const 预览元素 = 融合结果.生成显示元素("融合");
+            预览元素.style.cursor = 'pointer'; // 表示可点击确认
+            输出格子.appendChild(预览元素);
+            输出格子.onclick = () => setTimeout(() => 执行融合(), 0); // 绑定确认事件
+
+            // 注意：原始的 更新融合窗口 函数现在只负责渲染输入格子
+            // 我们在这里直接更新了输出格子
+        }
+
+        function 执行融合() {
+            // 1. 验证是否有有效的预览结果
+            if (!融合结果) {
+                显示通知("没有有效的融合结果！", "错误");
+                return;
+            }
+
+            // 2. 获取原始武器实例
+            const 武器槽标识 = 融合区物品[0];
+            if (!武器槽标识) {
+                显示通知("融合错误：找不到武器！", "错误");
+                融合结果 = null; // 清理无效预览
+                更新融合窗口(); // 清理输出槽
+                return;
+            }
+            const 武器原件 = 玩家背包.get(武器槽标识);
+            if (!武器原件 || !是否为有效融合武器(武器原件)) {
+                显示通知("融合错误：原始武器无效！", "错误");
                 融合结果 = null;
                 更新融合窗口();
                 return;
             }
 
-            当前输入物品.sort(); // 排序以忽略顺序
+            // 3. 识别材料和金币，计算消耗
+            const 材料标识列表 = [融合区物品[1], 融合区物品[2], 融合区物品[3]];
+            const 待消耗材料实例 = [];
+            let 消耗金币数量 = 0;
 
-            for (const 配方 of 融合配方列表) {
-                const 配方输入 = 配方.输入.filter(name => name !== null).sort();
-                if (配方输入.length !== 当前输入物品.length) continue; // 数量必须一致
-
-                // 比较排序后的数组
-                if (JSON.stringify(当前输入物品) === JSON.stringify(配方输入)) {
-                    // 找到匹配配方
-                    try {
-                        const 构造器 = window[配方.输出类]; // 获取构造函数
-                        if (构造器) {
-                            const 输出配置 = {
-                                数量: 配方.输出数量 || 1,
-                                ...(配方.输出配置 || {}) // 应用配方指定的额外配置
-                            };
-                            融合结果 = new 构造器(输出配置);
-                            更新融合窗口();
-                            return; // 找到配方就停止
-                        } else {
-                            console.error(`找不到输出类构造器: ${配方.输出类}`);
+            材料标识列表.forEach(标识 => {
+                if (标识) {
+                    const 物品 = 玩家背包.get(标识);
+                    if (物品) {
+                        if (物品 instanceof 金币) {
+                            消耗金币数量 += 物品.堆叠数量; // 消耗槽内所有金币
+                        } else if (是否为有效融合材料(物品)) {
+                            待消耗材料实例.push(物品);
                         }
-                    } catch (e) {
-                        console.error(`创建融合结果实例失败: ${配方.输出类}`, e);
                     }
+                }
+            });
+
+            // 4. 检查并消耗能量
+            const 能量消耗 = 10 + 待消耗材料实例.length * 3;
+            if (!卷轴扣除能量(能量消耗)) {
+                显示通知(`能量不足！需要 ${能量消耗} 点能量。`, "错误");
+                return; // 能量不足，融合失败
+            }
+
+            // 5. 检查并消耗金币
+            if (消耗金币数量 > 0) {
+                if (!扣除金币(消耗金币数量)) {
+                    显示通知("金币不足！", "错误");
+                    // 归还能量
+                    const 能量条 = document.querySelector(".power-bar");
+                    const 当前能量 = parseFloat(能量条?.style.width) || 0;
+                    if (能量条) 能量条.style.width = `${Math.min(100, 当前能量 + 能量消耗)}%`;
+                    触发HUD显示();
+                    return; // 金币不足，融合失败
                 }
             }
 
-            // 没有找到匹配配方
-            融合结果 = null;
-            更新融合窗口();
-        }
+            // 6. 应用 Buff 到原始武器
+            const 应用的Buffs = 融合结果.自定义数据.get('fusedBuffs');
+            if (应用的Buffs && 应用的Buffs.length > 0) {
+                // 合并旧Buff和新Buff（如果需要保留旧Buff）
+                const 旧Buffs = 武器原件.自定义数据.get('fusedBuffs') || [];
+                const 合并后的Buffs = [...旧Buffs];
+                应用的Buffs.forEach(新Buff => {
+                    const 现有索引 = 合并后的Buffs.findIndex(旧 => 旧.type === 新Buff.type);
+                    if (现有索引 > -1) {
+                        // 如果类型已存在，简单地替换为新的值（或根据需要合并）
+                        合并后的Buffs[现有索引].value = 新Buff.value; // 简单替换，如果需要累加则修改这里
+                        // 注意：上限在计算时已处理，这里不再检查
+                    } else {
+                        合并后的Buffs.push(新Buff);
+                    }
+                });
+                武器原件.自定义数据.set('fusedBuffs', 合并后的Buffs);
 
+                // --- 如果Buff影响了最大耐久，需要更新 ---
+                let 耐久加成值 = 0;
+                let 耐久倍率 = 1.0;
+                合并后的Buffs.forEach(buff => {
+                    if (buff.type === 融合Buff类型.耐久加成) 耐久加成值 += buff.value;
+                    if (buff.type === 融合Buff类型.耐久倍率) 耐久倍率 += buff.value; // 假设倍率是加算的
+                });
+                if (耐久加成值 > 0 || 耐久倍率 !== 1.0) {
+                    const 基础原耐久 = 武器原件.constructor?.prototype?.自定义数据?.get('原耐久') || 武器原件.自定义数据.get('原耐久') || 30; // 尝试获取原型或当前值
+                    const 新最大耐久 = Math.round((基础原耐久 + 耐久加成值) * 耐久倍率);
+                    武器原件.自定义数据.set('原耐久', 新最大耐久);
+                    // 可选：是否按比例增加当前耐久？或者保持不变？保持不变较简单
+                    // 武器原件.自定义数据.set('耐久', Math.min(新最大耐久, 武器原件.自定义数据.get('耐久')));
+                }
+                // --- 结束耐久处理 ---
 
-        function 执行融合() {
-            if (!融合结果) return;
-            
-
-            if (尝试收集物品(融合结果, true)) {
-                显示通知(`成功融合出 ${融合结果.获取名称()}！`, "成功");
-                融合区物品 = [null, null, null, null];
-                融合结果 = null;
-                更新融合窗口();
-                更新背包显示();
+                显示通知(`${武器原件.获取名称()} 强化成功！`, "成功");
             } else {
-                显示通知("尝试添加融合结果到背包失败！", "错误");
-                更新融合窗口();
+                // 如果预览结果没有 buffs（例如只放了金币），可以选择不改变原武器
+                // 或者移除原武器的 buffs？当前逻辑是不改变
+                显示通知(`${武器原件.获取名称()} 没有获得强化效果。`, "信息");
             }
+
+
+            // 7. 消耗材料物品 (从背包删除)
+            待消耗材料实例.forEach(材料 => {
+                const 背包物品 = 玩家背包.get(材料.唯一标识);
+                if (背包物品 === 材料) { // 确认是从背包移动过来的原件
+                    玩家背包.delete(材料.唯一标识);
+                } else {
+                    // 如果是克隆的，原件在添加到融合槽时已经减了堆叠，这里不需要额外操作
+                    // 但要确保克隆对象不再被引用
+                }
+            });
+            // 消耗放入材料槽的金币实例（即使金币在扣除金币函数中处理了，也要从背包中删除实例）
+            材料标识列表.forEach(标识 => {
+                if (标识) {
+                    const 物品 = 玩家背包.get(标识);
+                    if (物品 instanceof 金币) {
+                        // 扣除金币函数已经处理了数量，这里只需确保实例被移除（如果数量变为0）
+                        // 扣除金币函数内部应该调用 处理销毁物品(金币.唯一标识, true)
+                    }
+                }
+            });
+
+            // 8. 清空融合状态和 UI
+            融合区物品 = [null, null, null, null]; // 清空内部状态数组
+            融合结果 = null;
+            更新融合窗口(); // 更新UI以显示空格子
+            武器原件.是否隐藏 = false;
+            // 9. 更新外部 UI
+            更新背包显示();
+            更新装备显示(); // 如果武器被装备了
         }
 
         function 更新融合窗口() {
@@ -16559,7 +16802,9 @@
             for (let i = 1; i <= 4; i++) {
                 const 格子 = document.getElementById(`融合区格子${i}`);
                 格子.innerHTML = '';
-                格子.onclick = () => 从融合区移除(i - 1); // 绑定移除事件
+                格子.onclick = () => setTimeout(() => {
+                    从融合区移除(i - 1);
+                }, 0);
             }
 
             // 填充输入格子
@@ -16586,7 +16831,9 @@
                 const 结果元素 = 融合结果.生成显示元素("融合"); // 使用特殊类型生成缩小版
                 结果元素.style.cursor = 'pointer'; // 明确可点击取出
                 输出格子.appendChild(结果元素);
-                输出格子.onclick = 执行融合; // 绑定取出事件
+                输出格子.onclick = () => setTimeout(() => {
+                    执行融合();
+                }, 0); // 绑定取出事件
             }
         }
         function 清空融合区() {
@@ -16597,6 +16844,163 @@
             更新融合窗口();
             更新背包显示();
         }
+
+
+        // --- Buff 类型定义 (放在合适的位置，例如靠近其他常量) ---
+        const 融合Buff类型 = {
+            攻击加成: 'ATTACK_BONUS',
+            攻击倍率: 'ATTACK_MULTIPLIER',
+            冷却缩减: 'COOLDOWN_REDUCTION',
+            冷却倍率: 'COOLDOWN_MULTIPLIER',
+            耐久加成: 'DURABILITY_BONUS',
+            耐久倍率: 'DURABILITY_MULTIPLIER',
+            范围加成: 'RANGE_BONUS',
+            中毒几率: 'POISON_CHANCE',
+            火焰伤害: 'FIRE_DAMAGE',
+            冰冻几率: 'ICE_CHANCE',
+            生命偷取: 'LIFE_STEAL',
+            防御加成: 'DEFENSE_BONUS',
+            防御倍率: 'DEFENSE_MULTIPLIER'
+        };
+
+        // --- 辅助函数 (如果不存在则添加) ---
+
+        function 哈希字符串(str) {
+            let hash = 0;
+            if (!str || str.length === 0) return hash;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0;
+            }
+            return Math.abs(hash);
+        }
+
+        function 种子伪随机数(seed) {
+            let t = seed += 0x6D2B79F5;
+            t = Math.imul(t ^ t >>> 15, t | 1);
+            t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+            return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        }
+
+        function 是否为有效融合武器(物品) {
+            return 物品 instanceof 武器类 || 物品 instanceof 防御装备类;
+        }
+
+        function 是否为有效融合材料(物品) {
+            return 物品 instanceof 炸弹 ||
+                物品 instanceof 卷轴类 ||
+                物品.类型 === '药水'; // 排除金币
+        }
+        function 格式化Buff提示(buff) {
+            const 格式化数值 = (类型, 数值) => {
+                if (类型.includes('倍率') || 类型.includes('几率') || 类型.includes('偷取')) return `${(数值 * 100).toFixed(1)}%`;
+                if (类型.includes('缩减')) return `${数值.toFixed(0)}`;
+                return `+${数值.toFixed(0)}`;
+            };
+            switch (buff.type) {
+                case 融合Buff类型.攻击加成: return `攻击力 ${格式化数值(buff.type, buff.value)}`;
+                case 融合Buff类型.攻击倍率: return `攻击力 ${格式化数值(buff.type, buff.value)}`;
+                case 融合Buff类型.冷却缩减: return `冷却 -${格式化数值(buff.type, buff.value)}回合`;
+                case 融合Buff类型.冷却倍率: return `冷却缩减 ${格式化数值(buff.type, buff.value)}`;
+                case 融合Buff类型.耐久加成: return `最大耐久 ${格式化数值(buff.type, buff.value)}`;
+                case 融合Buff类型.耐久倍率: return `最大耐久 ${格式化数值(buff.type, buff.value)}`;
+                case 融合Buff类型.范围加成: return `攻击范围 ${格式化数值(buff.type, buff.value)}`;
+                case 融合Buff类型.中毒几率: return `附加中毒 ${格式化数值(buff.type, buff.value)}`;
+                case 融合Buff类型.火焰伤害: return `附加火焰伤害 ${格式化数值(buff.type, buff.value)}`;
+                case 融合Buff类型.冰冻几率: return `附加冰冻 ${格式化数值(buff.type, buff.value)}`;
+                case 融合Buff类型.生命偷取: return `生命偷取 ${格式化数值(buff.type, buff.value)}`;
+                case 融合Buff类型.防御加成: return `防御力 ${格式化数值(buff.type, buff.value)}`;
+                case 融合Buff类型.防御倍率: return `防御力 ${格式化数值(buff.type, buff.value)}`;
+                default: return `未知强化: ${buff.type}`;
+            }
+        }
+
+
+        // --- 新增: 计算 Buff 的核心函数 ---
+        function 计算融合Buff(武器, 材料列表, 金币数量) {
+            if (!武器) return [];
+
+            const 基础种子字符串 = 武器.唯一标识.toString();
+            let 组合种子字符串 = 基础种子字符串;
+            const 有效材料 = 材料列表.filter(m => m != null);
+            if (有效材料.length === 0) return [];
+
+            有效材料.sort((a, b) => a.constructor.name.localeCompare(b.constructor.name));
+            有效材料.forEach(mat => 组合种子字符串 += mat.constructor.name);
+
+            const 组合种子 = 哈希字符串(组合种子字符串);
+            const 最终Buff列表 = [];
+            const 金币增幅系数 = 1 + Math.log10(Math.max(1, (金币数量 || 0) / 10 + 1)) * 0.5;
+
+            有效材料.forEach((材料, 索引) => {
+                const 材料种子 = 哈希字符串(组合种子字符串 + 索引);
+                const 随机数生成 = () => 种子伪随机数(材料种子 + 最终Buff列表.length);
+
+                let buff类型 = null;
+                let buff数值 = 0;
+                const 可能的Buff列表 = [];
+                const 是否武器 = 武器 instanceof 武器类;
+                const 是否防具 = 武器 instanceof 防御装备类;
+
+                if (材料 instanceof 炸弹) {
+                    if (是否武器) 可能的Buff列表.push(融合Buff类型.攻击加成, 融合Buff类型.火焰伤害);
+                    if (是否防具) 可能的Buff列表.push(融合Buff类型.防御加成);
+                    可能的Buff列表.push(融合Buff类型.耐久加成);
+                } else if (材料 instanceof 卷轴类) {
+                    if (是否武器) 可能的Buff列表.push(融合Buff类型.冷却缩减, 融合Buff类型.范围加成, 融合Buff类型.攻击倍率);
+                    if (是否防具) 可能的Buff列表.push(融合Buff类型.防御加成, 融合Buff类型.防御倍率);
+                    可能的Buff列表.push(融合Buff类型.冰冻几率, 融合Buff类型.中毒几率, 融合Buff类型.耐久倍率);
+                } else if (材料.类型 === '药水') {
+                    if (是否武器) 可能的Buff列表.push(融合Buff类型.生命偷取, 融合Buff类型.中毒几率);
+                    if (是否防具) 可能的Buff列表.push(融合Buff类型.防御加成);
+                    可能的Buff列表.push(融合Buff类型.耐久加成);
+                }
+
+                if (可能的Buff列表.length === 0) return;
+
+                buff类型 = 可能的Buff列表[Math.floor(随机数生成() * 可能的Buff列表.length)];
+
+                switch (buff类型) {
+                    case 融合Buff类型.攻击加成: buff数值 = Math.round((1 + 随机数生成() * 3) * 金币增幅系数); break;
+                    case 融合Buff类型.攻击倍率: buff数值 = Math.min(0.30, (0.05 + 随机数生成() * 0.1) * 金币增幅系数); break;
+                    case 融合Buff类型.冷却缩减: buff数值 = Math.round((1 + 随机数生成() * 1) * 金币增幅系数); break;
+                    case 融合Buff类型.冷却倍率: buff数值 = Math.min(0.50, (0.05 + 随机数生成() * 0.15) * 金币增幅系数); break;
+                    case 融合Buff类型.耐久加成: buff数值 = Math.round((5 + 随机数生成() * 15) * 金币增幅系数); break;
+                    case 融合Buff类型.耐久倍率: buff数值 = Math.min(0.75, (0.10 + 随机数生成() * 0.20) * 金币增幅系数); break;
+                    case 融合Buff类型.范围加成: buff数值 = (武器.自定义数据.has('攻击范围') && 武器.自定义数据.get('攻击范围') > 1 && 随机数生成() < 0.7) ? Math.round(1 * 金币增幅系数) : 0; break;
+                    case 融合Buff类型.防御加成: buff数值 = Math.round((1 + 随机数生成() * 2) * 金币增幅系数); break;
+                    case 融合Buff类型.防御倍率: buff数值 = Math.min(0.30, (0.05 + 随机数生成() * 0.1) * 金币增幅系数); break;
+                    case 融合Buff类型.中毒几率:
+                    case 融合Buff类型.冰冻几率:
+                    case 融合Buff类型.生命偷取: buff数值 = Math.min(0.40, (0.05 + 随机数生成() * 0.15) * 金币增幅系数); break;
+                    case 融合Buff类型.火焰伤害: buff数值 = Math.round((1 + 随机数生成() * 2) * 金币增幅系数); break;
+                    default: buff数值 = 0;
+                }
+
+                if (buff数值 !== 0) {
+                    const 已存在Buff索引 = 最终Buff列表.findIndex(b => b.type === buff类型);
+                    if (已存在Buff索引 > -1) {
+                        if (typeof 最终Buff列表[已存在Buff索引].value === 'number' && typeof buff数值 === 'number') {
+                            最终Buff列表[已存在Buff索引].value += buff数值;
+                            // 应用上限
+                            if (buff类型.includes('倍率') || buff类型.includes('几率') || buff类型.includes('偷取')) {
+                                const 上限 = { ATTACK_MULTIPLIER: 0.30, COOLDOWN_MULTIPLIER: 0.50, DURABILITY_MULTIPLIER: 0.75, DEFENSE_MULTIPLIER: 0.30, POISON_CHANCE: 0.40, ICE_CHANCE: 0.40, LIFE_STEAL: 0.40 }[buff类型] || 1.0;
+                                最终Buff列表[已存在Buff索引].value = Math.min(最终Buff列表[已存在Buff索引].value, 上限);
+                            }
+                            if (buff类型 === 融合Buff类型.冷却缩减) {
+                                最终Buff列表[已存在Buff索引].value = Math.max(0, 最终Buff列表[已存在Buff索引].value);
+                            }
+                        }
+                    } else {
+                        最终Buff列表.push({ type: buff类型, value: buff数值 });
+                    }
+                }
+            });
+
+            return 最终Buff列表;
+        }
+
         function 伤害玩家(原始攻击力, 伤害来源 = null) {
             let 最终攻击力 = 原始攻击力;
             if (伤害来源 instanceof 怪物) {
@@ -16633,7 +17037,7 @@
             let 实际击退 = false;
             let 击退后X = 玩家.x;
             let 击退后Y = 玩家.y;
-            if (新宽度 > 0 && 伤害来源 instanceof 怪物) { // 玩家未死亡且伤害来自怪物
+            if (新宽度 > 0 && 伤害来源 instanceof 怪物 && 切换动画) { // 玩家未死亡且伤害来自怪物
                 let dx = 玩家.x - 伤害来源.x;
                 let dy = 玩家.y - 伤害来源.y;
 
@@ -16819,8 +17223,7 @@
             if (
                 界面可见性.背包 &&
                 !e.target.closest(".背包弹窗") &&
-                !e.target.closest("#背包按钮") &&
-                !e.target.closest(".物品图标")
+                !e.target.closest("#背包按钮")
             ) {
                 切换背包显示();
             } else if (教程提示已显示 && !e.target.closest("#教程提示窗口")) {
@@ -16977,6 +17380,17 @@
             document.querySelector("#卷轴按钮").innerHTML = `${图标映射.卷轴按钮}`;
             切换HUD模式();
         }
+        let 切换动画 = true
+        function 切换动画模式() {
+            切换动画 = !切换动画; // 切换状态
+
+            // --- 更新主菜单按钮文本 ---
+            const 主菜单切换按钮 = document.getElementById("切换动画按钮");
+            if (主菜单切换按钮) {
+                主菜单切换按钮.textContent = 切换动画 ? "已切换为自动" : "已切换为回合制";
+            }
+        }
+
         function 使用装备槽物品(槽位编号) {
             const 物品实例 = 玩家装备.get(槽位编号);
 
@@ -19558,7 +19972,7 @@
                 待显示爆炸范围 = { 爆炸范围: [], 爆炸距离: null }; // 清空计划中的爆炸
             }
 
-            if ((游戏状态 === "图鉴" || 游戏状态 === "游戏中") && 当前时间 - 上次自动回合时间 >= 自动回合间隔) {
+            if ((游戏状态 === "图鉴" || 游戏状态 === "游戏中") && 当前时间 - 上次自动回合时间 >= 自动回合间隔 && 切换动画) {
                 if (!死亡界面已显示 && 玩家属性.允许移动 === 0) {
                     处理回合逻辑();
                     上次自动回合时间 = 当前时间;
