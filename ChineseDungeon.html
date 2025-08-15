@@ -2,7 +2,7 @@
 <html lang="zh-cmn-Hans">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=0.5" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=0.1" />
 		<title>Dungeon Game</title>
 		<style>
 			/*或哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈*/
@@ -91,8 +91,6 @@
 			padding: 25px;
 			box-shadow: 0 0 40px rgba(76, 175, 80, 0.2);
 			width: 90%;
-			max-width: 500px;
-			max-height: 90vh;
 			display: flex;
 			flex-direction: column;
 			color: #e0e0e0;
@@ -570,7 +568,6 @@
 			color: #e0e0e0;
 			cursor: pointer;
 			transition: all 0.3s ease;
-			min-width: 250px;
 			text-align: center;
 			font-family: inherit;
 			}
@@ -812,14 +809,14 @@
 			}
 			/* --- Control Panel --- */
 			.control-pad {
-			position: fixed;
-			pointer-events: none;
-			left: 2vw;
-			bottom: 80px;
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-			}
+    position: fixed;
+    pointer-events: none;
+    left: 2vw;
+    bottom: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 			#方向键容器 {
 			position: fixed;
 			left: 20px;
@@ -1492,46 +1489,70 @@
 			height: 5vmin;
 			width: 20vmin;
 			}
-			@media (min-width: 769px) {
-			.control-pad {
-			display: none;
-			}
-			.control-btn {
-			display: none;
-			}
-			.control-row {
-			display: none;
-			}
-			#小地图容器 {
-			position: fixed;
-			bottom: 20px;
-			right: 20px;
-			transform: none;
-			}
-			#跳过教程按钮 {
-			top: 75px;
-			}
-			#回放教程按钮 {
-			top: 15px;
-			}
-			}
-			@media (max-width: 768px) {
-			.control-pad {
-			display: flex;
-			}
-			.control-btn {
-			display: flex;
-			}
-			.control-row {
-			display: flex;
-			}
-			#跳过教程按钮 {
-			top: 40px;
-			}
-			#回放教程按钮 {
-			top: 10px;
-			}
-			}
+.control-pad-actions {
+    position: fixed;
+    pointer-events: none;
+    left: 7vw;
+    bottom: 100px;
+    display: flex;
+    flex-direction: column;
+}
+.settings-container {
+    position: fixed;
+    right: 23px;
+    bottom: 80px;
+    display: flex;
+}
+@media (min-width: 769px) {
+    .control-pad {
+        
+        bottom: 40px;
+        }
+    .control-pad-actions {
+        right: 2vw;
+        left: auto;
+        top: 42%;
+        bottom: auto;
+        transform: translateY(-50%);
+    }
+    .settings-container {
+        right: 2vw;
+        left: auto;
+        
+        bottom: 5px;
+    }
+    body:not(.手机模式启用) .control-pad,
+    body:not(.手机模式启用) .control-pad-actions,
+    body:not(.手机模式启用) .settings-container {
+        display: none;
+    }
+    #小地图容器 {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        transform: none;
+    }
+    #跳过教程按钮 { top: 75px; }
+    #回放教程按钮 { top: 15px; }
+}
+@media (max-width: 768px) {
+    #跳过教程按钮 {
+    top: 40px;
+    }
+    #回放教程按钮 {
+    top: 10px;
+    }
+}
+
+
+body.手机模式启用 .control-pad,
+body.手机模式启用 .control-pad-actions,
+body.手机模式启用 .settings-container {
+    display: flex;
+}
+body.方向键隐藏 .control-pad {
+    display: none !important;
+}
 			canvas {
 			mix-blend-mode: lighten;
 			}
@@ -3382,6 +3403,10 @@
 							<input type="range" id="移动速度滑块" min="0" max="200" value="100" step="5">
 							<span id="移动速度值">100ms</span>
 						</div>
+						<div class="设置行">
+    <label class="设置标签">强制手机模式</label>
+    <button id="手机模式切换" class="设置切换按钮"></button>
+</div>
 					</div>
 					<div class="设置分区">
 						<h3>显示</h3>
@@ -3697,35 +3722,30 @@
 			<div class="装备槽" id="装备槽6"></div>
 			<div class="装备槽" id="装备槽7"></div>
 		</div>
-		<div class="control-pad 不可选中" style="z-index: 1000">
-			<!-- 日志浮窗Z:1002 大于 悬浮提示Z:1002 背包Z：1001 控制钮Z：1000 设置钮Z：999-->
-			<div class="control-row">
-				<div class="control-btn directional-btn" id="upBtn">↑</div>
-			</div>
-			<div class="control-row">
-				<div class="control-btn directional-btn" id="leftBtn">←</div>
-				<div class="control-btn directional-btn" id="rightBtn">→</div>
-			</div>
-			<div class="control-row">
-				<div class="control-btn directional-btn" id="downBtn">↓</div>
-			</div>
-			<div class="control-row">
-				<button id="背包按钮" onclick="切换背包显示()" class="control-btn">
-				🎒
-				</button>
-				<button class="control-btn" id="互动按钮" onclick="尝试互动()">
-				⚡
-				</button>
-				<button id="hudToggle" class="control-btn" style="position: absolute; bottom: 110%" onclick="处理HUD切换按钮点击()">
-				👁️
-				</button>
-			</div>
-		</div>
-		<div class="control-row" style="right: 23px; position: fixed; bottom: 80px; z-index: 999">
-			<button id="设置按钮" class="control-btn" onclick="切换设置菜单()" style="font-size: 1em">
-			⚙️
-			</button>
-		</div>
+<div class="control-pad 不可选中" style="z-index: 1000">
+    <div class="control-row">
+        <div class="control-btn directional-btn" id="upBtn">↑</div>
+    </div>
+    <div class="control-row">
+        <div class="control-btn directional-btn" id="leftBtn">←</div>
+        <div class="control-btn directional-btn" id="rightBtn">→</div>
+    </div>
+    <div class="control-row">
+        <div class="control-btn directional-btn" id="downBtn">↓</div>
+    </div>
+</div>
+<div class="control-pad-actions 不可选中" style="z-index: 1000">
+    <div class="control-row">
+        <button id="背包按钮" onclick="切换背包显示()" class="control-btn">🎒</button>
+        <button id="互动按钮" onclick="尝试互动()" class="control-btn">⚡</button>
+        <button id="hudToggle" class="control-btn" style="position: absolute; bottom: 110%" onclick="处理HUD切换按钮点击()">👁️</button>
+    </div>
+</div>
+<div class="settings-container 不可选中" style="z-index: 999">
+    <div class="control-row">
+        <button id="设置按钮" class="control-btn" onclick="切换设置菜单()" style="font-size: 1em">⚙️</button>
+    </div>
+</div>
 		<div id="浮动提示框"></div>
 		<div id="配方书遮罩" class="重铸遮罩" style="display: none; z-index: 10005">
 			<div id="配方书窗口" style="
@@ -3973,7 +3993,7 @@
 			const 最大堆叠数 = 64;
 			let 地牢大小 = 100;
 			const 存档版本 = "v1";
-			const 游戏版本 = 1518
+			const 游戏版本 = 1519
 			const 所有天气列表 = [
 			    "雷暴",
 			    "诡魅",
@@ -4172,6 +4192,9 @@
 			    战士: '战',
 			    法师: '法',
 			    忍者: '忍',
+			    游侠:'侠',
+			    死灵:'灵',
+			    骑士:'骑',
 			    磁铁: "磁",
 			};
 			let 图标映射 = {
@@ -4354,6 +4377,9 @@
 			    战士: '💂‍♀️',
 			    法师: '🧙',
 			    忍者: '🥷',
+			    游侠:'🏹',
+			    死灵:'💀',
+			    骑士:'🏇',
 			    磁铁: "🧲",
 			};
 			// 单元格类型枚举
@@ -4864,6 +4890,7 @@
 			 },
 			 方向键大小: 13,
 			 显示方向键: true,
+			 手机模式: false,
 			 动画模式: false,
 			 文本模式: false,
 			 相机视野大小: 15,
@@ -7045,7 +7072,7 @@
 			            let 触发击退 = false;
 			            let 来源坐标 = null;
 			
-			            let 伤害来源是玩家 = 来源 === "玩家";
+			            let 伤害来源是玩家 = 来源 === "玩家" || (来源?.x===玩家.x&&来源?.y===玩家.y);
 			            let 伤害来源是宠物 = 来源 instanceof 宠物;
 			            
 			            if (来源 instanceof 武器类) {
@@ -13738,7 +13765,7 @@
 			        return Math.max(1, Math.round(effectiveCooldown));
 			    }
 			
-			    使用(目标怪物列表, 目标路径) {
+			    使用(目标怪物列表, 目标路径, 调用者) {
 			        if (
 			            this.堆叠数量 <= 0 ||
 			            this.自定义数据.get("冷却剩余") > 0
@@ -13778,7 +13805,7 @@
 			        目标怪物列表.forEach((怪物) => {
 			            if (怪物.当前生命值 > 0) {
 			                const 原始血量 = 怪物.当前生命值;
-			                怪物.受伤(Math.round(总伤害), "玩家");
+			                怪物.受伤(Math.round(总伤害), 调用者);
 			                const 实际伤害 = 原始血量 - 怪物.当前生命值;
 			                if (实际伤害 > 0) 总有效伤害 += 实际伤害;
 			
@@ -14781,7 +14808,7 @@
 			        return 最近怪物;
 			    }
 
-			    			    使用(目标怪物列表, 目标路径, 使用者 = 玩家) {
+			    使用(目标怪物列表, 目标路径, 使用者 = 玩家) {
 			        if (this.堆叠数量 <= 0 || this.自定义数据.get("冷却剩余") > 0) return 0;
 
 			        const 目标怪物 = this.寻找最近的可攻击怪物(使用者);
@@ -20081,7 +20108,7 @@
 			        });
 			    }
 			
-			    计算总迅捷加成() {
+			    计算总倍率加成() {
 			        let 激活的贪婪卷轴数量 = 0;
 			        if (
 			            typeof 当前激活卷轴列表 !== "undefined" &&
@@ -28973,7 +29000,7 @@
 			        生成特殊房间();
 			        has特殊房间生成 = true;
 			    }
-			    prng()
+			    
 			    生成墙壁();
 			
 			    const 第一个房间 = 房间列表[0];
@@ -29064,7 +29091,7 @@
 			     
 			     const 是否上锁 = 上锁房间列表.some(r => r.id === 房间.id);
 			
-			     if (prng() < 0.18) {
+			     if (prng() < 0.15) {
 			         生成毒气陷阱群(房间);
 			     }
 			
@@ -30269,6 +30296,7 @@
 			    if (死亡遮罩) 死亡遮罩.remove();
 			    死亡界面已显示 = false;
 			    更新视口();
+			    绘制小地图();
 			}
 			function 切换楼层(
 			    新层数,
@@ -34089,11 +34117,13 @@
 			        if (物品实例.堆叠数量 > 1) {
 			物品实例.堆叠数量--; 
 			const 移出物品 = 克隆物品(物品实例); 
-			移出物品.堆叠数量 = 1; 
+			移出物品.堆叠数量 = 1;
+			移出物品.实际唯一标识 = 物品实例.唯一标识
 			融合区物品[targetSlotIndex] = 移出物品; 
 			        } else {
 			玩家背包.delete(物品实例.唯一标识); 
 			if (物品实例.装备槽位) 物品实例.取消装备()
+			物品实例.实际唯一标识 = 物品实例.唯一标识
 			融合区物品[targetSlotIndex] = 物品实例; 
 			        }
 			        const 获取目标元素的函数 = () => document.getElementById(`融合区格子${targetSlotIndex + 1}`);
@@ -35082,7 +35112,7 @@
 			function 计算融合Buff(武器, 材料列表, 金币数量) {
 			    if (!武器) return [];
 			
-			    const 基础种子字符串 = 武器.唯一标识.toString();
+			    const 基础种子字符串 = 武器.唯一标识.toString()+材料列表?.[0]?.实际唯一标识?.toString();
 			    let 组合种子字符串 = 基础种子字符串;
 			    const 有效材料 = 材料列表.filter((m) => m != null);
 			    if (有效材料.length === 0 && 金币数量 === 0) return [];
@@ -40362,6 +40392,7 @@
 			    }
 			});
 			function 绘制小地图() {
+			    if (地牢.length !== 地牢大小) return;
 			    const 小地图 = document.getElementById("小地图");
 			    if (
 			        (当前天气效果.includes("诡魅") ||
@@ -40388,7 +40419,7 @@
 			    if (地牢.length > 0) {
 			        for (let y = 0; y < 地牢大小; y++) {
 			            for (let x = 0; x < 地牢大小; x++) {
-			                const 物品 = 地牢[y][x]?.关联物品;
+			                const 物品 = 地牢[y]?.[x]?.关联物品;
 			                if (
 			                    物品 &&
 			                    (物品 instanceof 护卫植物 ||
@@ -41032,7 +41063,7 @@
 			                const currX = 中心X + i * dx;
 			                const currY = 中心Y + i * dy;
 			
-			                if (检查移动可行性(prevX, prevY, currX, currY, false)) {
+			                if (检查移动可行性(prevX, prevY, currX, currY, false) && 位置是否可用(currX, currY, false)) {
 			                    陷阱坐标.push({ x: currX, y: currY });
 			                    prevX = currX;
 			                    prevY = currY;
@@ -48883,13 +48914,13 @@
 			         功能键映射[key.toLowerCase()] = actionMap[action];
 			     }
 			 });
-			
+			document.body.classList.toggle('手机模式启用', 游戏设置.手机模式);
+			document.body.classList.toggle('方向键隐藏', !游戏设置.显示方向键);
 			 document.querySelectorAll('.directional-btn').forEach(btn => {
 			 btn.style.width = `${游戏设置.方向键大小}vmin`;
 			 btn.style.height = `${游戏设置.方向键大小}vmin`;
 			 btn.style.borderRadius = `${游戏设置.方向键大小 / 4}vmin`;
 			 btn.style.fontSize = `${游戏设置.方向键大小 / 3}vmin`;
-			 btn.style.display = 游戏设置.显示方向键 ? 'flex' : 'none';
 			});
 			 
 			
@@ -48914,6 +48945,7 @@
 			 document.getElementById('方向键大小滑块').value = 游戏设置.方向键大小;
 			 document.getElementById('方向键大小值').textContent = `${游戏设置.方向键大小}vmin`;
 			 document.getElementById('显示方向键切换').classList.toggle('active', 游戏设置.显示方向键);
+			 document.getElementById('手机模式切换').classList.toggle('active', 游戏设置.手机模式);
 			 document.getElementById('移动速度滑块').value = 游戏设置.移动速度;
 			 document.getElementById('移动速度值').textContent = `${游戏设置.移动速度}ms`;
 			 document.getElementById('相机视野滑块').value = 游戏设置.相机视野大小;
@@ -49007,6 +49039,7 @@
 			 document.getElementById('移动速度滑块').oninput = function() { document.getElementById('移动速度值').textContent = `${this.value}ms`; };
 			 document.getElementById('相机视野滑块').oninput = function() { document.getElementById('相机视野值').textContent = this.value; };
 			 document.getElementById('显示方向键切换').onclick = function() { this.classList.toggle('active'); };
+			 document.getElementById('手机模式切换').onclick = function() { this.classList.toggle('active'); };
 			 document.getElementById('动画模式切换').onclick = function() { this.classList.toggle('active'); };
 			 document.getElementById('文本模式切换').onclick = function() { this.classList.toggle('active'); };
 			}
@@ -49033,6 +49066,7 @@
 			 游戏设置.相机视野大小 = parseInt(document.getElementById('相机视野滑块').value);
 			 
 			 游戏设置.显示方向键 = document.getElementById('显示方向键切换').classList.contains('active');
+			 游戏设置.手机模式 = document.getElementById('手机模式切换').classList.contains('active');
 			 游戏设置.动画模式 = document.getElementById('动画模式切换').classList.contains('active');
 			 游戏设置.文本模式 = document.getElementById('文本模式切换').classList.contains('active');
 			
@@ -49270,9 +49304,9 @@
 			        '战士': { 图标: 图标映射.战士, 描述: '攻守兼备，勇往直前' },
 			        '法师': { 图标: 图标映射.法师, 描述: '掌控元素，智慧超群' },
 			        '忍者': { 图标: 图标映射.忍者, 描述: '身法迅捷，一击致命' },
-			        '游侠': { 图标: '🏹', 描述: '百步穿杨，洞察先机' },
-			        '圣骑士': { 图标: '🛡️', 描述: '信仰坚定，守护队友' },
-			        '死灵法师': { 图标: '💀', 描述: '驱使亡灵，玩弄生死' }
+			        '游侠': { 图标: 图标映射.游侠, 描述: '百步穿杨，洞察先机' },
+			        '骑士': { 图标: 图标映射.骑士, 描述: '信仰坚定，守护队友' },
+			        '死灵': { 图标: 图标映射.死灵, 描述: '驱使亡灵，玩弄生死' }
 			    };
 			
 			    选项容器.innerHTML = '';
@@ -49348,6 +49382,7 @@
 			    if (typeof gsap !== 'undefined') {
 			        gsap.fromTo(遮罩, {autoAlpha:0},{ autoAlpha: 1, duration: 0.3, ease: 'power2.out' });
 			        
+			        
 			        gsap.fromTo(窗口, 
 			            { 
 			                y: '50vh', 
@@ -49364,9 +49399,13 @@
 			                onStart: () => {
 			                    遮罩.style.pointerEvents = 'auto';
 			                    窗口.style.visibility = 'visible';
+			                    窗口.style.transform = '';
 			                    更新选中状态();
 			                },
-			                
+			                onComplete: () => {
+			                    窗口.style.transform = '';
+			                    
+			                },
 			            }
 			        );
 			    } else {
@@ -49558,15 +49597,11 @@ async function 开始筛选种子() {
         seedsChecked++;
         const currentSeed = Date.now().toString() + seedsChecked;
         
-if (seedsChecked % 10 === 0) {
     statusDisplay.textContent = `筛选中... 已检查: ${seedsChecked} (种子: ${currentSeed})`;
-}
-        
-        // 使用Promise确保虚拟生成是异步的，避免阻塞UI
         const found = await new Promise(resolve => {
             setTimeout(() => {
                 resolve(虚拟生成并检查(currentSeed, criteria));
-            }, 0); // 屈服于事件循环
+            }, 0);
         });
 
         if (found) {
