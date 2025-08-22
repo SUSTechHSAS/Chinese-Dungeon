@@ -1492,7 +1492,7 @@
 .control-pad-actions {
     position: fixed;
     pointer-events: none;
-    left: 7vw;
+    left: 9vw;
     bottom: 100px;
     display: flex;
     flex-direction: column;
@@ -2258,8 +2258,6 @@ body.方向键隐藏 .control-pad {
 			#小地图 {
 			position: relative;
 			right: 10px;
-			width: 150px;
-			height: 150px;
 			border: 2px solid #4caf50;
 			border-radius: 8px;
 			box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -3423,6 +3421,11 @@ body.方向键隐藏 .control-pad {
 							<input type="range" id="相机视野滑块" min="5" max="30" value="15">
 							<span id="相机视野值">15</span>
 						</div>
+						<div class="设置行">
+							<label for="小地图大小滑块" class="设置标签">小地图大小</label>
+							<input type="range" id="小地图大小滑块" min="0" max="250" value="150">
+							<span id="小地图大小值">150px</span>
+						</div>
 					</div>
 				</div>
 				<div class="设置页脚">
@@ -3993,7 +3996,7 @@ body.方向键隐藏 .control-pad {
 			const 最大堆叠数 = 64;
 			let 地牢大小 = 100;
 			const 存档版本 = "v1";
-			const 游戏版本 = 1519
+			const 游戏版本 = 1520
 			const 所有天气列表 = [
 			    "雷暴",
 			    "诡魅",
@@ -4894,7 +4897,8 @@ body.方向键隐藏 .control-pad {
 			 动画模式: false,
 			 文本模式: false,
 			 相机视野大小: 15,
-			 移动速度: 100
+			 移动速度: 100,
+			 小地图大小: 150,
 			};
 			
 			const 热键绑定描述 = {
@@ -5070,6 +5074,59 @@ body.方向键隐藏 .control-pad {
 			let 装备栏每页装备数 = 7;
 			
 			canvas.addEventListener("touchstart", 处理地图点击);
+			let touchStartX = 0;
+			let touchStartY = 0;
+			let touchStartTime = 0;
+			const swipeThreshold = 30; // 至少滑动30像素才被视为滑动
+			const tapTimeThreshold = 300; // 300毫秒内的触摸被视为点击
+
+			function handleCanvasTouchStart(e) {
+				e.preventDefault();
+				const touch = e.touches[0];
+				touchStartX = touch.clientX;
+				touchStartY = touch.clientY;
+				touchStartTime = Date.now();
+			}
+
+			function handleCanvasTouchEnd(e) {
+				e.preventDefault();
+				if (touchStartX === 0 && touchStartY === 0) return;
+
+				const touch = e.changedTouches[0];
+				const touchEndX = touch.clientX;
+				const touchEndY = touch.clientY;
+				const touchEndTime = Date.now();
+
+				const deltaX = touchEndX - touchStartX;
+				const deltaY = touchEndY - touchStartY;
+				const duration = touchEndTime - touchStartTime;
+
+				touchStartX = 0;
+				touchStartY = 0;
+
+				if (Math.abs(deltaX) > swipeThreshold || Math.abs(deltaY) > swipeThreshold) {
+					if (Math.abs(deltaX) > Math.abs(deltaY)) {
+						if (deltaX > 0) {
+							移动玩家(玩家属性.移动步数, 0); // 右滑
+						} else {
+							移动玩家(-玩家属性.移动步数, 0); // 左滑
+						}
+					} else {
+						if (deltaY > 0) {
+							移动玩家(0, 玩家属性.移动步数); // 下滑
+						} else {
+							移动玩家(0, -玩家属性.移动步数); // 上滑
+						}
+					}
+				} else if (duration < tapTimeThreshold) {
+					处理点击(touchEndX, touchEndY);
+				}
+			}
+
+			canvas.removeEventListener("touchstart", 处理地图点击);
+			canvas.addEventListener("touchstart", handleCanvasTouchStart);
+			canvas.addEventListener("touchend", handleCanvasTouchEnd);
+
 			canvas.addEventListener("click", 处理地图单击); // 兼容PC端点击
 			function 注册全局类() {
 			    // --- 基础类 ---
@@ -48887,55 +48944,7 @@ body.方向键隐藏 .control-pad {
 			 应用所有设置();
 			}
 			
-			function 应用所有设置() {
-			 Object.keys(功能键映射).forEach(key => delete 功能键映射[key]);
-			 Object.entries(游戏设置.热键绑定).forEach(([action, key]) => {
-			     const actionMap = {
-			         '装备槽1': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 1),
-			         '装备槽2': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 2),
-			         '装备槽3': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 3),
-			         '装备槽4': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 4),
-			         '装备槽5': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 5),
-			         '装备槽6': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 6),
-			         '装备槽7': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 7),
-			         '切换HUD': () => 处理HUD切换按钮点击(),
-			         '背包': () => { 界面可见性.背包 = !界面可见性.背包; 切换背包显示(); },
-			         '日志': 切换日志显示,
-			         '互动': 尝试互动,
-			         '导出存档': 导出存档,
-			         '传送菜单': 打开传送菜单,
-			         '装备页上一页': () => 切换装备页(-1),
-			         '装备页下一页': () => 切换装备页(1),
-			         '自杀': 玩家死亡,
-			         '重置关卡': 重置创意关卡,
-			         '配方书': 打开配方书,
-			     };
-			     if (actionMap[action]) {
-			         功能键映射[key.toLowerCase()] = actionMap[action];
-			     }
-			 });
-			document.body.classList.toggle('手机模式启用', 游戏设置.手机模式);
-			document.body.classList.toggle('方向键隐藏', !游戏设置.显示方向键);
-			 document.querySelectorAll('.directional-btn').forEach(btn => {
-			 btn.style.width = `${游戏设置.方向键大小}vmin`;
-			 btn.style.height = `${游戏设置.方向键大小}vmin`;
-			 btn.style.borderRadius = `${游戏设置.方向键大小 / 4}vmin`;
-			 btn.style.fontSize = `${游戏设置.方向键大小 / 3}vmin`;
-			});
-			 
 			
-			 切换动画 = 游戏设置.动画模式;
-			
-			 if (中文模式 !== 游戏设置.文本模式) {
-			     切换中文模式();
-			 }
-			 
-			 相机显示边长 = 游戏设置.相机视野大小;
-			 移动间隔 = 游戏设置.移动速度;
-			
-			 初始化canvas();
-			 绘制();
-			}
 			
 			function 打开设置窗口() {
 			 const 遮罩 = document.getElementById("设置窗口遮罩");
@@ -48950,6 +48959,8 @@ body.方向键隐藏 .control-pad {
 			 document.getElementById('移动速度值').textContent = `${游戏设置.移动速度}ms`;
 			 document.getElementById('相机视野滑块').value = 游戏设置.相机视野大小;
 			 document.getElementById('相机视野值').textContent = 游戏设置.相机视野大小;
+			 document.getElementById('小地图大小滑块').value = 游戏设置.小地图大小;
+			 document.getElementById('小地图大小值').textContent = 游戏设置.小地图大小 > 0 ? `${游戏设置.小地图大小}px` : '隐藏';
 			 document.getElementById('动画模式切换').classList.toggle('active', 游戏设置.动画模式);
 			 document.getElementById('文本模式切换').classList.toggle('active', 游戏设置.文本模式);
 			
@@ -49038,10 +49049,91 @@ body.方向键隐藏 .control-pad {
 			 document.getElementById('方向键大小滑块').oninput = function() { document.getElementById('方向键大小值').textContent = `${this.value}vmin`; };
 			 document.getElementById('移动速度滑块').oninput = function() { document.getElementById('移动速度值').textContent = `${this.value}ms`; };
 			 document.getElementById('相机视野滑块').oninput = function() { document.getElementById('相机视野值').textContent = this.value; };
+			 document.getElementById('小地图大小滑块').oninput = function() { document.getElementById('小地图大小值').textContent = this.value > 0 ? `${this.value}px` : '隐藏'; };
 			 document.getElementById('显示方向键切换').onclick = function() { this.classList.toggle('active'); };
 			 document.getElementById('手机模式切换').onclick = function() { this.classList.toggle('active'); };
 			 document.getElementById('动画模式切换').onclick = function() { this.classList.toggle('active'); };
 			 document.getElementById('文本模式切换').onclick = function() { this.classList.toggle('active'); };
+			}
+			function 保存并应用设置() {
+			 document.querySelectorAll('.热键输入').forEach(input => {
+			     游戏设置.热键绑定[input.dataset.action] = input.value;
+			 });
+			
+			 游戏设置.方向键大小 = parseInt(document.getElementById('方向键大小滑块').value);
+			 游戏设置.移动速度 = parseInt(document.getElementById('移动速度滑块').value);
+			 游戏设置.相机视野大小 = parseInt(document.getElementById('相机视野滑块').value);
+			 游戏设置.小地图大小 = parseInt(document.getElementById('小地图大小滑块').value);
+			 
+			 游戏设置.显示方向键 = document.getElementById('显示方向键切换').classList.contains('active');
+			 游戏设置.手机模式 = document.getElementById('手机模式切换').classList.contains('active');
+			 游戏设置.动画模式 = document.getElementById('动画模式切换').classList.contains('active');
+			 游戏设置.文本模式 = document.getElementById('文本模式切换').classList.contains('active');
+			
+			 localStorage.setItem('ChineseDungeonSettings', JSON.stringify(游戏设置));
+			 
+			 应用所有设置();
+			
+			 显示通知("设置已保存！", "成功");
+			 关闭设置窗口();
+			}
+			function 应用所有设置() {
+			 Object.keys(功能键映射).forEach(key => delete 功能键映射[key]);
+			 Object.entries(游戏设置.热键绑定).forEach(([action, key]) => {
+			     const actionMap = {
+			         '装备槽1': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 1),
+			         '装备槽2': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 2),
+			         '装备槽3': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 3),
+			         '装备槽4': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 4),
+			         '装备槽5': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 5),
+			         '装备槽6': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 6),
+			         '装备槽7': () => 使用装备槽物品(当前装备页 * 装备栏每页装备数 + 7),
+			         '切换HUD': () => 处理HUD切换按钮点击(),
+			         '背包': () => { 界面可见性.背包 = !界面可见性.背包; 切换背包显示(); },
+			         '日志': 切换日志显示,
+			         '互动': 尝试互动,
+			         '导出存档': 导出存档,
+			         '传送菜单': 打开传送菜单,
+			         '装备页上一页': () => 切换装备页(-1),
+			         '装备页下一页': () => 切换装备页(1),
+			         '自杀': 玩家死亡,
+			         '重置关卡': 重置创意关卡,
+			         '配方书': 打开配方书,
+			     };
+			     if (actionMap[action]) {
+			         功能键映射[key.toLowerCase()] = actionMap[action];
+			     }
+			 });
+			document.body.classList.toggle('手机模式启用', 游戏设置.手机模式);
+			document.body.classList.toggle('方向键隐藏', !游戏设置.显示方向键);
+			 document.querySelectorAll('.directional-btn').forEach(btn => {
+			 btn.style.width = `${游戏设置.方向键大小}vmin`;
+			 btn.style.height = `${游戏设置.方向键大小}vmin`;
+			 btn.style.borderRadius = `${游戏设置.方向键大小 / 4}vmin`;
+			 btn.style.fontSize = `${游戏设置.方向键大小 / 3}vmin`;
+			});
+			 
+			 const 小地图容器 = document.getElementById('小地图容器');
+			 const 小地图 = document.getElementById('小地图');
+			 if (游戏设置.小地图大小 > 0) {
+			     小地图容器.style.display = 'block';
+			     小地图.style.width = `${游戏设置.小地图大小}px`;
+			     小地图.style.height = `${游戏设置.小地图大小}px`;
+			 } else {
+			     小地图容器.style.display = 'none';
+			 }
+			
+			 切换动画 = 游戏设置.动画模式;
+			
+			 if (中文模式 !== 游戏设置.文本模式) {
+			     切换中文模式();
+			 }
+			 
+			 相机显示边长 = 游戏设置.相机视野大小;
+			 移动间隔 = 游戏设置.移动速度;
+			
+			 初始化canvas();
+			 绘制();
 			}
 			
 			function 关闭设置窗口() {
@@ -49056,27 +49148,7 @@ body.方向键隐藏 .control-pad {
 			 }, 300);
 			}
 			
-			function 保存并应用设置() {
-			 document.querySelectorAll('.热键输入').forEach(input => {
-			     游戏设置.热键绑定[input.dataset.action] = input.value;
-			 });
 			
-			 游戏设置.方向键大小 = parseInt(document.getElementById('方向键大小滑块').value);
-			 游戏设置.移动速度 = parseInt(document.getElementById('移动速度滑块').value);
-			 游戏设置.相机视野大小 = parseInt(document.getElementById('相机视野滑块').value);
-			 
-			 游戏设置.显示方向键 = document.getElementById('显示方向键切换').classList.contains('active');
-			 游戏设置.手机模式 = document.getElementById('手机模式切换').classList.contains('active');
-			 游戏设置.动画模式 = document.getElementById('动画模式切换').classList.contains('active');
-			 游戏设置.文本模式 = document.getElementById('文本模式切换').classList.contains('active');
-			
-			 localStorage.setItem('ChineseDungeonSettings', JSON.stringify(游戏设置));
-			 
-			 应用所有设置();
-			
-			 显示通知("设置已保存！", "成功");
-			 关闭设置窗口();
-			}
 			const Q字形图案 = [
 			 " XXXX ",
 			 "X    X",
