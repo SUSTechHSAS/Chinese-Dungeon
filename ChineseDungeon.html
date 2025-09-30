@@ -3996,7 +3996,7 @@ body.方向键隐藏 .control-pad {
 			const 最大堆叠数 = 64;
 			let 地牢大小 = 100;
 			const 存档版本 = "v1";
-			const 游戏版本 = 1523
+			const 游戏版本 = 1524
 			const 所有天气列表 = [
 			    "雷暴",
 			    "诡魅",
@@ -5312,6 +5312,7 @@ body.方向键隐藏 .control-pad {
 			    window.神偷手 = 神偷手;
 			    window.追踪风弹 = 追踪风弹;
 			    window.扫帚=扫帚;
+			    window.守卫者盔甲 = 守卫者盔甲;
 			    
 			
 			    // --- 防御装具体子类 ---
@@ -5828,7 +5829,7 @@ body.方向键隐藏 .control-pad {
 			        this.掉落物 =
 			            配置.掉落物 ||
 			            new 金币({ 数量: Math.floor(prng() * 5) + 1 });
-			        this.掉落概率 = 配置.掉落概率 ?? 1,
+			        this.掉落概率 = 配置.掉落概率 ?? 0.9,
 			        this.血条元素 = null;
 			        this.受击动画 = false;
 			        this.基础攻击范围 = 配置.基础攻击范围 || 1;
@@ -7246,13 +7247,30 @@ body.方向键隐藏 .control-pad {
 			                }
 			                this.恢复背景类型();
 			                if (!(this instanceof 复活怪物) && !(this instanceof 娃娃怪物)) {
-			                    最近击杀列表.push({ 类名: this.constructor.name, 配置: { 强化: this.强化 } });
+			                    最近击杀列表.push({ 类名: this.constructor.name, 配置: { 强化: this.强化,永久增益: this.永久增益 } });
 			                    if (最近击杀列表.length > 10) { 
 			                        最近击杀列表.shift();
 			                    }
 			                }
 			                
 			                所有怪物 = 所有怪物.filter((m) => m !== this);
+			                if (this.永久增益.some(b => b.类型 === '自爆')) {
+    const 自爆伤害 = Math.ceil(this.生命值 / 2);
+    const 自爆弹 = new 炸弹({
+        
+            倒计时: 1,
+            爆炸时间: 1,
+            伤害: 自爆伤害,
+            来源: '怪物',
+            爆炸范围: 3,
+            能否拾起: false,
+            颜色索引: 4,
+    });
+    if(放置物品到单元格(自爆弹, this.x, this.y)){
+        自爆弹.使用(false, this.x, this.y);
+        添加日志(`${this.类型} 死亡时留下了一颗危险的炸弹！`, '警告');
+    }
+}
 			                if (
 			                    当前天气效果.includes("诡魅") &&
 			                    !(this instanceof 幽灵怪物) &&
@@ -7306,22 +7324,7 @@ body.方向键隐藏 .control-pad {
 			                        单元格.颜色索引 = 颜色表.length
 			                    }
 			                }
-			                if (this.永久增益.some(b => b.类型 === '自爆')) {
-    const 自爆伤害 = Math.ceil(this.生命值 / 2);
-    const 自爆弹 = new 炸弹({
-        
-            倒计时: 1,
-            爆炸时间: 1,
-            伤害: 自爆伤害,
-            来源: '怪物',
-            爆炸范围: 3,
-            能否拾起: false,
-    });
-    if(放置物品到单元格(自爆弹, this.x, this.y)){
-        自爆弹.使用(false, this.x, this.y);
-        添加日志(`${this.类型} 死亡时留下了一颗危险的炸弹！`, '警告');
-    }
-}
+			                
 			                if (是否为教程层 && this.房间ID === 2) {
 			                    教程阶段 = 2.5; 
 			                    教程提示已显示 = false;
@@ -7714,8 +7717,8 @@ body.方向键隐藏 .control-pad {
 			            掉落物: new 金币({ 数量: 5 }),
 			            ...配置,
 			        });
-			        this.分裂冷却 = 5 - (配置.强化 ? 1 : 0);
-			        this.分裂冷却剩余 = this.分裂冷却;
+			        this.分裂冷却 = 配置.分裂冷却 ?? 5 - (配置.强化 ? 1 : 0);
+			        this.分裂冷却剩余 = 配置.分裂冷却剩余 ?? this.分裂冷却;
 			    }
 			
 			    尝试移动() {
@@ -7739,7 +7742,7 @@ body.方向键隐藏 .control-pad {
 			            const 新X = this.x + dx;
 			            const 新Y = this.y + dy;
 			            if (位置是否可用(新X, 新Y, true)) {
-			                const 克隆体 = new 分裂怪物({ 强化: this.强化 });
+			                const 克隆体 = new 分裂怪物({ 强化: this.强化,分裂冷却:this.分裂冷却});
 			                克隆体.当前生命值 = Math.max(1,this.生命值 - this.当前生命值); 
 			                if (放置怪物到单元格(克隆体, 新X, 新Y)) {
 			                    克隆体.状态 = 怪物状态.活跃;
@@ -7874,22 +7877,22 @@ body.方向键隐藏 .control-pad {
 			        }
 			    }
 			    
-			    获得效果(状态效果) {
+			    获得效果(效果) {
 			        if (this.主体) {
 			            const 现有主体效果 = 怪物状态表.get(this.主体);
-			            if (现有主体效果 && 现有主体效果.类型 === 状态效果.类型) {
-			                 现有主体效果.剩余回合 = Math.max(现有主体效果.剩余回合, 状态效果.剩余回合);
-			                 现有主体效果.强度 = Math.min(5, (现有主体效果.强度 || 1) + (状态效果.强度 || 1));
+			            if (现有主体效果 && 现有主体效果.类型 === 效果.类型) {
+			                 现有主体效果.剩余回合 = Math.max(现有主体效果.剩余回合, 效果.剩余回合);
+			                 现有主体效果.强度 = Math.min(5, (现有主体效果.强度 || 1) + (效果.强度 || 1));
 			            } else {
 			                const 新状态 = new 状态效果(
-			                    状态效果.类型,
-			                    状态效果.颜色,
-			                    状态效果.图标,
-			                    状态效果.持续时间,
-			                    状态效果.剩余回合,
-			                    状态效果.来源,
+			                    效果.类型,
+			                    效果.颜色,
+			                    效果.图标,
+			                    效果.持续时间,
+			                    效果.剩余回合,
+			                    效果.来源,
 			                    this.主体, 
-			                    状态效果.强度
+			                    效果.强度
 			                );
 			            }
 			            return true;
@@ -8008,7 +8011,7 @@ body.方向键隐藏 .control-pad {
 			        if (this.攻击冷却回合剩余 > 0) {
 			            this.攻击冷却回合剩余--;
 			        }
-			        if (this.当前生命值 <= 0 || this.状态 !== 怪物状态.活跃) return;
+			        if (this.当前生命值 <= 0 || this.状态 !== 怪物状态.活跃 || this.移动率 > prng()) return;
 			
 			        this.目标路径 = this.计算路径(玩家.x, 玩家.y);
 			        if (!this.目标路径 || this.目标路径.length <= 1) return;
@@ -8082,7 +8085,7 @@ body.方向键隐藏 .control-pad {
 			        const 弹道路径 = 路径.slice(0,5);
 			        
 			        if(弹道路径.length === 0) return false;
-			
+			        let 爆炸格子 = [];
 			        弹道路径.forEach((节点, 索引) => {
 			            setTimeout(() => {
 			                const 弹头格子 = [
@@ -8105,17 +8108,18 @@ body.方向键隐藏 .control-pad {
 			                        const 爆炸范围 = 2;
 			                        const 爆炸中心X = 节点.x;
 			                        const 爆炸中心Y = 节点.y;
-			                        const 爆炸格子 = [];
+			                        
 			
 			                        for (let dy = -爆炸范围; dy <= 爆炸范围; dy++) {
 			                            for (let dx = -爆炸范围; dx <= 爆炸范围; dx++) {
 			                               if (Math.abs(dx) + Math.abs(dy) <= 爆炸范围) {
-			                                   爆炸格子.push({x: 爆炸中心X + dx, y: 爆炸中心Y + dy});
+			                                   
+			                                   计划显示格子特效([{x: 爆炸中心X + dx, y: 爆炸中心Y + dy}], "A52A2A")
 			                               }
 			                            }
 			                        }
 			                        
-			                        计划显示格子特效(爆炸格子, "A52A2A");
+			                        
 			                        爆炸格子.forEach(位置 => {
 			                             if (玩家.x === 位置.x && 玩家.y === 位置.y) {
 			                                 伤害玩家(this.攻击力 * 1.2, this);
@@ -11735,6 +11739,7 @@ body.方向键隐藏 .control-pad {
 			                            状态: 怪物状态.活跃, // 出生即活跃
 			                            强化: this.强化, // 继承强化状态
 			                        });
+			                        if (this.永久增益.some(b => b.类型 === '自爆')) 史莱姆.永久增益.push(新怪物.携带药水);
 			                    } else {
 			                        史莱姆 = new 小史莱姆怪物({
 			                            x: 新X,
@@ -11743,6 +11748,7 @@ body.方向键隐藏 .control-pad {
 			                            状态: 怪物状态.活跃, // 出生即活跃
 			                            强化: this.强化, // 继承强化状态
 			                        });
+			                        if (this.永久增益.some(b => b.类型 === '自爆')) 史莱姆.永久增益.push(新怪物.携带药水);
 			                    }
 			                    放置怪物到单元格(史莱姆, 新X, 新Y);
 			                    成功分裂数++;
@@ -30454,10 +30460,10 @@ body.方向键隐藏 .control-pad {
 			                            { 类型: '永久强化', 值: 10 },
 			                            { 类型: '永久抗毒', 图标: 图标映射.永久抗毒 },
 			                            { 类型: '永久解冻', 图标: 图标映射.永久解冻 },
+			                            { 类型: '自爆', 图标: 图标映射.炸弹 }
 			                        ];
 			                        新怪物.携带药水 = 药水池[Math.floor(prng() * 药水池.length)];
-			                    } else if (当前层数>7 && prng() < 0.15+(当前层数-7)*0.1){
-			                        新怪物.永久增益.push({ 类型: '自爆', 图标: 图标映射.炸弹 });
+			                        if (新怪物.携带药水.类型 === '自爆') 新怪物.永久增益.push(新怪物.携带药水);
 			                    }
 			                    新怪物.基础生命值 += 当前层数权重 * 3;
 			                    新怪物.当前生命值 += 当前层数权重 * 3;
@@ -30779,6 +30785,8 @@ body.方向键隐藏 .control-pad {
 			            待保存楼层数据.当前天气效果 = [...当前天气效果];
 			            待保存楼层数据.已放置配方卷轴 = 当前数据.已放置配方卷轴;
 			            所有地牢层.set(当前层数, 待保存楼层数据);
+			        } else {
+			            传送点列表 = [];
 			        }
 			
 			        当前层数 = 新层数;
@@ -32664,6 +32672,10 @@ body.方向键隐藏 .control-pad {
 			    const 特效容器 = document.getElementById("effectsContainer");
 			
 			    路径.forEach((节点, index) => {
+			        if (!(节点.x >= 视口偏移X &&
+			            节点.x < 视口偏移X + 相机显示边长 &&
+			            节点.y >= 视口偏移Y &&
+			            节点.y < 视口偏移Y + 相机显示边长)) return;
 			        const 屏幕X = (节点.x - 当前相机X) * 单元格大小;
 			        const 屏幕Y = (节点.y - 当前相机Y) * 单元格大小;
 			
@@ -37038,7 +37050,7 @@ body.方向键隐藏 .control-pad {
 			        ArrowDown: "down", s: "down", S: "down",
 			        ArrowRight: "right", d: "right", D: "right",
 			    };
-			    if (keyMap[e.key] && 玩家属性.允许移动 === 0) {
+			    if (keyMap[e.key] && 玩家属性.允许移动 <= 0) {
 			        const direction = keyMap[e.key];
 			        if (移动状态[direction]) return;
 			        移动状态[direction] = true;
@@ -39796,6 +39808,9 @@ body.方向键隐藏 .control-pad {
 			    - 地牢有很多层，每层都有不同的怪物和宝藏。<br>
 			    - 找到并走下楼梯 ${图标映射.下楼楼梯} 即可进入下一层，开始你的冒险！`;
 			            break;
+			        case "首领挑战":
+    提示文本 = `<b>首领挑战模式：</b><br>你将面对一系列强大的首领和怪物组合。祝你好运！`;
+    break;
 			        default:
 			            提示文本 = "未知教程阶段"; // 或者返回空字符串
 			    }
@@ -40443,7 +40458,7 @@ body.方向键隐藏 .control-pad {
 			        当前时间 - 上次自动回合时间 >= 自动回合间隔 &&
 			        切换动画
 			    ) {
-			        if (!死亡界面已显示 && 玩家属性.允许移动 === 0) {
+			        if (!死亡界面已显示 && 玩家属性.允许移动 <= 0) {
 			            处理回合逻辑();
 			            上次自动回合时间 = 当前时间;
 			        }
@@ -40946,7 +40961,7 @@ body.方向键隐藏 .control-pad {
 			            clearInterval(moveInterval);
 			            return;
 			        }
-			        if (玩家属性.允许移动 === 0) {
+			        if (玩家属性.允许移动 <= 0) {
 			            let targetIndex = Math.min(
 			                玩家属性.移动步数 - 1,
 			                moveQueue.length - 1
@@ -43799,7 +43814,7 @@ function 启动游戏(存档数据 = null, 是否是创意关卡 = false, 种子
 			
 			function 克隆怪物编辑器(原始怪物) {
 			    if (!原始怪物 || typeof 原始怪物.constructor !== 'function' || 原始怪物 instanceof 巨人怪物 || 原始怪物 instanceof 巨人部位) {
-			        return null;
+			        return null; //未开发
 			    }
 			    const 配置 = {}
 			    for (const 键 in 原始怪物) {
