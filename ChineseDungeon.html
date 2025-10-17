@@ -3887,7 +3887,7 @@ body.方向键隐藏 .control-pad {
 					<button id="编辑器保存按钮" class="菜单按钮" style="padding: 8px 15px; font-size: 0.9em; margin:0; min-width:0px;">导出地图</button>
 					<button id="编辑器加载按钮" class="菜单按钮" style="padding: 8px 15px; font-size: 0.9em; margin:0; min-width:0px;">导入地图</button>
 					<button id="编辑器设置起点按钮" class="菜单按钮" style="padding: 8px 15px; font-size: 0.9em; margin:0; min-width:0px;">设置起点</button>
-					<button id="编辑器模板按钮" class="菜单按钮" style="padding: 8px 15px; font-size: 0.9em; margin:0; min-width:0px;">生成模板</button>
+					<button id="编辑器模板按钮" class="菜单按钮" style="padding: 8px 15px; font-size: 0.9em; margin:0; min-width:0px;">生成地牢模板</button>
 					<button id="编辑器洞穴模板按钮" class="菜单按钮" style="padding: 8px 15px; font-size: 0.9em; margin:0; min-width:0px;">生成洞穴模板</button>
 					<button id="编辑器迷宫模板按钮" class="菜单按钮" style="padding: 8px 15px; font-size: 0.9em; margin:0; min-width:0px;">生成迷宫模板</button>
 				</div>
@@ -4052,11 +4052,7 @@ body.方向键隐藏 .control-pad {
 					<p><strong>《Rogue》:</strong> 程序生成地牢</p>
 					<h3>更新日志 <span class="info-version-tag">v</span></h3>
 					<ul>
-						<li><strong>新功能:</strong> 增加了背包整理功能，允许游戏内设置。</li>
-						<li><strong>新元素:</strong> 新增了蜈蚣怪物、锅盖、洞穴模式、迷宫模式。</li>
-						<li><strong>新功能:</strong> 新增了多宠物同时出战功能！</li>
-						<li><strong>新功能:</strong> 增加了地图编辑器笔刷。</li>
-						<li><strong>新功能:</strong> 支持鼠标中键控制。</li>
+						<li><strong>新功能:</strong> 增加了死灵法杖。</li>
 						<li><strong>修复:</strong> 修复了若干问题。</li>
 					</ul>
 					
@@ -4320,7 +4316,7 @@ body.方向键隐藏 .control-pad {
 			const 最大堆叠数 = 64;
 			let 地牢大小 = 100;
 			const 存档版本 = "v1";
-			const 游戏版本 = 1525
+			const 游戏版本 = 1526
 			document.querySelector('.info-version-tag').innerHTML=`v${游戏版本}`;
 			const 所有天气列表 = [
 			    "雷暴",
@@ -4534,6 +4530,8 @@ body.方向键隐藏 .control-pad {
             烟雾: "雾",
             蜈蚣怪物:"虫",
             定位器地图:"图",
+            死灵法杖: "杖",
+            骷髅仆从: "骸",
 			};
 			let 图标映射 = {
 			    药水: "🧪",
@@ -4729,6 +4727,8 @@ body.方向键隐藏 .control-pad {
             烟雾: "🌫️",
             蜈蚣怪物:"🐲",
             定位器地图:"🗺️",
+            死灵法杖: "🪄",
+            骷髅仆从: "💀",
 			};
 			// 单元格类型枚举
 			const 单元格类型 = {
@@ -4878,6 +4878,7 @@ body.方向键隐藏 .control-pad {
 			        { 类: 陨石法杖, 品质: 4, 最小层: 6 },
 			        { 类: 狙击金币枪, 品质: 2, 最小层: 4 },
 			        { 类: 追踪风弹, 品质: 3, 最小层: 4 },
+			        { 类: 死灵法杖, 品质: 2, 最小层: 7 },
 			        { 类: 扫帚, 品质: 2, 最小层: 2 },
 			    ],
 			    工具: [
@@ -5259,7 +5260,7 @@ body.方向键隐藏 .control-pad {
 			 相机视野大小: 15,
 			 移动速度: 100,
 			 小地图大小: 150,
-			 受伤时击退: true,
+			 受伤时击退: false,
 			};
 			
 			const 热键绑定描述 = {
@@ -5376,6 +5377,7 @@ body.方向键隐藏 .control-pad {
 			let 当前相机X = 视口偏移X;
 			let 当前相机Y = 视口偏移Y;
 			let 相机锁定 = false; // 防止中途更新目标
+			let 玩家仆从列表 = [];
 			const 相机移动速度 = 0.2;
 			let 显示模式 = "装备"; // 默认显示装备槽
 			let 日志历史 = [];
@@ -5753,7 +5755,7 @@ ctx.fillText(图标, sx, sy);
 }
 房间列表.forEach(房间 => {
 const 已访问 = floorData?.已访问房间?.has(房间.id);
-if  ((已访问 || 开发者模式)&&房间.id!=下楼房间) return;
+if  ((已访问 && 房间.id!==下楼房间)||开发者模式||游戏状态==="地图编辑器") return;
 const rx = 房间.x * 单元格尺寸;
 const ry = 房间.y * 单元格尺寸;
 
@@ -6013,7 +6015,7 @@ function 大地图悬停信息(事件) {
     const 世界Y = Math.floor((y - 大地图状态.平移Y) / (16 * 大地图状态.缩放等级));
 
     const 房间ID = 房间地图[世界Y]?.[世界X];
-    if (房间ID !== undefined && 房间ID !== -1 && 已访问房间.has(房间ID)) {
+    if (房间ID !== undefined && 房间ID !== -1 && (已访问房间.has(房间ID)||开发者模式||游戏状态=="地图编辑器")) {
         const room = 房间列表.find(r => r && r.id === 房间ID);
         if (room) {
             大地图状态.悬停信息 = `房间 ${room.id}: ${room.名称 || '未命名'} (${room.类型 || '普通'})`;
@@ -6426,7 +6428,7 @@ function 移除大地图事件监听() {
 			    window.追踪风弹 = 追踪风弹;
 			    window.扫帚=扫帚;
 			    window.守卫者盔甲 = 守卫者盔甲;
-			    
+			    window.死灵法杖 = 死灵法杖;
 			
 			    // --- 防御装具体子类 ---
 			    window.秘银锁甲 = 秘银锁甲;
@@ -6515,6 +6517,7 @@ function 移除大地图事件监听() {
 			    window.巨人部位 = 巨人部位;
 			    window.移动弹幕=移动弹幕;
 			    window.蜘蛛怪物=蜘蛛怪物;
+			    window.骷髅仆从 = 骷髅仆从;
 			    window.反弹怪物=反弹怪物;
 			    window.蜈蚣怪物 = 蜈蚣怪物;
                 window.蜈蚣部位 = 蜈蚣部位;
@@ -8206,34 +8209,29 @@ if (版本信息元素) {
 			        return null;
 			    }
 			    选择目标() {
-			        if (怪物状态表.get(this)?.类型 === "魅惑") {
-			            return this.寻找最近怪物目标();
-			        }
-			        if (this.仇恨 instanceof 怪物 && this.仇恨.当前生命值 > 0) {
-			            return this.仇恨;
-			        }
-			
-					const 潜在目标列表 = [玩家];
-    当前出战宠物列表.forEach(pet => {
-        if (pet && pet.是否已放置 && !pet.自定义数据.get("休眠中") && pet.层数==当前层数) {
-            潜在目标列表.push(pet);
-        }
-    });
+    if (怪物状态表.get(this)?.类型 === "魅惑") {
+        return this.寻找最近怪物目标();
+    }
+    if (this.仇恨 instanceof 怪物 && this.仇恨.当前生命值 > 0) {
+        return this.仇恨;
+    }
 
+    const 潜在目标列表 = [玩家, ...当前出战宠物列表, ...玩家仆从列表];
     let 最近目标 = null;
     let 最小距离 = Infinity;
 
-    // 遍历所有潜在目标，找到距离最近的一个
     潜在目标列表.forEach(目标 => {
-        const 距离 = Math.abs(this.x - 目标.x) + Math.abs(this.y - 目标.y);
-        if (距离 < 最小距离) {
-            最小距离 = 距离;
-            最近目标 = 目标;
+        if (目标 && (目标.当前生命值 > 0 || 目标 === 玩家) && (目标.是否已放置 || 目标 === 玩家)) {
+            const 距离 = Math.abs(this.x - 目标.x) + Math.abs(this.y - 目标.y);
+            if (距离 < 最小距离) {
+                最小距离 = 距离;
+                最近目标 = 目标;
+            }
         }
     });
     
     return 最近目标 || 玩家;
-			    }
+}
 			    尝试攻击() {
 			        let 目标 = this.目标;
 			        if (!目标) return false;
@@ -12184,8 +12182,8 @@ class 蜈蚣怪物 extends 怪物 {
 			                            获取房间("最终秘室")
 			                        );
 			                        if (游戏状态 === '地图编辑器' || 游戏状态 === '编辑器游玩') {
-			                        const 旗帜位置 = 可用位置列表.shift();
-			                        放置物品到单元格(new 旗帜(), 旗帜位置.x, 旗帜位置.y);
+			                        
+			                        放置物品到房间(new 旗帜(),获取房间("最终秘室"));
 									} else if (游戏状态 !== '图鉴') {
 										放置楼梯(
 											获取房间("最终秘室"),
@@ -12998,6 +12996,178 @@ class 蜈蚣怪物 extends 怪物 {
 			        }
 			    }
 			}
+			class 骷髅仆从 extends 怪物 {
+    constructor(配置 = {}) {
+        super({
+            图标: 图标映射.骷髅仆从,
+            类型: "骷髅仆从",
+            基础生命值: 15 + (配置.强化 ? 10 : 0),
+            基础攻击力: 3 + (配置.强化 ? 2 : 0),
+            移动率: 1.0,
+            掉落概率: 0,
+            基础攻击范围: 1,
+            跟踪距离: 50,
+            ...配置,
+        });
+        this.主人 = 玩家;
+        this.状态 = 怪物状态.活跃;
+        this.生命周期 = 30 + (配置.强化 ? 20 : 0);
+    }
+
+    选择目标() {
+        if (this.仇恨 && this.仇恨.当前生命值 > 0) {
+            const 距离 = Math.abs(this.x - this.仇恨.x) + Math.abs(this.y - this.仇恨.y);
+            if (距离 < this.跟踪距离 && 检查视线(this.x, this.y, this.仇恨.x, this.仇恨.y, this.跟踪距离)) {
+                return this.仇恨;
+            }
+        }
+        return this.寻找最近怪物目标();
+    }
+
+    寻找最近怪物目标() {
+        let 最近距离 = Infinity;
+        let 最近目标 = {x:玩家.x,y:玩家.y};
+
+        所有怪物.forEach(怪物 => {
+            if (怪物.状态 === 怪物状态.活跃 && 怪物.当前生命值 > 0 && !(怪物 instanceof 骷髅仆从) && !(怪物 instanceof 远射陷阱) && !(怪物 instanceof 巡逻怪物)) {
+                const 距离 = Math.abs(this.x - 怪物.x) + Math.abs(this.y - 怪物.y);
+                if (距离 < 最近距离 && 检查视线(this.x, this.y, 怪物.x, 怪物.y, this.跟踪距离)) {
+                    最近距离 = 距离;
+                    最近目标 = 怪物;
+                }
+            }
+        });
+        this.仇恨 = 最近目标;
+        return 最近目标;
+    }
+
+    尝试移动() {
+        if (this.生命周期 > 0) {
+            this.生命周期--;
+        } else {
+            this.受伤(999, '消散');
+            return;
+        }
+
+        const 目标 = this.选择目标();
+        if (!目标) {
+            const 距离主人 = Math.abs(this.x - this.主人.x) + Math.abs(this.y - this.主人.y);
+            if (距离主人 > 2) {
+                this.目标路径 = this.计算路径(this.主人.x, this.主人.y);
+                if (this.目标路径 && this.目标路径.length > 0) {
+                    super.尝试移动();
+                }
+            }
+            return;
+        }
+
+        const 距离目标 = Math.abs(this.x - 目标.x) + Math.abs(this.y - 目标.y);
+
+        if (距离目标 > this.攻击范围) {
+            this.目标路径 = this.计算路径(目标.x, 目标.y);
+            if (this.目标路径 && this.目标路径.length > 0) {
+                super.尝试移动();
+            }
+        }
+    }
+    
+    尝试攻击() {
+        const 目标 = this.选择目标();
+        if (目标 && 深度比较(目标,this.主人)) {
+             const 距离目标 = Math.abs(this.x - 目标.x) + Math.abs(this.y - 目标.y);
+             if (距离目标 <= this.攻击范围) {
+                 目标.受伤(this.攻击力, this);
+                 计划显示格子特效(获取直线路径(this.x,this.y,目标.x,目标.y));
+                 return true;
+             }
+        }
+        return false;
+    }
+    
+    受伤(伤害, 来源 = null) {
+        if (来源 !== 玩家 && !(来源 instanceof 骷髅仆从)) {
+            this.当前生命值 -= 伤害;
+        }
+        if (来源 instanceof 怪物) {
+			            let dx = this.x - 来源.x;
+			            let dy = this.y - 来源.y;
+			            let 方向DX = 0, 方向DY = 0;
+
+			            if (Math.abs(dx) > Math.abs(dy)) {
+			                方向DX = Math.sign(dx) || (dy === 0 ? (prng() < 0.5 ? 1 : -1) : 0);
+			            } else if (Math.abs(dy) > Math.abs(dx)) {
+			                方向DY = Math.sign(dy) || (dx === 0 ? (prng() < 0.5 ? 1 : -1) : 0);
+			            } else if (dx !== 0) {
+			                方向DX = Math.sign(dx);
+			            } else if (dy !== 0) {
+			                方向DY = Math.sign(dy);
+			            }
+
+			            const 新X = this.x + 方向DX;
+			            const 新Y = this.y + 方向DY;
+
+			            if (位置是否可用(新X, 新Y, true, false) && 检查移动可行性(this.x, this.y, 新X, 新Y)) {
+			                const 旧X = this.x;
+			                const 旧Y = this.y;
+			                this.x = 新X;
+			                this.y = 新Y;
+			                怪物动画状态.set(this, {
+			                    旧逻辑X: 旧X, 旧逻辑Y: 旧Y,
+			                    目标逻辑X: 新X, 目标逻辑Y: 新Y,
+			                    视觉X: 旧X, 视觉Y: 旧Y,
+			                    动画开始时间: Date.now(), 正在动画: true,
+			                });
+			                //添加日志(`${this.名称} 被击退了！`, "警告");
+			            }
+			        }
+        
+        if (this.当前生命值 <= 0) {
+            this.恢复背景类型();
+            所有怪物 = 所有怪物.filter(m => m !== this);
+            玩家仆从列表 = 玩家仆从列表.filter(p => p !== this);
+            计划显示格子特效([{ x: this.x, y: this.y }], "FFFFFF");
+        }
+    }
+
+    绘制血条(隐藏 = false) {
+        const 动画状态 = 怪物动画状态.get(this);
+			        let 绘制逻辑X = this.x;
+			        let 绘制逻辑Y = this.y;
+			        const 正在动画 = 动画状态?.正在动画;
+			
+			        if (正在动画) {
+			            绘制逻辑X =
+			                动画状态.视觉X !== undefined
+			                    ? 动画状态.视觉X
+			                    : this.x;
+			            绘制逻辑Y =
+			                动画状态.视觉Y !== undefined
+			                    ? 动画状态.视觉Y
+			                    : this.y;
+			        }
+			
+			        const 屏幕X = (绘制逻辑X - 当前相机X) * 单元格大小;
+			        const 屏幕Y = (绘制逻辑Y - 当前相机Y) * 单元格大小;
+        const 宽度 = 单元格大小;
+
+        const 血条高度 = 4;
+        const 血条Y = 屏幕Y - 12;
+        const 血条背景色 = "#444";
+        const 血条前景色 = "#90ee90";
+
+        ctx.save();
+        ctx.fillStyle = 血条背景色;
+        ctx.fillRect(屏幕X, 血条Y, 宽度, 血条高度);
+        const 血量百分比 = Math.max(0, (this.当前生命值 / this.生命值) * 100);
+        ctx.fillStyle = 血条前景色;
+        ctx.fillRect(屏幕X, 血条Y, 宽度 * (血量百分比 / 100), 血条高度);
+        ctx.restore();
+    }
+}
+
+
+
+    
 			class 召唤师怪物 extends 怪物 {
 			    constructor(配置 = {}) {
 			        super({
@@ -17542,6 +17712,78 @@ class 蜈蚣怪物 extends 怪物 {
 			        return;
 			    }
 			}
+			class 死灵法杖 extends 武器类 {
+    constructor(配置 = {}) {
+        super({
+            名称: "死灵法杖",
+            图标: 图标映射.死灵法杖,
+            品质: 2,
+            基础攻击力: 1,
+            冷却回合: 8,
+            攻击范围: 10,
+            耐久: 50,
+            效果描述: "召唤一个骷髅仆从为你作战，仆从会在一定回合后消散。",
+            ...配置,
+            数据: {
+                最大仆从数: 5 + (配置.强化 ? 5 : 0),
+                ...配置.数据
+            }
+        });
+    }
+
+    使用(目标怪物列表, 目标路径, 使用者 = 玩家) {
+        if (this.自定义数据.get("冷却剩余") > 0) {
+            显示通知("法杖还未准备好！", "错误");
+            return false;
+        }
+
+        const 当前仆从数 = 玩家仆从列表.length;
+        if (当前仆从数 >= this.自定义数据.get("最大仆从数")) {
+            显示通知("你无法控制更多的仆从！", "警告");
+            return false;
+        }
+
+        let 放置位置 = 寻找可放置位置(使用者.x, 使用者.y);
+        if (!放置位置) {
+            显示通知("周围没有空间召唤仆从！", "错误");
+            return false;
+        }
+
+        let 新仆从 = new 骷髅仆从({ 强化: this.强化 });
+        let 放置成功=false
+        if (放置怪物到单元格(新仆从, 放置位置.x, 放置位置.y)) {
+            玩家仆从列表.push(新仆从);
+            显示通知("骷髅仆从响应了你的召唤！", "成功");
+            计划显示格子特效([{ x: 放置位置.x, y: 放置位置.y }], "8A2BE2");
+            this.自定义数据.set("冷却剩余", this.最终冷却回合);
+            更新装备显示();
+            放置成功 = true
+            //return true;
+        }
+        if (放置成功){
+        if(prng()<0.5){
+        放置位置 = 寻找可放置位置(使用者.x, 使用者.y);
+        if (!放置位置) {
+            显示通知("周围没有空间召唤仆从！", "错误");
+            return false;
+        }
+
+        新仆从 = new 骷髅仆从({ 强化: this.强化 });
+        if (放置怪物到单元格(新仆从, 放置位置.x, 放置位置.y)) {
+            玩家仆从列表.push(新仆从);
+            //显示通知("一个骷髅仆从响应了你的召唤！", "成功");
+            计划显示格子特效([{ x: 放置位置.x, y: 放置位置.y }], "8A2BE2");
+            //this.自定义数据.set("冷却剩余", this.最终冷却回合);
+            //更新装备显示();
+            return true;
+        }
+        } else {
+        return true;
+        }
+        }
+        return false;
+    }
+}
 			class 冰霜法杖 extends 武器类 {
 			    constructor(配置 = {}) {
 			        super({
@@ -27594,7 +27836,7 @@ class 蜈蚣怪物 extends 怪物 {
 			        this.触发技能("被攻击", 来源);
 			        return 最终攻击力 * (1 - 承担比例);
 			    }
-			
+
 			    受伤(伤害值, 来源 = null) {
 			        let 当前生命值 = this.自定义数据.get("当前生命值");
 			        if (this.是否已放置 && 地牢[this.y]?.[this.x]?.关联物品 instanceof 烟雾) {
@@ -27604,6 +27846,40 @@ class 蜈蚣怪物 extends 怪物 {
 			        当前生命值 = Math.max(0, 当前生命值 - 伤害值);
 			        this.自定义数据.set("当前生命值", 当前生命值);
 			        this.更新宠物管理窗口();
+
+			        if (来源 instanceof 怪物 && this.是否已放置) {
+			            let dx = this.x - 来源.x;
+			            let dy = this.y - 来源.y;
+			            let 方向DX = 0, 方向DY = 0;
+
+			            if (Math.abs(dx) > Math.abs(dy)) {
+			                方向DX = Math.sign(dx) || (dy === 0 ? (prng() < 0.5 ? 1 : -1) : 0);
+			            } else if (Math.abs(dy) > Math.abs(dx)) {
+			                方向DY = Math.sign(dy) || (dx === 0 ? (prng() < 0.5 ? 1 : -1) : 0);
+			            } else if (dx !== 0) {
+			                方向DX = Math.sign(dx);
+			            } else if (dy !== 0) {
+			                方向DY = Math.sign(dy);
+			            }
+
+			            const 新X = this.x + 方向DX;
+			            const 新Y = this.y + 方向DY;
+
+			            if (位置是否可用(新X, 新Y, false, false) && 检查移动可行性(this.x, this.y, 新X, 新Y)) {
+			                const 旧X = this.x;
+			                const 旧Y = this.y;
+			                this.x = 新X;
+			                this.y = 新Y;
+			                怪物动画状态.set(this, {
+			                    旧逻辑X: 旧X, 旧逻辑Y: 旧Y,
+			                    目标逻辑X: 新X, 目标逻辑Y: 新Y,
+			                    视觉X: 旧X, 视觉Y: 旧Y,
+			                    动画开始时间: Date.now(), 正在动画: true,
+			                });
+			                添加日志(`${this.名称} 被击退了！`, "警告");
+			            }
+			        }
+
 			        if (当前生命值 <= 0) {
 			            const 以牙还牙列表 = Object.values(this.自定义数据.get("装备") || {}).filter(item => item instanceof 以牙还牙饰品);
 			            const 伤害来源 = 来源 || this.伤害来源缓存;
@@ -32047,25 +32323,73 @@ function 确保所有房间均已连接() {
 			    if (!关联房间) {
 			        return;
 			    }
-
+				let adjX = -1,
+			        adjY = -1;
+			    let isVerticalDoor = false; // 门是垂直放置（左右打开）还是水平放置（上下打开）
+			
+			    // 检查左右是否是房间或走廊
+			    const leftCell = 地牢[y]?.[x - 1];
+			    const rightCell = 地牢[y]?.[x + 1];
+			    if (
+			        (leftCell && leftCell.背景类型 !== 单元格类型.墙壁) ||
+			        (rightCell && rightCell.背景类型 !== 单元格类型.墙壁)
+			    ) {
+			        const upCell = 地牢[y - 1]?.[x];
+			        const downCell = 地牢[y + 1]?.[x];
+			        if (
+			            (upCell && upCell.背景类型 !== 单元格类型.墙壁) ||
+			            (downCell && downCell.背景类型 !== 单元格类型.墙壁)
+			        ) {
+			            adjX = -1;
+			            adjY = -1;
+			        } else {
+			            isVerticalDoor = true;
+			            adjY = y + 1; // 尝试在下方放置配对门
+			            adjX = x;
+			        }
+			    } else {
+			        // 检查上下是否是房间或走廊
+			        const upCell = 地牢[y - 1]?.[x];
+			        const downCell = 地牢[y + 1]?.[x];
+			        if (
+			            (upCell && upCell.背景类型 !== 单元格类型.墙壁) ||
+			            (downCell && downCell.背景类型 !== 单元格类型.墙壁)
+			        ) {
+			            isVerticalDoor = false; // 水平放置
+			            adjX = x + 1; // 尝试在右方放置配对门
+			            adjY = y;
+			        } else {
+			            adjX = -1;
+			            adjY = -1;
+			        }
+			    }
+			
+			    // --- 创建逻辑门实例 ---
 			    const 新门 = new 门({
 			        关联房间ID: 关联房间.id,
-			        位置: { x, y },
+			        位置: { x, y }, // 主单元格位置
 			    });
+			    let mainDoorOrientation = null;
+			    if (isVerticalDoor) {
+			        mainDoorOrientation = "EW";
+			    } else {
+			    mainDoorOrientation = "NS";
+			    }
+
 
 			    const 单元格 = 地牢[y][x];
 			    单元格.背景类型 = 单元格类型.门;
 			    单元格.标识 = 新门.唯一标识;
 			    单元格.关联物品 = null;
 			    单元格.墙壁 = { 上: false, 右: false, 下: false, 左: false };
+				单元格.oneWayAllowedDirection = null; // Initialize
+			    单元格.doorOrientation = mainDoorOrientation;
 			    门实例列表.set(新门.唯一标识, 新门);
 
 			    if (!关联房间.门.some(d => d.x === x && d.y === y)) {
 			        关联房间.门.push({ x, y });
 			    }
 			}
-
-			
 
 			function 最终化地牢() {
 			    for (let y = 1; y < 地牢大小 - 1; y++) {
@@ -32085,7 +32409,6 @@ function 确保所有房间均已连接() {
 			        玩家.x = 玩家初始位置.x;
 			        玩家.y = 玩家初始位置.y;
 			        已访问房间.add(第一个房间.id);
-			        放置楼梯(第一个房间, 楼梯图标.上楼, 单元格类型.楼梯上楼);
 			    }
 
 			    const 距离图 = 计算距离图(玩家初始位置.x, 玩家初始位置.y);
@@ -32246,11 +32569,12 @@ function 确保所有房间均已连接() {
 			}
 			function 寻找可放置位置(中心X, 中心Y) {
 			    const 方向 = [
-			        [0, 0],
+			        
 			        [0, -1],
 			        [1, 0],
 			        [0, 1],
 			        [-1, 0],
+			        [0, 0],
 			    ];
 			    for (const [dx, dy] of 方向) {
 			        const 检查X = 中心X + dx;
@@ -41091,14 +41415,14 @@ function 更新光源地图() {
 			    return { x: 目标X, y: 目标Y, 新物品: 放置物品 };
 			}
 			function 放置怪物到单元格(怪物, x, y) {
-			    if (位置是否可用(x, y) || (地牢[y][x].类型==单元格类型.物品&&!地牢[y][x].关联物品?.阻碍怪物)) {
+			    if (位置是否可用(x, y,false) || (地牢[y][x].类型==单元格类型.物品&&!地牢[y][x].关联物品?.阻碍怪物)) {
 			        地牢[y][x].类型 = 单元格类型.怪物;
 			        地牢[y][x].关联怪物 = 怪物;
 			        怪物.x = x;
 			        怪物.y = y;
 			        怪物.房间ID = 房间地图[y][x];
 			        所有怪物.push(怪物);
-			        绘制();
+			        //绘制();
 			        return true;
 			    }
 			    return false;
@@ -44752,6 +45076,7 @@ function 启动游戏(存档数据 = null, 是否是创意关卡 = false, 种子
 			    上次死亡地点 = null;
 			    调试无限生命=false
 			    调试无限能量=false
+			    玩家仆从列表 = [];
 			    所有怪物 = [];
 			    if(地牢生成方式==='cave') 已揭示洞穴格子.clear();
 			    
@@ -49647,6 +49972,9 @@ if (怪物实例 instanceof 蜈蚣部位) {
     配置.跟随ID = 怪物实例.跟随?.存档ID;
     配置.基础颜色 = 怪物实例.基础颜色;
 }
+if (怪物实例 instanceof 骷髅仆从) {
+    配置.生命周期 = 怪物实例.生命周期;
+}
 			        if (怪物实例 instanceof 腐蚀怪物) {
 			配置.腐蚀强度 = 怪物实例.腐蚀强度;
 			配置.腐蚀持续 = 怪物实例.腐蚀持续;
@@ -49921,6 +50249,9 @@ if (怪物实例 instanceof 蜈蚣部位) {
 			序列化物品列表: 序列化物品列表,
 			序列化地牢格子: 序列化地牢格子,
 			序列化门实例: 序列化门实例,
+			序列化玩家仆从索引: 玩家仆从列表
+    .map(仆从 => 所有怪物.findIndex(m => m === 仆从))
+    .filter(index => index !== -1 && 所有怪物[index].层数 === 层号),
 			当前天气效果: [...当前天气效果],
 			        };
 			    } catch (e) {
@@ -50121,6 +50452,10 @@ if (实例 instanceof 蜈蚣部位) {
     实例.临时主体ID = 配置.主体ID;
     实例.临时跟随ID = 配置.跟随ID;
     实例.基础颜色 = 配置.基础颜色;
+}
+if (实例 instanceof 骷髅仆从) {
+    实例.生命周期 = 配置.生命周期 ?? 30;
+    实例.主人 = 玩家;
 }
 			        if (实例 instanceof 腐蚀怪物) {
 			实例.腐蚀强度 = 配置.腐蚀强度 ?? 1;
@@ -50639,6 +50974,14 @@ if (实例 instanceof 蜈蚣部位) {
 			    }
 			});
 			        }
+			        if (楼层存档数据.序列化玩家仆从索引) {
+    楼层存档数据.序列化玩家仆从索引.forEach(索引 => {
+        const 仆从 = 楼层数据.所有怪物[索引];
+        if (仆从 instanceof 骷髅仆从 && !玩家仆从列表.includes(仆从)) {
+            玩家仆从列表.push(仆从);
+        }
+    });
+}
 			        
 			        楼层数据.所有怪物.forEach(monster => {
 			if (monster instanceof 王座守护者) {
@@ -53296,12 +53639,12 @@ function deepClone(target) {
 			            初始物品: new 穿云箭({ 不可破坏: true }),
 			            额外效果: () => 初始玩家属性.透视 = true
 			        },
-			        '圣骑士': {
+			        '骑士': {
 			            防御加成: 2,
 			            初始物品: new 钢制板甲({ 不可破坏: true }),
 			        },
-			        '死灵法师': {
-			            初始物品: new 召唤师怪物({ 状态: 怪物状态.休眠, x: 0, y: 0 }),
+			        '死灵': {
+			            初始物品: new 死灵法杖({ 不可破坏: true }),
 			        },
 			    };
 			
@@ -53840,7 +54183,16 @@ function 生成洞穴地牢() {
     let 评分图 = 生成评分图('entry');
     const { 入口, 出口 } = 放置地牢出入口(评分图, 主洞穴);
     玩家初始位置.x = 入口.x;
-    玩家初始位置.y = 入口.y;
+		    玩家初始位置.y = 入口.y;
+		
+		    if (当前层数 > 0) {
+		        const 上楼梯位置 = 寻找可放置位置(玩家初始位置.x, 玩家初始位置.y);
+		        if (上楼梯位置) {
+		            放置物品到单元格(创建楼梯实例('上楼'), 上楼梯位置.x, 上楼梯位置.y, 单元格类型.楼梯上楼);
+		        } else {
+		            放置物品到单元格(创建楼梯实例('上楼'), 玩家初始位置.x, 玩家初始位置.y, 单元格类型.楼梯上楼);
+		        }
+		    }
     放置物品到单元格(创建楼梯实例('下楼'), 出口.x, 出口.y, 单元格类型.楼梯下楼);
 
     //console.log("放置物品...");
