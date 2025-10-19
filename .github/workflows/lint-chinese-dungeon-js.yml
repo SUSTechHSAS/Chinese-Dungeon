@@ -1,0 +1,56 @@
+name: Lint JS in ChineseDungeon.html
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "ChineseDungeon.html"
+      - ".github/workflows/lint-chinese-dungeon-js.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "ChineseDungeon.html"
+      - ".github/workflows/lint-chinese-dungeon-js.yml"
+  workflow_dispatch:
+
+jobs:
+  eslint-html-js:
+    name: ESLint inline JS in HTML
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Initialize npm project (ephemeral)
+        run: |
+          npm init -y
+
+      - name: Install ESLint and HTML plugin
+        run: |
+          npm install --save-dev eslint@8 eslint-plugin-html@^7
+
+      - name: Create ESLint config for HTML inline scripts
+        run: |
+          cat > .eslintrc.json <<'EOF'
+          {
+            "env": { "browser": true, "es2020": true },
+            "extends": ["eslint:recommended"],
+            "plugins": ["html"],
+            "overrides": [
+              { "files": ["*.html"], "processor": "html/html" }
+            ],
+            "rules": {
+              "no-unused-vars": "error",
+              "no-undef": "error"
+            }
+          }
+          EOF
+
+      - name: Lint ChineseDungeon.html
+        run: |
+          npx eslint --max-warnings 0 ChineseDungeon.html
