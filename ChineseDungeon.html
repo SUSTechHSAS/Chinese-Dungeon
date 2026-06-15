@@ -20,10 +20,6 @@
 			background-color: #1a1a1a;
 			overflow: hidden;
 			justify-content: flex-start;
-			-webkit-user-select: none;
-			-moz-user-select: none;
-			-ms-user-select: none;
-			user-select: none;
 			}
 			.重铸弹窗,
 			#设置窗口,
@@ -40,12 +36,19 @@
 			::-webkit-scrollbar {
 			display: none;
 			}
-			/* 不可选中 */
-			.不可选中 {
+
+			/* 防止长按选中文本 */
+			body {
 			-webkit-user-select: none;
 			-moz-user-select: none;
 			-ms-user-select: none;
 			user-select: none;
+			-webkit-touch-callout: none;
+			}
+.不可选中 {
+			/* 允许选中 */
+			user-select: text; 
+			-webkit-user-select: text;
 			}
 			/* Dungeon Canvas */
 			#dungeonCanvas {
@@ -607,7 +610,7 @@
 			.重铸弹窗 textarea,
 			#编辑器属性面板 textarea,
 			#全局设置窗口 textarea {
-			min-height: 80px;
+			min-height: 60px;
 			resize: vertical;
 			}
 			.重铸弹窗 .设置项目,
@@ -674,13 +677,25 @@
 			border-color: #66bb6a;
 			}
 			/* --- 主菜单 --- */
-			#主菜单容器 {
+			/* --- 动态背景样式 --- */
+#backgroundCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10004; /* 比主菜单低一层 */
+    pointer-events: none; /* 确保不影响鼠标交互 */
+}
+
+/* --- 主菜单容器 --- */
+#主菜单容器 {
 			position: fixed;
 			top: 0;
 			left: 0;
 			width: 100vw;
 			height: 100vh;
-			background: linear-gradient(160deg, #0a0a0a 0%, #1a1a1a 100%);
+			background: transparent;
 			display: nonr;
 			flex-direction: column;
 			align-items: center;
@@ -694,14 +709,57 @@
 			overflow: scroll;
 			}
 			#游戏标题 {
-			font-size: 5rem;
-			margin-bottom: 3rem;
-			color: #4caf50;
-			text-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
-			font-family: "Arial Black", Gadget, sans-serif;
-			letter-spacing: 2px;
-			animation: 标题浮动 3s ease-in-out infinite;
-			}
+    font-size: 6rem;
+    color: #4caf50;
+    text-shadow: 0 0 20px rgba(76, 175, 80, 0.6), 0 0 40px rgba(76, 175, 80, 0.3);
+    font-family: "Arial Black", Gadget, sans-serif;
+    letter-spacing: 3px;
+    position: relative; /* 为伪元素定位 */
+    animation: 标题浮动 4s ease-in-out infinite, 标题故障 7s linear infinite alternate-reverse;
+}
+
+/* 扫描线效果 */
+#游戏标题::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0) 0,
+        rgba(0,0,0,0.15) 1px,
+        rgba(0,0,0,0) 2px
+    );
+    animation: 扫描线动画 1.5s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes 标题浮动 {
+    0%, 100% { transform: translateY(0) skew(0); }
+    50% { transform: translateY(-12px) skew(-1deg); }
+}
+
+@keyframes 扫描线动画 {
+    from { background-position: 0 0; }
+    to { background-position: 0 -10px; }
+}
+
+@keyframes 标题故障 {
+    0%, 3%, 5%, 45%, 47%, 49%, 100% {
+        text-shadow: 0 0 20px rgba(76, 175, 80, 0.6), 0 0 40px rgba(76, 175, 80, 0.3);
+    }
+    4% {
+        text-shadow: 0 0 20px rgba(255, 0, 0, 0.7), 2px 2px 2px rgba(0, 255, 255, 0.5);
+    }
+    46% {
+         text-shadow: 0 0 20px rgba(0, 255, 255, 0.7), -2px -2px 2px rgba(255, 0, 0, 0.5);
+    }
+    48% {
+        text-shadow: 0 0 30px rgba(76, 175, 80, 0.8), 0 0 50px rgba(76, 175, 80, 0.4);
+    }
+}
 			@keyframes 标题浮动 {
 			0%,
 			100% {
@@ -1072,6 +1130,12 @@
 			cursor: pointer;
 			padding: 8px;
 			}
+			#背包搜索栏 {
+			flex-shrink: 0;
+			}
+			#背包搜索输入::placeholder {
+			color: #666;
+			}
 			.物品容器 {
 			flex: 1;
 			overflow-y: auto;
@@ -1079,13 +1143,18 @@
 			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
 			gap: 8px;
+			overflow-anchor: none;
 			}
 			.物品条目 {
 			position: relative;
 			border-radius: 8px;
 			padding: 12px;
 			cursor: pointer;
-			transition: all 0.2s;
+			transition: background 0.2s, transform 0.2s;
+			background: rgba(255, 255, 255, 0.03);
+			transform: translateZ(0);
+			backface-visibility: hidden;
+			min-height: 80px;
 			}
 			.hover:hover {
 			background: rgba(255, 255, 255, 0.2);
@@ -2602,7 +2671,7 @@ body.方向键隐藏 .control-pad {
 			padding: 10px;
 			border-radius: 5px;
 			position: relative;
-			min-height: 80px;
+			min-height: 60px;
 			background: #2b2b2b;
 			}
 			.宠物装备槽位名 {
@@ -4822,6 +4891,7 @@ body.命令行风格 .确认按钮-取消:hover {
 		</style>
 	</head>
 	<body class="初始化">
+	    <canvas id="backgroundCanvas"></canvas>
 		<div id="effectsContainer"></div>
 		<div id="等待界面遮罩">
     <div id="等待界面窗口">
@@ -5424,9 +5494,10 @@ body.命令行风格 .确认按钮-取消:hover {
 			<div id="菜单选项">
 				<button id="新建游戏按钮" class="菜单按钮">开始新游戏</button>
 				<button id="读取存档按钮" class="菜单按钮">读取存档</button>
+				<button id="联机按钮" class="菜单按钮">加入局域网</button>
 				<button id="图鉴按钮" class="菜单按钮">图鉴</button>
 				<button id="地图编辑器按钮" class="菜单按钮">地图编辑器</button>
-				<button id="读凭证按钮" class="菜单按钮">读取凭证</button>
+				
 				<button id="设置按钮_主菜单" class="菜单按钮">设置</button>
 			</div>
 			<div id="版本信息">游戏似乎崩溃了!请尝试反馈!</div>
@@ -5594,6 +5665,9 @@ body.命令行风格 .确认按钮-取消:hover {
 			</div>
 		</div>
 		<div id="浮动提示框"></div>
+		<div id="联机状态指示器" style="position:fixed; bottom:10px; right:10px; z-index:10000; background:rgba(0,0,0,0.5); padding:5px 10px; border-radius:5px; font-size:0.8rem; color:#fff; display:none;">
+    <span id="联机状态文本"></span>
+</div>
 		<div id="配方书遮罩" class="重铸遮罩" style="display: none; z-index: 10005">
 			<div id="配方书窗口" style="
 				position: fixed;
@@ -5703,6 +5777,20 @@ body.命令行风格 .确认按钮-取消:hover {
 				</button>
 				<button onclick="切换背包显示()" class="关闭按钮">×</button>
 			</div>
+			<div id="背包搜索栏" style="display:none; padding: 5px 8px;">
+				<input id="背包搜索输入" type="text" placeholder="搜索物品..." style="
+					width: 100%;
+					padding: 8px 12px;
+					border: 1px solid #4a4a4a;
+					border-radius: 6px;
+					background: rgba(0, 0, 0, 0.6);
+					color: #e0e0e0;
+					font-size: 0.9em;
+					outline: none;
+					box-sizing: border-box;
+					transition: border-color 0.2s;
+				" onfocus="this.style.borderColor='#4caf50'" onblur="this.style.borderColor='#4a4a4a'">
+			</div>
 			<div id="背包物品栏" class="物品容器"></div>
 		</div>
 		<div id="transitionMask" class="楼层过渡遮罩">
@@ -5778,9 +5866,12 @@ body.命令行风格 .确认按钮-取消:hover {
 		<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 		<script>
+
+
+
 			const canvas = document.getElementById("dungeonCanvas");
 			const ctx = canvas.getContext("2d");
-			let supabase = null;
+			//let supabase = null;
 			let 创意工坊已启用 = false;
 			
 			async function 初始化创意工坊() {
@@ -7388,6 +7479,7 @@ const 绘图常量 = {
              '编辑器确认': '确认/应用',
 			 '大地图': '打开/关闭大地图',
 			};
+			let 随机数状态 = 0;
 			let 玩家正在休息 = false;
 			let 休息定时器 = null;
 			let 等待触摸定时器 = null;
@@ -7402,6 +7494,7 @@ const 绘图常量 = {
 			const 怪物生成概率 = 0.7;
 			const 最大怪物数 = 5; //一个房间内的怪物生成上限
 			let 玩家初始位置 = { x: 0, y: 0 };
+			let 已使用存档点 = false; // 玩家是否通过存档点物品设置了重生点
 			let 死亡界面已显示 = false;
 			let 单击移动定时器 = null;
 			let 开始移动定时器 = null;
@@ -7420,6 +7513,8 @@ const 绘图常量 = {
 			let 宠物状态表 = new WeakMap();
 			let 玩家属性 = {
             移动步数: 1,
+            当前生命值:100,
+            当前能量值:100,
             攻击加成: 0,
             防御加成: 0,
             掉落倍率: 1,
@@ -7444,6 +7539,8 @@ const 绘图常量 = {
         };
 			let 初始玩家属性 = {
             移动步数: 1,
+            当前生命值:100,
+            当前能量值:100,
             攻击加成: 0,
             防御加成: 0,
             掉落倍率: 1,
@@ -7642,6 +7739,8 @@ const 音效管理器 = {
 			let 开发者模式 = false;
 			let versionClickCount = 0;
 			let 地牢生成方式 = 'default';
+			let 其他玩家列表 = [];
+			let 本地玩家ID
             let 已揭示洞穴格子 = new Set();
 			
 			
@@ -7687,6 +7786,9 @@ const 音效管理器 = {
 				可能是一个点击: false,
 				信息计时器: null,
 			};
+			
+		
+			
 const 大地图画布 = document.getElementById('大地图画布');
 const 大地图画布容器 = document.getElementById('大地图画布容器');
 const 大地图遮罩 = document.getElementById('大地图遮罩');
@@ -7717,7 +7819,7 @@ function 大地图点击信息(事件) {
 				if (大地图状态.信息计时器) clearTimeout(大地图状态.信息计时器);
 				
 				if (房间ID !== undefined && 房间ID !== -1 && (floorData?.已访问房间.has(房间ID)||开发者模式||游戏状态=="地图编辑器")) {
-					const room = floorData?.房间列表.find(r => r && r.id === 房间ID);
+					const room = floorData?.房间列表?.find(r => r && r.id === 房间ID);
 					if (room) {
 						大地图状态.悬停信息 = `房间 ${room.id}: ${room.名称 || '未命名'} (${room.类型 || '普通'})`;
 					} else {
@@ -7889,13 +7991,13 @@ function 绘制大地图() {
 						    }
 			    for (let y = 0; y < 地牢大小; y++) {
 			        for (let x = 0; x < 地牢大小; x++) {
-			            const 单元格 = 本地地牢[y][x];
-			            const 房间ID=floorData?.房间地图[y][x]
+			            const 单元格 = 本地地牢[y]?.[x];
+			            const 房间ID=floorData?.房间地图?.[y]?.[x]
 			            if (!单元格) continue;
 			            if(!开发者模式&&floorData.地牢生成方式 === 'cave' && !单元格.已揭示&&!(玩家定位器地图&&单元格.类型==单元格类型.楼梯下楼) &&!(玩家定位器地图&&单元格.关联物品 instanceof 旗帜)&& 游戏状态!=="地图编辑器") continue;
 			            const 已访问 = floorData?.已访问房间?.has(房间ID)||房间ID===-1;
 			            
-			if  ((已访问&&floorData?.房间列表.find(r => r && r.id === 房间ID)?.类型!=='黑暗房间')||开发者模式||房间ID==下楼房间||游戏状态==="地图编辑器"||游戏状态=="图鉴") {
+			if  ((已访问&&floorData?.房间列表?.find(r => r && r.id === 房间ID)?.类型!=='黑暗房间')||开发者模式||房间ID==下楼房间||游戏状态==="地图编辑器"||游戏状态=="图鉴") {
 			            
 			            if (命令行模式开启) {
 					const 屏幕X = (单元格.x) * 单元格尺寸;
@@ -8134,7 +8236,7 @@ function 绘制大地图() {
             if(floorData.地牢生成方式 === 'cave' && !本地地牢[怪物.y][怪物.x].已揭示&& 游戏状态!=="地图编辑器"&&!开发者模式) return;
             const 已访问 = floorData?.已访问房间?.has(房间ID)||房间ID===-1;
             
-if  ((已访问&&floorData?.房间列表.find(r => r && r.id === 房间ID)?.类型!=='黑暗房间')||开发者模式||房间ID==下楼房间||游戏状态==="地图编辑器"||游戏状态=="图鉴") {
+if  ((已访问&&floorData?.房间列表?.find(r => r && r.id === 房间ID)?.类型!=='黑暗房间')||开发者模式||房间ID==下楼房间||游戏状态==="地图编辑器"||游戏状态=="图鉴") {
             if (怪物.强化) {
                 ctx.fillStyle = '#f00';
                 ctx.font = `${单元格尺寸 * 0.8}px color-emoji`;
@@ -8511,7 +8613,7 @@ function 大地图悬停信息(事件) {
 
     const 房间ID = floorData?.房间地图[世界Y]?.[世界X];
     if (房间ID !== undefined && 房间ID !== -1 && (floorData?.已访问房间.has(房间ID)||开发者模式||游戏状态=="地图编辑器")) {
-        const room = floorData?.房间列表.find(r => r && r.id === 房间ID);
+        const room = floorData?.房间列表?.find(r => r && r.id === 房间ID);
         if (room) {
             大地图状态.悬停信息 = `房间 ${room.id}: ${room.名称 || '未命名'} (${room.类型 || '普通'})`;
             return;
@@ -8536,6 +8638,10 @@ function 大地图悬停信息(事件) {
 			}
 
 			function 开始休息() {
+			    if (联机模式) {
+        显示通知("联机模式禁止休息", "错误");
+        return;
+    }
 				if (玩家正在休息 || 玩家属性.允许移动 > 0 || 死亡界面已显示) return;
 				if (玩家状态.length > 0) {
 					显示通知("你身中药水效果，无法静心休息。", "警告");
@@ -8572,25 +8678,53 @@ function 大地图悬停信息(事件) {
     }
 				});
 			function 整理背包(无提示 = false) {
-				const 物品数组 = [...玩家背包.values()].filter(item => !item.是否隐藏);
-				
-				物品数组.sort((a, b) => {
-					if (b.品质 !== a.品质) {
-						return b.品质 - a.品质;
-					}
-					return 0; 
-				});
+    if (联机模式) {
+        socket.emit('playerAction', { type: 'sortInventory' });
+        return;
+    }
+    
+    // --- 原本地整理逻辑 ---
+    const 物品数组 = [...玩家背包.values()].filter(item => !item.是否隐藏);
+    
+    物品数组.sort((a, b) => {
+        if (b.品质 !== a.品质) {
+            return b.品质 - a.品质;
+        }
+        return 0; 
+    });
 
-				const 隐藏物品 = [...玩家背包.values()].filter(item => item.是否隐藏);
+    // 本地合并逻辑
+    const mergedList = [];
+    while (物品数组.length > 0) {
+        let current = 物品数组.shift();
+        for (let target of mergedList) {
+             if (target.名称 === current.名称 && 
+                target.品质 === current.品质 && 
+                target.强化 === current.强化 &&
+                target.最大堆叠数量 > 1 &&
+                target.堆叠数量 < target.最大堆叠数量 &&
+                target.比较自定义数据(current.自定义数据)) {
+                
+                const space = target.最大堆叠数量 - target.堆叠数量;
+                const toTransfer = Math.min(space, current.堆叠数量);
+                target.堆叠数量 += toTransfer;
+                current.堆叠数量 -= toTransfer;
+            }
+            if (current.堆叠数量 <= 0) break;
+        }
+        if (current.堆叠数量 > 0) mergedList.push(current);
+    }
 
-				玩家背包.clear();
-				更新背包显示();
+    const 隐藏物品 = [...玩家背包.values()].filter(item => item.是否隐藏);
 
-				物品数组.forEach(item => 玩家背包.set(item.唯一标识, item));
-				隐藏物品.forEach(item => 玩家背包.set(item.唯一标识, item));
-				更新背包显示()
-				if(!无提示) 显示通知("背包已整理！", "成功");
-			}
+    玩家背包.clear();
+    更新背包显示();
+
+    mergedList.forEach(item => 玩家背包.set(item.唯一标识, item));
+    隐藏物品.forEach(item => 玩家背包.set(item.唯一标识, item));
+    更新背包显示()
+    if(!无提示) 显示通知("背包已整理并合并！", "成功");
+}
 			
 			
 const emojiImageCache = new Map();
@@ -8882,7 +9016,10 @@ function drawIcon(ctx, key, screenX, screenY, size, color) {
 				移动玩家(moveDx * 玩家属性.移动步数, moveDy * 玩家属性.移动步数,true,获取实际移动步数());
 			}
 
-			canvas.addEventListener("touchstart", handleCanvasTouchStart);
+			canvas.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            handleCanvasTouchStart(e);
+        });
 			canvas.addEventListener("touchmove", handleCanvasTouchMove);
 			canvas.addEventListener("touchend", handleCanvasTouchEnd);
 			canvas.addEventListener("touchcancel", handleCanvasTouchEnd); // 处理触摸取消事件
@@ -9579,7 +9716,24 @@ if (版本信息元素) {
 			//处理canvas的点击
 			function 处理点击(clientX, clientY) {
 			
-			
+			    if (玩家正在放置障碍物 && 待放置物品ID && 联机模式) {
+            const rect = canvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+            const gridX = Math.floor(视口偏移X + x / 单元格大小);
+            const gridY = Math.floor(视口偏移Y + y / 单元格大小);
+            
+            socket.emit('playerAction', { 
+                type: 'placeItemAction', 
+                id: 待放置物品ID, 
+                x: gridX, 
+                y: gridY 
+            });
+            
+            玩家正在放置障碍物 = false;
+            待放置物品ID = null;
+            return;
+        }
 			        if (游戏状态 !== "游戏中" && 游戏状态 !== "图鉴" && 游戏状态 !== "地图编辑器" && 游戏状态 !== "编辑器游玩") return;
 			    
 			        if (物品点击监听器) {
@@ -9672,7 +9826,7 @@ if (版本信息元素) {
 			
 			class 门 {
 			    constructor(配置) {
-			        this.唯一标识 = Symbol(
+			        this.唯一标识 = Symbol.for(
 			            Date.now().toString() + prng().toString()
 			        );
 			        this.类型 = "门"; //常驻类型
@@ -11334,14 +11488,11 @@ get 攻击力() {
 			            if (this.当前生命值 <= 0) {
 			                if (伤害来源是玩家 || 伤害来源是宠物) {
 			                    已击杀怪物数++;
-			                    const 能量条 =
-			                        document.querySelector(".power-bar");
-			                    const 当前能量 =
-			                        parseFloat(能量条.style.width) || 100;
-			                    能量条.style.width = `${Math.min(
+			                    
+			                    玩家属性.当前能量值 =Math.min(
 			                        100,
-			                        当前能量 + 1.5/自定义全局设置.初始能量值*100
-			                    )}%`;
+			                        玩家属性.当前能量值+ 1.5/自定义全局设置.初始能量值*100
+			                    )
 			                    击杀提示.更新({
 			                        内容: `已击杀怪物：${已击杀怪物数}`,
 			                    });
@@ -11427,7 +11578,7 @@ get 攻击力() {
 			                } else if (this.掉落物&&
 			                    prng() <=
 			                    this.物品掉率 * 玩家属性.掉落倍率
-			                    &&当前环境!==环境类型.岩浆
+			                    &&当前环境!==环境类型.岩浆&&!联机模式
 			                ) {
 			                    if (this.掉落物.自定义数据?.get("耐久"))
 			                        this.掉落物.自定义数据.set(
@@ -15292,13 +15443,10 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
 			
 			            if (this.当前生命值 <= 0) {
 			                已击杀怪物数++;
-			                const 能量条 = document.querySelector(".power-bar");
-			                const 当前能量 =
-			                    parseFloat(能量条.style.width) || 100;
-			                能量条.style.width = `${Math.min(
+			                玩家属性.当前能量值 =Math.min(
 			                    100,
-			                    当前能量 + 7/自定义全局设置.初始能量值*100
-			                )}%`;
+			                    玩家属性.当前能量值 + 7/自定义全局设置.初始能量值*100
+			                )
 			                击杀提示.更新({
 			                    内容: `已击杀怪物：${已击杀怪物数} `,
 			                });
@@ -16043,15 +16191,7 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
 			                Math.ceil(造成伤害 * this.吸能比例)
 			            );
 			            if (扣除能量(吸取量)) {
-			                const 能量条 = document.querySelector(".power-bar");
-			                const 当前能量 =
-			                    parseFloat(能量条.style.width) || 0;
-			                添加日志(
-			                    `${this.类型} 吸取了你 ${吸取量.toFixed(
-			                        0
-			                    )} 点能量！`,
-			                    "错误"
-			                );
+			                
 			                触发HUD显示();
 			            }
 			        }
@@ -16123,7 +16263,7 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
 			            基础生命值: 25 + (配置.强化 ? 15 : 0),
 			            基础攻击力: 5 + (配置.强化 ? 2 : 0),
 			            移动率: 0.8,
-			            掉落物: new 治疗药水({ 数量: 1 }),
+			            掉落物: new 剧毒匕首({ 数量: 1 }),
 			            掉落概率: 0.3,
 			            基础攻击范围: 1,
 			            ...配置,
@@ -19052,7 +19192,7 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
 			        const date = new Date();
 			        this.唯一标识 =
 			            配置.唯一标识 ||
-			            Symbol(
+			            Symbol.for(
 			                Date.now().toString() + prng().toString()
 			            );
 			        this.已装备 = 配置.已装备 || false;
@@ -19646,15 +19786,14 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
             const 吸血量 = Math.ceil(总有效伤害 * lifeStealBuff.value);
             const 玩家最大生命值 = 100 + (玩家属性.最大生命值加成 || 0);
             
-            const 生命条 = document.querySelector(".health-bar");
-            const 当前宽度 = parseFloat(生命条.style.width) || 0;
-            const 当前生命值 = (当前宽度 / 100) * 玩家最大生命值;
+            
+            const 当前生命值 = (玩家属性.当前生命值 / 100) * 玩家最大生命值;
 
             const 新生命值 = Math.min(玩家最大生命值, 当前生命值 + 吸血量);
             const 新宽度 = (新生命值 / 玩家最大生命值) * 100;
 
-            if (新宽度 > 当前宽度) {
-                生命条.style.width = `${新宽度}%`;
+            if (新宽度 > 玩家属性.当前生命值) {
+                玩家属性.当前生命值=新宽度
                 添加日志(`${this.获取名称()} 吸取了 ${吸血量.toFixed(0)} 点生命！`, "成功");
                 触发HUD显示();
             }
@@ -19667,12 +19806,10 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
 			            const 吸能量 = Math.ceil(
 			                总有效伤害 * energyStealBuff.value * 0.5
 			            );
-			            const 能量条 = document.querySelector(".power-bar");
-			            const 当前能量 = parseFloat(能量条.style.width) || 0;
-			            能量条.style.width = `${Math.min(
+			            玩家属性.当前能量值 =Math.min(
 			                100,
-			                当前能量 + 吸能量/自定义全局设置.初始能量值*100
-			            )}%`;
+			                玩家属性.当前能量值 + 吸能量/自定义全局设置.初始能量值*100
+			            )
 			            添加日志(
 			                `${this.获取名称()} 吸取了 ${吸能量.toFixed(
 			                    0
@@ -19990,15 +20127,12 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
 			}
 			class 钥匙 extends 物品 {
 			    constructor(配置) {
-			        if(配置.地牢层数===undefined) 配置.地牢层数=-1
-			        let 钥匙唯一标识 = undefined;
-			        if (配置.地牢层数 && 配置.对应门ID) {
-			            钥匙唯一标识 = Symbol.for(
-			                配置.地牢层数.toString() +
-			                    "层" +
-			                    配置.对应门ID.toString()
-			            );
-			        }
+			        // 从顶层或嵌套数据中读取，克隆物品()会把数据放在配置.数据里
+			        const 读对应门ID = 配置.对应门ID ?? 配置.数据?.对应门ID ?? 0;
+			        const 读地牢层数 = 配置.地牢层数 ?? 配置.数据?.地牢层数;
+			        if(读地牢层数===undefined) 配置.地牢层数 = -1;
+			        else 配置.地牢层数 = 读地牢层数;
+			        
 			        super({
 			            ...配置,
 			            类型: 配置.类型 || "钥匙",
@@ -20006,12 +20140,12 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
 			            图标: 配置.图标 || 图标映射.钥匙,
 			            品质: 配置.品质 || 2,
 			            颜色索引: 配置.颜色索引,
-			            唯一标识: 钥匙唯一标识,
+			            
 			            材质: 材质.普通,
 			            ...配置,
 			            数据: {
-			                对应门ID: 配置.对应门ID || 0,
-			                地牢层数: 配置.地牢层数,
+			                对应门ID: 读对应门ID,
+			                地牢层数: 读地牢层数,
 			                ...配置.数据,
 			            },
 			            
@@ -20155,6 +20289,10 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
 			                    el.__物品实例.isActive = false;
 			                }
 			            });
+			            if (联机模式) {
+        socket.emit('playerAction', { type: 'equip', id: this.唯一标识.toString() });
+        
+    }
 			            if (this.已装备) {
 			                this.取消装备();
 			                显示通知("已卸下", "成功");
@@ -20402,13 +20540,10 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
 			            );
 			            if (energyOnHitBuff) {
 			                const 恢复能量 = Math.ceil(energyOnHitBuff.value);
-			                const 能量条 = document.querySelector(".power-bar");
-			                const 当前能量 =
-			                    parseFloat(能量条.style.width) || 0;
-			                能量条.style.width = `${Math.min(
+			                玩家属性.当前能量值 =Math.min(
 			                    100,
-			                    当前能量 + 恢复能量/自定义全局设置.初始能量值*100
-			                )}%`;
+			                    玩家属性.当前能量值 + 恢复能量/自定义全局设置.初始能量值*100
+			                )
 			                添加日志(
 			                    `${this.获取名称()} 受到攻击，恢复了 ${恢复能量} 点能量！`,
 			                    "信息"
@@ -20678,15 +20813,14 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
                 const 吸血量 = Math.ceil(总有效伤害 * 吸血比例);
                 const 玩家最大生命值 = 100 + (玩家属性.最大生命值加成 || 0);
                 
-                const 生命条 = document.querySelector(".health-bar");
-                const 当前宽度 = parseFloat(生命条.style.width) || 0;
-                const 当前生命值 = (当前宽度 / 100) * 玩家最大生命值;
+                
+                const 当前生命值 = (玩家属性.当前生命值/ 100) * 玩家最大生命值;
 
                 const 新生命值 = Math.min(玩家最大生命值, 当前生命值 + 吸血量);
                 const 新宽度 = (新生命值 / 玩家最大生命值) * 100;
 
-                if (新宽度 > 当前宽度) {
-                    生命条.style.width = `${新宽度}%`;
+                if (新宽度 > 玩家属性.当前生命值) {
+                    玩家属性.当前生命值=新宽度
                     添加日志(`${this.获取名称()} 吸取了 ${吸血量.toFixed(0)} 点生命！`, "成功");
                     触发HUD显示();
                 }
@@ -21085,14 +21219,9 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
         const 玩家最大生命值 = 100 + (玩家属性.最大生命值加成 || 0);
         const 恢复量 = 15 * this.强度;
         
-        const 生命条 = document.querySelector(".health-bar");
-        const 当前宽度 = parseFloat(生命条.style.width) || 0;
-        const 当前生命值 = (当前宽度 / 100) * 玩家最大生命值;
+        if (玩家属性.当前生命值 === undefined) 玩家属性.当前生命值 = 玩家最大生命值;
+        玩家属性.当前生命值 = Math.min(玩家最大生命值, 玩家属性.当前生命值 + 恢复量);
         
-        const 新生命值 = Math.min(玩家最大生命值, 当前生命值 + 恢复量);
-        const 新宽度 = (新生命值 / 玩家最大生命值) * 100;
-        
-        生命条.style.width = `${新宽度}%`;
         return;
     }
 			    移除效果() {
@@ -21113,16 +21242,11 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
 			        });
 			    }
 			    应用效果() {
-			        const 当前能量 =
-			            parseFloat(
-			                document.querySelector(".power-bar").style.width
-			            ) || 0;
-			        document.querySelector(
-			            ".power-bar"
-			        ).style.width = `${Math.min(
-			            100,
-			            当前能量 + 3 * this.强度/自定义全局设置.初始能量值*100
-			        )}% `;
+			        const 最大能量 = 自定义全局设置.初始能量值 || 100;
+        if (玩家属性.当前能量值 === undefined) 玩家属性.当前能量值 = 最大能量;
+        
+        玩家属性.当前能量值 = Math.min(100, 玩家属性.当前能量值 + 3 * this.强度 / 最大能量 * 100);
+        
 			        return;
 			    }
 			    移除效果() {
@@ -21199,7 +21323,7 @@ if (配置?.玩家放置) this.图标 = 图标映射.水怪;
 			        });
 			    }
 			    应用效果() {
-			        处理怪物回合();
+			        //处理怪物回合();
 			        return; // 在 处理怪物回合 中检测了 玩家状态 来实现
 			    }
 			    移除效果() {
@@ -22407,13 +22531,10 @@ class 火箭筒 extends 武器类 {
 			                );
 			            } else {
 			                const 恢复量 = this.自定义数据.get("能量恢复量");
-			                const 能量条 = document.querySelector(".power-bar");
-			                const 当前能量 =
-			                    parseFloat(能量条.style.width) || 0;
-			                能量条.style.width = `${Math.min(
+			                玩家属性.当前能量值 =Math.min(
 			                    100,
-			                    当前能量 + 恢复量/自定义全局设置.初始能量值*100
-			                )}%`;
+			                    玩家属性.当前能量值 + 恢复量/自定义全局设置.初始能量值*100
+			                )
 			                显示通知(
 			                    `护符转化雷电，恢复了 ${恢复量} 点能量！`,
 			                    "成功"
@@ -23336,15 +23457,14 @@ class 火箭筒 extends 武器类 {
         const 玩家最大生命值 = 100 + (玩家属性.最大生命值加成 || 0);
         const 恢复量 = this.自定义数据.get("恢复量");
 
-        const 生命条 = document.querySelector(".health-bar");
-        const 当前宽度 = parseFloat(生命条.style.width) || 0;
-        const 当前生命值 = (当前宽度 / 100) * 玩家最大生命值;
+        
+        const 当前生命值 = (玩家属性.当前生命值 / 100) * 玩家最大生命值;
 
         const 新生命值 = Math.min(玩家最大生命值, 当前生命值 + 恢复量);
         const 新宽度 = (新生命值 / 玩家最大生命值) * 100;
 
-        if (新宽度 > 当前宽度) {
-            生命条.style.width = `${新宽度}%`;
+        if (新宽度 > 玩家属性.当前生命值) {
+            玩家属性.当前生命值=新宽度
         }
         
 			        
@@ -25729,12 +25849,10 @@ class 火箭筒 extends 武器类 {
 			
 			        if (最大怪物数 <= 0) {
 			            显示通知("没有可冲锋的目标方向！", "信息");
-			            const 能量条 = document.querySelector(".power-bar");
-			            const 当前能量 = parseFloat(能量条.style.width) || 0;
-			            能量条.style.width = `${Math.min(
+			            玩家属性.当前能量值 =Math.min(
 			                100,
-			                当前能量 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100
-			            )}%`;
+			                玩家属性.当前能量值+ this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100
+			            )
 			            return false;
 			        }
 			
@@ -26225,10 +26343,13 @@ class 火箭筒 extends 武器类 {
 			            显示通知("泉水已经干涸了。", "信息");
 			            return false;
 			        }
-			        const 生命条 = document.querySelector(".health-bar");
-			        const 能量条 = document.querySelector(".power-bar");
-			        生命条.style.width = "100%";
-			        能量条.style.width = "100%";
+			        const 玩家最大生命值 = 100 + (玩家属性.最大生命值加成 || 0);
+        const 最大能量 = 自定义全局设置.初始能量值 || 100;
+        
+        玩家属性.当前生命值 = 玩家最大生命值;
+        玩家属性.当前能量值 = 最大能量;
+        
+
 			        this.自定义数据.set("已使用", true);
 			        const 新的永久Buffs = { 已获得效果: new Set() };
 			                 永久Buffs = 新的永久Buffs;
@@ -26387,9 +26508,7 @@ class 火箭筒 extends 武器类 {
 			     if (!目标) {
 			         显示通知("附近没有可以下手的东西...", "信息");
 			         
-			         const 能量条 = document.querySelector(".power-bar");
-			         const 当前能量 = parseFloat(能量条.style.width) || 0;
-			         能量条.style.width = `${Math.min(100, 当前能量 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100)}%`;
+			         玩家属性.当前能量值 =Math.min(100,玩家属性.当前能量值 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100)
 			         return true;
 			     }
 			
@@ -27252,6 +27371,30 @@ class 火箭筒 extends 武器类 {
 			    }
 			
 			    使用() {
+			        if (联机模式) {
+			        if (this.自定义数据.get("静默回合") > 0) {
+            显示通知(`${this.获取名称()} 被浸湿了，暂时无法使用！`, "警告");
+            return 0;
+        }
+        显示通知("请在地图上点击要交换位置的目标。", "信息", true);
+        物品点击监听器 = (clientX, clientY) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+            const gridX = Math.floor(视口偏移X + x / 单元格大小);
+            const gridY = Math.floor(视口偏移Y + y / 单元格大小);
+            socket.emit('playerAction', { 
+                type: 'useTranslocate', 
+                targetX: gridX, 
+                targetY: gridY, 
+                id: this.唯一标识.toString(),
+                slot: this.装备槽位
+            });
+            物品点击监听器 = null;
+        };
+        return true;
+			        
+			    }
 			        if (!this.消耗能量()) return false;
 			        if (生存挑战激活) {
 			        显示通知("强大的结界阻止了传送！", "错误");
@@ -27286,13 +27429,10 @@ class 火箭筒 extends 武器类 {
 			                if (目标实体 instanceof 怪物) {
 			                    isPlayerSpotValid = 目标实体.位置合法(玩家旧X, 玩家旧Y);
 			                    if (目标实体 instanceof 巨人怪物 || 目标实体 instanceof 巨人部位 || 目标实体 instanceof 蜈蚣怪物 || 目标实体 instanceof 蜈蚣部位) {
-			                        const 能量条 = document.querySelector(".power-bar");
-			            const 当前能量 = parseFloat(能量条.style.width) || 0;
-			            if (能量条)
-			                能量条.style.width = `${Math.min(
+			                        玩家属性.当前能量值 =Math.min(
 			                    100,
-			                    当前能量 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100
-			                )}%`;
+			                    玩家属性.当前能量值 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100
+			                )
 			            触发HUD显示();
 			                    显示通知("无法交换：目标无法移动到你的位置！", "错误");
 			                return true;
@@ -27333,24 +27473,19 @@ class 火箭筒 extends 武器类 {
 			                    更新视口();
 			                    
 			                } else {
-			                    const 能量条 = document.querySelector(".power-bar");
-			            const 当前能量 = parseFloat(能量条.style.width) || 0;
-			            if (能量条)
-			                能量条.style.width = `${Math.min(
+			                    玩家属性.当前能量值 =Math.min(
 			                    100,
-			                    当前能量 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100
-			                )}%`;
+			                    玩家属性.当前能量值 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100
+			                )
 			            触发HUD显示();
 			                    显示通知("无法交换：目标无法移动到你的位置！", "错误");
 			                }
 			            } else {
-			                const 能量条 = document.querySelector(".power-bar");
-			            const 当前能量 = parseFloat(能量条.style.width) || 0;
-			            if (能量条)
-			                能量条.style.width = `${Math.min(
+			                
+			                玩家属性.当前能量值 =Math.min(
 			                    100,
-			                    当前能量 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100
-			                )}%`;
+			                    玩家属性.当前能量值 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100
+			                )
 			            触发HUD显示();
 			                显示通知("无效的目标！", "错误");
 			            }
@@ -27622,12 +27757,11 @@ class 太阳卷轴 extends 卷轴类 {
         });
         
         const 玩家最大生命值 = 100 + (玩家属性.最大生命值加成 || 0);
-        const 生命条 = document.querySelector(".health-bar");
-        const 当前宽度 = parseFloat(生命条.style.width) || 0;
-        const 当前生命值 = (当前宽度 / 100) * 玩家最大生命值;
+        
+        const 当前生命值 = (玩家属性.当前生命值 / 100) * 玩家最大生命值;
         const 新生命值 = Math.min(玩家最大生命值, 当前生命值 + 恢复总量);
         const 新宽度 = (新生命值 / 玩家最大生命值) * 100;
-        生命条.style.width = `${新宽度}%`;
+        玩家属性.当前生命值=新宽度
 
         显示通知(`阳光普照！造成大量伤害并恢复了 ${恢复总量} 点生命！`, "成功");
         
@@ -27713,7 +27847,11 @@ class 太阳卷轴 extends 卷轴类 {
 				
 						门实例列表.forEach((门) => {
 							if (门.房间ID === 目标房间.id) {
-								地牢[门.所在位置.y][门.所在位置.x].背景类型 = 单元格类型.门;
+							地牢[门.所在位置.y][门.所在位置.x].背景类型 = 单元格类型.门;
+							if (地牢[门.所在位置.y][门.所在位置.x].配对单元格位置) {
+								const 配对 = 地牢[门.所在位置.y][门.所在位置.x].配对单元格位置;
+								地牢[配对.y][配对.x].背景类型 = 单元格类型.门;
+							}
 							}
 						});
 				
@@ -27725,7 +27863,7 @@ class 太阳卷轴 extends 卷轴类 {
 
 			        更新视口();
 			        绘制();
-			        处理怪物回合();
+			        //处理怪物回合();
 			        当前激活卷轴列表.delete(this);
 			
 			        return true;
@@ -27762,9 +27900,9 @@ class 太阳卷轴 extends 卷轴类 {
         return 0;
     }
 
-        const 能量条 = document.querySelector(".power-bar");
+        
         let 当前能量 = Math.max(
-            Math.min(parseFloat(能量条.style.width), 100),
+            Math.min(玩家属性.当前能量值, 100),
             0
         );
 
@@ -27805,7 +27943,7 @@ class 太阳卷轴 extends 卷轴类 {
         if (解密数量 > 0) {
             扣除能量(
                 Math.max(
-                    Math.min(parseFloat(document.querySelector(".power-bar").style.width), 100),
+                    Math.min(玩家属性.当前能量值, 100),
                     0
                 ) - 当前能量
             );
@@ -28292,14 +28430,15 @@ class 太阳卷轴 extends 卷轴类 {
 			            调试无限生命 = !调试无限生命;
 			            无限生命按钮.textContent = 调试无限生命 ? "无限生命: 开" : "无限生命: 关";
 			            无限生命按钮.style.borderColor = 调试无限生命 ? "#FFD700" : "";
-			            if(调试无限生命) document.querySelector(".health-bar").style.width = "100%";
+			            if(调试无限生命) 玩家属性.当前生命值=100
 			        };
 			
 			        无限能量按钮.onclick = () => {
 			            调试无限能量 = !调试无限能量;
 			            无限能量按钮.textContent = 调试无限能量 ? "无限能量: 开" : "无限能量: 关";
 			            无限能量按钮.style.borderColor = 调试无限能量 ? "#2196F3" : "";
-			             if(调试无限能量) document.querySelector(".power-bar").style.width = "100%";
+			             if(调试无限能量) 玩家属性.当前能量值 = 自定义全局设置.初始能量值;
+    
 			        };
 			
 			        document.getElementById("debug-give-item-btn").onclick = () => {
@@ -28484,9 +28623,7 @@ class 太阳卷轴 extends 卷轴类 {
 			
 			        if (待吸取物品列表.length === 0) {
 			            显示通知("周围没有可吸取的物品。", "信息");
-			            const 能量条 = document.querySelector(".power-bar");
-			            const 当前能量 = parseFloat(能量条.style.width) || 0;
-			            能量条.style.width = `${Math.min(100, 当前能量 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100)}%`;
+			            玩家属性.当前能量值 =Math.min(100, 玩家属性.当前能量值+ this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100)
 			            return false;
 			        }
 			
@@ -28515,9 +28652,7 @@ class 太阳卷轴 extends 卷轴类 {
 			            const 当前物品数量 = [...玩家背包.values()].reduce((sum, i) => sum + (i.是否隐藏 ? 0 : 1), 0);
 			            if (当前物品数量 >= 最大背包容量 && ![...玩家背包.values()].some(i => i.可堆叠于(待吸取物品列表[索引].物品))) {
 			                if (成功吸取数量==0) {
-			                    const 能量条 = document.querySelector(".power-bar");
-			                    const 当前能量 = parseFloat(能量条.style.width) || 0;
-			                    能量条.style.width = `${Math.min(100, 当前能量 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100)}%`;
+			                    玩家属性.当前能量值 =Math.min(100, 玩家属性.当前能量值 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100)
 			                }
 			                玩家属性.允许移动--
 			                显示通知("背包已满，停止吸取！", "警告");
@@ -29069,6 +29204,35 @@ class 太阳卷轴 extends 卷轴类 {
 			    }
 			
 			    使用(目标怪物列表,目标路径,使用者=玩家) {
+			        if (联机模式) {
+			        
+			        if (this.自定义数据.get("冷却剩余") > 0) {
+            显示通知("枪械正在冷却！", "错误");
+            return true;
+        }
+        if (物品点击监听器) {
+            物品点击监听器 = null;
+            显示通知("取消了狙击模式。", "信息");
+            return true;
+        }
+        显示通知("狙击模式开启：请点击一个目标。", "信息", true);
+        物品点击监听器 = (clientX, clientY) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+            const gridX = Math.floor(视口偏移X + x / 单元格大小);
+            const gridY = Math.floor(视口偏移Y + y / 单元格大小);
+            socket.emit('playerAction', { 
+                type: 'useSniper', 
+                targetX: gridX, 
+                targetY: gridY, 
+                id: this.唯一标识.toString(),
+                slot: this.装备槽位
+            });
+            物品点击监听器 = null;
+        };
+        return true;
+			    }
 			        if (使用者 instanceof 宠物) return;
 			        if (this.自定义数据.get("冷却剩余") > 0) {
 			            显示通知("枪械正在冷却！", "错误");
@@ -30557,6 +30721,7 @@ class 血水桶 extends 物品 {
 			            玩家初始位置.x = parseInt(目标X);
 			            玩家初始位置.y = parseInt(目标Y);
 			        }
+			        已使用存档点 = true;
 			        
 			        显示通知(`重生点已设置在 (${玩家初始位置.x}, ${玩家初始位置.y})！`, '成功');
 			        计划显示格子特效([{x: 玩家初始位置.x, y: 玩家初始位置.y}], '4CAF50');
@@ -32418,10 +32583,7 @@ class 许愿井 extends 物品 {
 			        switch (条件) {
 			            case "献祭生命":
 			                const 当前生命 =
-			                    parseFloat(
-			                        document.querySelector(".health-bar").style
-			                            .width
-			                    ) || 0;
+			                    玩家属性.当前生命值
 			                if (当前生命 > 75) {
 			                    伤害玩家(75, this.名称);
 			                } else {
@@ -32667,12 +32829,11 @@ class 许愿井 extends 物品 {
 			        let 剩余伤害 = super.当被攻击(原始攻击力, 来源);
 			        if (prng() < this.自定义数据.get("能量恢复概率")) {
 			            const 恢复量 = this.自定义数据.get("能量恢复量");
-			            const 能量条 = document.querySelector(".power-bar");
-			            const 当前能量 = parseFloat(能量条.style.width) || 0;
-			            能量条.style.width = `${Math.min(
+			            
+			            玩家属性.当前能量值 =Math.min(
 			                100,
-			                当前能量 + 恢复量/自定义全局设置.初始能量值*100
-			            )}%`;
+			                玩家属性.当前能量值 + 恢复量/自定义全局设置.初始能量值*100
+			            );
 			            触发HUD显示();
 			        }
 			
@@ -35192,13 +35353,11 @@ class 烟雾 extends 物品 {
 			        const 关闭选择界面 = () => {
 			            遮罩.remove();
 			            玩家属性.允许移动--;
-			            const 能量条 = document.querySelector(".power-bar");
-			            const 当前能量 = parseFloat(能量条.style.width) || 0;
-			            if (能量条)
-			                能量条.style.width = `${Math.min(
+			            
+			                玩家属性.当前能量值 =Math.min(
 			                    100,
-			                    当前能量 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100
-			                )}%`;
+			                    玩家属性.当前能量值 + this.自定义数据.get("能量消耗")/自定义全局设置.初始能量值*100
+			                )
 			            触发HUD显示();
 			        };
 			
@@ -35234,22 +35393,14 @@ class 烟雾 extends 物品 {
 			                                当前激活卷轴列表.delete(
 			                                    临时附魔卷轴
 			                                );
-			                                const 能量条 =
-			                                    document.querySelector(
-			                                        ".power-bar"
-			                                    );
-			                                const 当前能量 =
-			                                    parseFloat(
-			                                        能量条.style.width
-			                                    ) || 0;
-			                                if (能量条)
-			                                    能量条.style.width = `${Math.min(
+			                                
+			                                    玩家属性.当前能量值 =Math.min(
 			                                        100,
-			                                        当前能量 +
+			                                        玩家属性.当前能量值 +
 			                                            this.自定义数据.get(
 			                                                "能量消耗"
 			                                            )/自定义全局设置.初始能量值*100
-			                                    )}%`;
+			                                    )
 			                                触发HUD显示();
 			                            }, 300);
 			                        };
@@ -35329,14 +35480,11 @@ class 烟雾 extends 物品 {
 			                const 技能 = 宠物.自定义数据.get("技能")[1];
 			                if (prng() < 0.4 && 来源 instanceof 怪物) {
 			                    const 恢复量 = 5 + 技能.等级 * 2;
-			                    const 能量条 =
-			                        document.querySelector(".power-bar");
-			                    const 当前能量 =
-			                        parseFloat(能量条.style.width) || 0;
-			                    能量条.style.width = `${Math.min(
+			                    
+			                    玩家属性.当前能量值 = Math.min(
 			                        100,
-			                        当前能量 + 恢复量/自定义全局设置.初始能量值*100
-			                    )}%`;
+			                        玩家属性.当前能量值 + 恢复量/自定义全局设置.初始能量值*100
+			                    )
 			                    添加日志(`${宠物.名称}汲取了能量！`, "成功");
 			                }
 			            },
@@ -35664,9 +35812,8 @@ class 烟雾 extends 物品 {
 			    使用() {
 			        if (this.堆叠数量 <= 0) return false;
 			
-			        const 能量条 = document.querySelector(".power-bar");
-			        const 当前能量百分比 = parseFloat(能量条.style.width) || 0;
-			        const 当前能量值 = 当前能量百分比;
+			        
+			        const 当前能量值 = 玩家属性.当前能量值;
 			
 			        if (当前能量值 <= 0) {
 			            显示通知("没有能量可以吸取！", "错误");
@@ -35703,7 +35850,7 @@ class 烟雾 extends 物品 {
 			            );
 			            return true;
 			        } else {
-			            能量条.style.width = `${当前能量百分比}%`;
+			            玩家属性.当前能量值 = 当前能量百分比;
 			            显示通知("背包空间不足，无法获得能量草！", "错误");
 			            return false;
 			        }
@@ -35727,9 +35874,8 @@ class 烟雾 extends 物品 {
 			    使用() {
 			        if (this.堆叠数量 <= 0) return false;
 			
-			        const 能量条 = document.querySelector(".power-bar");
-			        const 当前能量 = parseFloat(能量条.style.width) || 0;
-			        能量条.style.width = `${Math.min(100, 当前能量 + 50/自定义全局设置.初始能量值*100)}%`;
+			        
+			        玩家属性.当前能量值 = Math.min(100, 玩家属性.当前能量值 + 50/自定义全局设置.初始能量值*100);
 			
 			        this.堆叠数量--;
 			        if (this.堆叠数量 <= 0) {
@@ -35763,6 +35909,19 @@ class 烟雾 extends 物品 {
     }
 
     尝试互动() {
+        const 移动方向 = 获取移动方向(玩家.x, 玩家.y, this.x, this.y);
+        
+        // 获取当前玩家格子和栅栏格子
+        const 玩家单元格 = 地牢[玩家.y]?.[玩家.x];
+        const 栅栏单元格 = 地牢[this.y]?.[this.x];
+
+        // 检查是否存在墙壁阻挡 (当前格子的朝向墙 或 目标格子的反向墙)
+        if (移动方向 && 玩家单元格 && 栅栏单元格) {
+            if (玩家单元格.墙壁[移动方向.当前墙] || 栅栏单元格.墙壁[移动方向.反方向墙]) {
+                显示通知("墙壁阻挡了操作！", "错误");
+                return false;
+            }
+        }
         let 当前 = this.自定义数据.get("当前回合");
         const 所需 = this.自定义数据.get("所需回合");
         
@@ -38185,8 +38344,7 @@ function 同步Ctx缓存到真实值(ctx) {
 			    }
 			}
 			
-			// 防止长按触发文字选择
-			document.addEventListener("contextmenu", (e) => e.preventDefault());
+
 			
 			const 添加控制事件 = (元素, 方向) => {
 			    const 事件类型 = {
@@ -40867,7 +41025,7 @@ function 隐藏等待界面() {
    
 
     
-    if (游戏状态 === '编辑器游玩' || 是否是自定义关卡) {
+    if (游戏状态 === '编辑器游玩' || 是否是自定义关卡 || 联机模式) {
         
         死亡界面已显示 = true;
         const 死亡遮罩 = document.createElement("div");
@@ -40882,10 +41040,7 @@ function 隐藏等待界面() {
                     <span class="按钮图标">⚡</span>
                     在本层重生
                 </button>
-                <button class="重生按钮" id="查看现场">
-                    
-                    查看现场
-                </button>
+                
             </div>
         </div>
         `;
@@ -40906,18 +41061,7 @@ function 隐藏等待界面() {
                 });
             }, 500);
         });
-        死亡遮罩.querySelector("#查看现场").addEventListener("click", function() {
-            死亡遮罩.style.display = "none";
-            const 返回按钮 = document.createElement("button");
-            返回按钮.className = "菜单按钮";
-            返回按钮.textContent = "返回结算界面";
-            返回按钮.style.cssText = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:20000; padding:10px 20px; font-size:1rem;";
-            返回按钮.onclick = () => {
-                死亡遮罩.style.display = "flex";
-                返回按钮.remove();
-            };
-            document.body.appendChild(返回按钮);
-        });
+        
         document.body.appendChild(死亡遮罩);
         return; 
     }
@@ -41439,6 +41583,10 @@ function 隐藏等待界面() {
 			    if (玩家所在房间 && 玩家所在房间.类型 === "挑战房间" && 玩家所在房间.挑战状态?.进行中) {
 			            处理挑战失败(玩家所在房间);
 			        }
+			        
+    if (联机模式 && typeof socket !== 'undefined' && socket.connected) {
+        socket.emit('playerRespawn', { x: 玩家.x, y: 玩家.y });
+    }
 			    if (生存挑战激活) {
 			        恢复挑战区域();
 			        生存挑战激活 = false;
@@ -41478,9 +41626,8 @@ function 隐藏等待界面() {
 			    
 			    玩家死亡次数++;
 			    更新胜利条件显示();
-			    const 生命条 = document.querySelector(".health-bar");
-			    生命条.style.width = "100%";
-			    document.querySelector(".power-bar").style.width = `100%`;
+			    玩家属性.当前生命值 = 自定义全局设置.初始生命值;
+                玩家属性.当前能量值 = 自定义全局设置.初始能量值;
 			
 			    玩家状态.forEach((m) => {
 			        m.移除状态();
@@ -41501,7 +41648,14 @@ function 隐藏等待界面() {
 			            let 重生Y = 玩家初始位置.y;
 			            let 找到位置 = false;
 			
-			            if (地牢生成方式 === 'cave') {
+			            // 仅当玩家通过存档点物品设置了重生点时，才优先使用该位置
+			            if (已使用存档点 && 位置是否可用(玩家初始位置.x, 玩家初始位置.y)) {
+			                重生X = 玩家初始位置.x;
+			                重生Y = 玩家初始位置.y;
+			                找到位置 = true;
+			            }
+			
+			            if (!找到位置 && 地牢生成方式 === 'cave') {
 			                const 可重生位置 = Array.from(已揭示洞穴格子);
 			                if (可重生位置.length > 0) {
 			                    for (let i = 0; i < 可重生位置.length * 2; i++) {
@@ -41512,7 +41666,7 @@ function 隐藏等待界面() {
 			                        }
 			                    }
 			                }
-			            } else if (地牢生成方式 === 'maze') {
+			            } else if (!找到位置 && 地牢生成方式 === 'maze') {
 			                const 已访问房间列表 = 房间列表.filter(room => room && 已访问房间.has(room.id) && room.类型 === "房间");
 			                if (已访问房间列表.length > 0) {
 			                    for (let i = 0; i < 50; i++) {
@@ -41527,6 +41681,7 @@ function 隐藏等待界面() {
 			            }
 			            玩家.x = 重生X;
 			            玩家.y = 重生Y;
+			            // 存档点标记永久保持
 			        } else if (当前层数 === 5) {
 			            const 迷宫尺寸 = 85;
 			            const 偏移X = Math.floor((地牢大小 - 迷宫尺寸) / 2);
@@ -41638,6 +41793,25 @@ function 隐藏等待界面() {
     通过楼梯切换 = false,
     onCompleteCallback = null
 ) {
+    if (联机模式) {
+        if (完全重生) {
+            // 重生不需要同步等待，或者由服务端统一处理重生逻辑
+             socket.emit('playerAction', { type: 'requestFloor', targetFloor: 新层数 });
+             return;
+        }
+        // 发送切换请求，本地仅显示遮罩提示
+        const 遮罩 = document.getElementById("transitionMask");
+        const 标题 = document.getElementById("floorTitle");
+        if (遮罩 && 标题) {
+            遮罩.style.opacity = 1;
+            标题.textContent = "等待队友...";
+            标题.style.opacity = 1;
+            标题.style.transform = "scale(1)";
+        }
+        socket.emit('playerAction', { type: 'requestFloor', targetFloor: 新层数 });
+        return;
+    }
+
     const 遮罩 = document.getElementById("transitionMask");
     const 标题 = document.getElementById("floorTitle");
 
@@ -41744,6 +41918,7 @@ if (玩家仆从列表.length > 0) {
         const 旧层数 = 当前层数;
         当前层数 = 新层数;
         已揭示洞穴格子 = new Set();
+        let 是否新楼层 = false
 
         if (所有地牢层.has(新层数)) {
             const 新地牢数据 = 所有地牢层.get(新层数);
@@ -41784,7 +41959,9 @@ if (玩家仆从列表.length > 0) {
                 玩家.x = 新地牢数据.玩家位置.x;
                 玩家.y = 新地牢数据.玩家位置.y;
             }
-        } else if (自定义游戏设置.开启Boss战&&当前层数 === 5) {
+        } else {
+        是否新楼层 = true
+        if (自定义游戏设置.开启Boss战&&当前层数 === 5) {
             初始化随机数生成器(当前游戏种子);
             生成迷宫关卡();
         } else if (自定义游戏设置.开启Boss战&&当前层数 === 10) {
@@ -41806,10 +41983,10 @@ if (玩家仆从列表.length > 0) {
                 当前出战宠物列表 = [];
                 
             }
-            const 能量条 = document.querySelector(".power-bar");
-        if (能量条 && 玩家属性.初始能量加成 > 0) {
-            const 当前能量 = parseFloat(能量条.style.width) || 0;
-            能量条.style.width = `${Math.min(100, 当前能量 + 玩家属性.初始能量加成/自定义全局设置.初始能量值*100)}%`;
+            
+        if (玩家属性.初始能量加成 > 0) {
+            
+            玩家属性.当前能量值 = Math.min(100, 玩家属性.当前能量值 + 玩家属性.初始能量加成/自定义全局设置.初始能量值*100);
         }
             房间列表 = [];
             上锁房间列表 = [];
@@ -41852,6 +42029,7 @@ if (玩家仆从列表.length > 0) {
             玩家.y = 玩家初始位置.y;
             绘制();
         }
+        }
             当前出战宠物列表.forEach(pet => {
     if (!pet || !pet.是否已放置) return;
     const 瞬间移动 = Object.values(pet.自定义数据.get("装备") || {}).find(item => item instanceof 瞬间移动饰品);
@@ -41875,7 +42053,7 @@ if (玩家仆从列表.length > 0) {
         标题.style.opacity = 0;
         标题.style.transform = "scale(0.5)";
         遮罩.style.opacity = 0;
-        if (新层数 > 旧层数 && 新层数 > 0 && 游戏状态 !== "编辑器游玩" && 游戏状态 !== "地图编辑器" && !是否是自定义关卡 && 自定义游戏设置.开启升级奖励 && 通过楼梯切换) {
+        if (新层数 > 旧层数 && 新层数 > 0 && 游戏状态 !== "编辑器游玩" && 游戏状态 !== "地图编辑器" && !是否是自定义关卡 && 自定义游戏设置.开启升级奖励 && 通过楼梯切换 && 是否新楼层) {
              await 显示升级界面();
         }
         resolve();
@@ -42180,7 +42358,7 @@ if (玩家仆从列表.length > 0) {
 			                添加日志(`已传送到 ${目标点.名称}`, "信息");
 			                更新视口();
 			                绘制();
-			                处理怪物回合();
+			                //处理怪物回合();
 			                更新物体指示器();
 			            } else {
 			                显示通知(
@@ -42219,7 +42397,7 @@ if (玩家仆从列表.length > 0) {
 			            if (当前层数===null) 目标层数 = 0;
 			            切换楼层(目标层数, false, null, true);
 			        },
-			        唯一标识: Symbol(`楼梯_${类型}`),
+			        唯一标识: Symbol.for(`楼梯_${类型}`),
 			        获取名称: () =>
 			            类型 === 单元格类型.楼梯下楼 ? "下楼楼梯" : "上楼楼梯",
 			        自定义数据: new Map(),
@@ -43092,6 +43270,16 @@ if (玩家仆从列表.length > 0) {
 			        if (物品实例 instanceof 沉浸式传送门 && !所有传送门.includes(物品实例)) {
 			    所有传送门.push(物品实例);
 			}
+			if (地牢[y][x].环境 === 环境类型.水 && 物品实例.材质 === 材质.铁质 && !物品实例.自定义数据.get("不可破坏")) {
+            if (prng() < 0.5) {
+                 const 当前锈蚀 = 物品实例.自定义数据.get('锈蚀度') || 0;
+                 物品实例.自定义数据.set('锈蚀度', 当前锈蚀 + 2);
+                 if (物品实例.自定义数据.has("耐久")) {
+                     物品实例.自定义数据.set("耐久", Math.max(0, 物品实例.自定义数据.get("耐久") - 5));
+                 }
+                 添加日志(`${物品实例.获取名称()} 接触水面严重生锈。`, "警告");
+            }
+        }
 			        地牢[y][x].颜色索引 = 物品实例.颜色索引;
 			        绘制();
 			        return true;
@@ -43157,6 +43345,10 @@ if (玩家仆从列表.length > 0) {
 			//修改时记得同步修改使用背包物品
  function 尝试互动() {
                 if (死亡界面已显示) return;
+                if (联机模式) {
+        socket.emit('playerAction', { type: 'interact' });
+        
+    }
                 if (游戏设置.自动移动可打断) 停止自动移动();
 			    if (游戏状态 === '地图编辑器') {
 			        const 互动按钮元素 = document.getElementById('互动按钮');
@@ -43265,9 +43457,8 @@ if (玩家仆从列表.length > 0) {
                 if (尝试收集物品(种子实例, true)) {
                     显示通知(`你在草地里找到了一个 ${种子实例.名称}！`, "成功");
                 } else {
-                    const 能量条 = document.querySelector(".power-bar");
-                    const 当前能量 = parseFloat(能量条.style.width) || 0;
-                    能量条.style.width = `${Math.min(100, 当前能量 + 2/自定义全局设置.初始能量值*100)}%`;
+
+                    玩家属性.当前能量值 = Math.min(100, 玩家属性.当前能量值 + 2/自定义全局设置.初始能量值*100);
                     显示通知("你在草地里发现了一些东西，但背包满了！", "警告");
                 }
             } else {
@@ -43385,16 +43576,19 @@ if (玩家仆从列表.length > 0) {
 			                        地牢[item.y][item.x].标识
 			                    );
 			                    互动 = 房间门.尝试解锁(玩家背包);
-			                    if (互动)
-			                        地牢[房间门.所在位置.y][
-			                            房间门.所在位置.x
-			                        ].背景类型 = 单元格类型.门;
+			                    if (互动) {
+			                        地牢[item.y][item.x].背景类型 = 单元格类型.门;
+			                        if (地牢[item.y][item.x].配对单元格位置) {
+			                            const 配对 = 地牢[item.y][item.x].配对单元格位置;
+			                            地牢[配对.y][配对.x].背景类型 = 单元格类型.门;
+			                        }
+			                    }
 			                });
 			                绘制();
 			            }
 			            if (互动) {
+			                触发游戏事件('玩家解锁门', { x: 对应门.所在位置.x, y: 对应门.所在位置.y });
 			                处理销毁物品(对应钥匙.唯一标识, true);
-			                触发游戏事件('玩家解锁门', { x: 房间门.所在位置.x, y: 房间门.所在位置.y });
 			                显示通知("解锁成功！", "成功");
 			                break; 
 			            }
@@ -43574,7 +43768,7 @@ if (玩家仆从列表.length > 0) {
 			    克隆实例.显示元素 = null;
 			    克隆实例.已装备 = false;
 			    克隆实例.装备槽位 = null;
-			    克隆实例.唯一标识 = Symbol(
+			    克隆实例.唯一标识 = Symbol.for(
 			        Date.now().toString() + prng().toString()
 			    );
 			
@@ -44782,6 +44976,14 @@ if (玩家仆从列表.length > 0) {
             卡片.onclick = () => {
                 天赋.行动();
                 显示通知(`选择了天赋：${天赋.名称}`, "成功");
+                
+                if (联机模式) {
+                    // 联机模式下，选择后发送完成信号，不立即关闭遮罩（等待服务端统一切换）
+                    socket.emit('playerAction', { type: 'finishUpgrade' });
+                    容器.innerHTML = '<p style="color:white; font-size:1.5em;">等待其他玩家...</p>';
+                    return;
+                }
+                
                 遮罩.classList.remove("显示");
                 setTimeout(() => {
                     遮罩.style.display = "none";
@@ -44821,6 +45023,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
     触发药水水域效果(宠物,目标单元格);
 }
 			function 处理回合逻辑() {
+			    if (联机模式) return;
 			    if (玩家属性.允许移动 > 0) return;
 			    if (地牢.length !== 地牢大小) return;
 			    
@@ -44832,14 +45035,19 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			    if (当前出战宠物列表.length > 0) {
 					当前出战宠物列表.forEach(pet => {if(pet.层数==当前层数) pet.执行回合AI()});
 				}
-				if ((玩家属性.能量自然恢复 || 0) > 0) {
-        能量变化 += (玩家属性.能量自然恢复 / 自定义全局设置.初始能量值 * 100);
+				const 最大能量 = 自定义全局设置.初始能量值 || 100;
+    const 玩家最大生命值 = 100 + (玩家属性.最大生命值加成 || 0);
+    if (玩家属性.当前能量值 === undefined) 玩家属性.当前能量值 = 最大能量;
+    if (玩家属性.当前生命值 === undefined) 玩家属性.当前生命值 = 玩家最大生命值;
+
+    let 能量变化 = 0;
+    if ((玩家属性.能量自然恢复 || 0) > 0) {
+        能量变化 += (玩家属性.能量自然恢复 / 最大能量 * 100);
     }
+    
     if ((玩家属性.生命自然恢复 || 0) > 0) {
-        const 生命条 = document.querySelector(".health-bar");
-        const 当前生命 = parseFloat(生命条?.style.width) || 100;
-        const 恢复百分比 = (玩家属性.生命自然恢复 / (100 + 玩家属性.最大生命值加成)) * 100;
-        生命条.style.width = `${Math.min(100, 当前生命 + 恢复百分比)}%`;
+        const 恢复百分比 = (玩家属性.生命自然恢复 / 玩家最大生命值) * 100;
+        玩家属性.当前生命值 = Math.min(玩家最大生命值, 玩家属性.当前生命值 + (玩家最大生命值 * 恢复百分比 / 100));
     }
 				if(当前天气效果.includes('深夜')) 更新光源地图();
 				if(房间列表.find(item=>item.id==房间地图[玩家.y][玩家.x])?.类型==='黑暗房间') 更新光源地图();
@@ -44860,6 +45068,18 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
             状态.更新状态();
         }
     });
+    const healthBar = document.querySelector(".health-bar");
+			        const powerBar = document.querySelector(".power-bar");
+			        if (healthBar) {
+			                healthBar.style.width = `${Math.max(0, Math.min(100, 玩家属性.当前生命值))}%`;
+			                if (玩家属性.当前能量值 <= 20) healthBar.classList.add("低数值警告");
+			                else healthBar.classList.remove("低数值警告");
+			            }
+			            if (powerBar) {
+			                powerBar.style.width = `${Math.max(0, Math.min(100, 玩家属性.当前能量值))}%`;
+			                if (玩家属性.当前能量值 <= 20) powerBar.classList.add("低数值警告");
+			                else powerBar.classList.remove("低数值警告");
+			            }
 			    处理天气效果();
 			    更新物体指示器();
 			    if (当前层数 === 5) {
@@ -44869,15 +45089,13 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			            生成迷宫怪物(需生成数量);
 			        }
 			    }
-			    const 能量条 = document.querySelector(".power-bar");
-			    const 当前能量 = parseFloat(能量条?.style.width) || 100;
-			    let 能量变化 = 0;
-			    if(当前能量 < 70) 能量变化 += (Math.round(prng() * 5) / 5)/自定义全局设置.初始能量值*100;
-			    if(玩家属性.能量流失 > 0) 能量变化 -= 玩家属性.能量流失/自定义全局设置.初始能量值*100;
-			
-			    if (能量条 && 能量变化 !== 0) {
-			         能量条.style.width = `${Math.max(0, Math.min(100, 当前能量 + 能量变化))}%`;
-			    }
+			    if(玩家属性.当前能量值 < 70) 能量变化 += (Math.round(prng() * 5) / 5) / 最大能量 * 100;
+    if(玩家属性.能量流失 > 0) 能量变化 -= 玩家属性.能量流失 / 最大能量 * 100;
+
+    if (能量变化 !== 0) {
+        玩家属性.当前能量值 = Math.max(0, Math.min(100, 玩家属性.当前能量值 + 能量变化));
+    }
+    
 			    玩家状态.forEach((item) => {
 			        item.更新状态();
 			    });
@@ -44983,9 +45201,32 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
                 }
             }
         };
+        Array.from({ length: 装备栏每页装备数 }, (_, i) => 
+            玩家装备.get(当前装备页 * 装备栏每页装备数 + i + 1)
+        ).filter(v => v != null).forEach(装备 => {
+            检查并浸泡(装备)
+            if (装备.材质 === 材质.铁质 && !装备.自定义数据.get("不可破坏")) {
+                if (prng() < 0.15) {
+                    const 当前锈蚀 = 装备.自定义数据.get('锈蚀度') || 0;
+                    装备.自定义数据.set('锈蚀度', 当前锈蚀 + 1);
+                    if (装备.自定义数据.has("耐久")) {
+                        const 新耐久 = Math.max(0, 装备.自定义数据.get("耐久") - 2);
+                        装备.自定义数据.set("耐久", 新耐久);
+                        if (新耐久 <= 0) {
+                            处理销毁物品(装备.唯一标识, true);
+                            显示通知(`你的 ${装备.获取名称()} 在水中彻底锈蚀损坏了！`, "错误");
+                        } else {
+                            显示通知(`你的 ${装备.获取名称()} 在水中生锈了！`, "警告");
+                        }
+                    }
+                    浸泡发生 = true;
+                }
+            }
+        });
+        
         //玩家背包.forEach(检查并浸泡);
-        Array.from({ length: 装备栏每页装备数 }, (_, i) => 玩家装备.get(当前装备页 * 装备栏每页装备数 + i + 1)).filter(v => v != null).forEach((装备) => {检查并浸泡(装备)});
-        if(浸泡发生) 显示通知("你的背包进水了！部分物品暂时无法使用。", "警告");
+        
+        if(浸泡发生) 显示通知("你的背包进水了！", "警告");
         
 					const 火焰效果 = 玩家状态.find(s => s.类型 === '火焰');
 					if (火焰效果) {
@@ -44998,14 +45239,13 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
         const 玩家最大生命值 = 100 + (玩家属性.最大生命值加成 || 0);
         const 恢复量 = Math.floor(玩家最大生命值 * 0.05); // 恢复 5% 最大生命值
         
-        const 生命条 = document.querySelector(".health-bar");
-        const 当前宽度 = parseFloat(生命条.style.width) || 0;
-        const 当前生命值 = (当前宽度 / 100) * 玩家最大生命值;
+        
+        const 当前生命值 = (玩家属性.当前生命值 / 100) * 玩家最大生命值;
         
         if (当前生命值 < 玩家最大生命值) {
             const 新生命值 = Math.min(玩家最大生命值, 当前生命值 + 恢复量);
             const 新宽度 = (新生命值 / 玩家最大生命值) * 100;
-            生命条.style.width = `${新宽度}%`;
+            玩家属性.当前生命值=新宽度
             
             目标单元格.环境 = 环境类型.水; // 变回水
             显示通知(`血水滋养了你，恢复了 ${恢复量} 点生命！`, "成功");
@@ -45104,13 +45344,10 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			        moveQueue = [];
 			        isAutoMoving = false;
 			        已访问房间.add(目标房间ID);
-			        const 能量条 = document.querySelector(".power-bar");
-			        const 当前能量 = parseFloat(能量条?.style.width) || 100;
-			        if (能量条)
-			            能量条.style.width = `${Math.min(
+			        玩家属性.当前能量值 =Math.min(
 			                100,
-			                当前能量 + 1.5/自定义全局设置.初始能量值*100
-			            )}%`;
+			                玩家属性.当前能量值 + 1.5/自定义全局设置.初始能量值*100
+			            )
 			        const 进入的房间 = 房间列表.find(t=>t.id==目标房间ID);
 			        if (
 			            进入的房间 &&
@@ -45148,6 +45385,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
     }
 }
 			function 处理单向房间(旧X, 旧Y, 新X, 新Y) {
+			if(联机模式) return;
 			const 新房间ID = 房间地图[新Y]?.[新X];
 			const 进入的房间 = 房间列表.find(t=>t.id==新房间ID);
 			if (新房间ID === -1) return;
@@ -45254,6 +45492,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 }
 			
 			        async function 移动玩家(dx, dy, 冷却 = false, 剩余步数=1) {
+			        
 			    if (游戏状态 === '地图编辑器') {
 			        相机目标X += dx * 编辑器状态.相机速度;
 			        相机目标Y += dy * 编辑器状态.相机速度;
@@ -45295,7 +45534,10 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
         if (now - 上次移动 < 游戏设置.移动速度) return;
         上次移动 = now;
     }
-
+if (联机模式) {
+        socket.emit('playerAction', { type: 'move', dx, dy });
+        //return;
+    }
     const 交互目标X = 玩家.x + Math.sign(dx);
     const 交互目标Y = 玩家.y + Math.sign(dy);
     if (交互目标X >= 0 && 交互目标X < 地牢大小 && 交互目标Y >= 0 && 交互目标Y < 地牢大小) {
@@ -45305,8 +45547,8 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
             return;
         }
     }
-			    const 能量条 = document.querySelector(".power-bar");
-			    const 当前能量 = parseFloat(能量条.style.width) || 100;
+			    
+			    const 当前能量 = 玩家属性.当前能量值 || 100;
 			    const 眩晕状态 = 玩家状态.some((s) => s.类型 === "眩晕");
 			    const 冻结状态 = 玩家状态.some((s) => s.类型 === "冻结");
 			    const 缓慢状态 = 玩家状态.some((s) => s.类型 === "缓慢");
@@ -45612,6 +45854,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			            移动历史 = [];
 			        }
 			        更新视口();
+			        if(联机模式) 更新光源地图();
 			        if (当前天气效果.includes("诡魅")) {
 			            处理诡魅房间刷新(
 			                玩家.x - dx,
@@ -45638,32 +45881,30 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			    绘制();
 			}
 			function 扣除能量(能量, 是否卷轴 = false) {
-			    if(调试无限能量) return true;
-			    const 能量条 = document.querySelector(".power-bar");
-			    let 当前能量 = Math.max(
-			        Math.min(parseFloat(能量条.style.width), 100),
-			        0
-			    );
-			    当前能量 -= 能量/自定义全局设置.初始能量值*100;
-			    if (当前能量 <= 0) {
-			        if (当前激活卷轴列表.size > 0) {
-			            当前激活卷轴列表.forEach((卷轴) => {
-			                当前激活卷轴列表.delete(卷轴);
-			                卷轴.卸下();
-			            });
-			
-			            当前能量 = 0;
-			        }
-			        更新装备显示();
-			        if (是否卷轴)
-			            显示通知("能量不足，已自动取消卷轴效果", "信息");
-			        return false;
-			    }
-			    能量条.style.width = `${Math.max(0, 当前能量)}%`;
-			    触发HUD显示();
-			    绘制();
-			    return true;
-			}
+    if (调试无限能量) return true;
+    const 最大能量 = 自定义全局设置.初始能量值;
+    if (玩家属性.当前能量值 === undefined) 玩家属性.当前能量值 = 最大能量;
+    
+    let 预测能量 = 玩家属性.当前能量值 - 能量;
+    
+    if (预测能量 < 0) {
+        if (当前激活卷轴列表.size > 0) {
+            当前激活卷轴列表.forEach((卷轴) => {
+                当前激活卷轴列表.delete(卷轴);
+                卷轴.卸下();
+            });
+        }
+        更新装备显示();
+        if (是否卷轴) 显示通知("能量不足，已自动取消卷轴效果", "信息");
+        return false;
+    }
+    
+    玩家属性.当前能量值 = 预测能量;
+    
+    return true;
+}
+
+
 			function 检查移动可行性(fromX, fromY, toX, toY, 未解锁房间视作障碍 = false, 无视物品 = false) {
     if (toX < 0 || toX >= 地牢大小 || toY < 0 || toY >= 地牢大小) return false;
     if (fromX < 0 || fromX >= 地牢大小 || fromY < 0 || fromY >= 地牢大小) return false;
@@ -45705,8 +45946,13 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
     return true;
 }
 			function 处理丢弃物品(唯一标识) {
+			    if (联机模式) {
+        socket.emit('playerAction', { type: 'drop', id: 唯一标识.toString() });
+        return true;
+    }
 			    const 物品实例 = 玩家背包.get(唯一标识);
 			    if (!物品实例) return false;
+			    
 			
 			    let 目标X = 玩家.x;
 			    let 目标Y = 玩家.y;
@@ -46078,6 +46324,11 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			let fusionGoldQuantities = [0, 0, 0, 0];
 			
 			function 添加到融合区(物品实例, 起始元素) {
+			    if (联机模式) {
+			        socket.emit('playerAction', { type: 'fuseAdd', id: 物品实例.唯一标识.toString() });
+    
+			        
+			    }
 			    if (!物品实例) return;
 			
 			    const targetSlotIndex = 融合区物品.findIndex(格子 => 格子 === null);
@@ -46151,6 +46402,10 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			
 			
 			function 从融合区移除(格子索引) {
+			    if (联机模式) {
+			        socket.emit('playerAction', { type: 'fuseRemove', index: 格子索引 });
+			        
+			    }
 			    const 物品实例 = 融合区物品[格子索引];
 			    if (物品实例 === null) return;
 			    
@@ -46182,6 +46437,10 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			}
 			
 			function 执行融合(){
+			if (联机模式) {
+			        socket.emit('playerAction', { type: 'fuseExec' });
+			        return;
+			    }
 			    if(!融合结果){
 			        显示通知("没有有效的融合结果！","错误");
 			        return;
@@ -46213,9 +46472,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
             显示通知(`成功融合出 ${新药水桶.获取名称()}！`, "成功");
         } else {
             显示通知("融合失败：无法将产物放入背包！", "错误");
-            const 能量条 = document.querySelector(".power-bar");
-            const 当前能量 = parseFloat(能量条.style.width) || 0;
-            if (能量条) 能量条.style.width = `${Math.min(100, 当前能量 + energyCost/自定义全局设置.初始能量值*100)}%`;
+            玩家属性.当前能量值 =Math.min(100, 玩家属性.当前能量值 + energyCost/自定义全局设置.初始能量值*100)
             return;
         }
     } else if (当前匹配的融合配方 === "药水弹融合") {
@@ -46240,9 +46497,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			            显示通知(`成功融合出 ${新药水弹.获取名称()}！`, "成功");
 			        } else {
 			            显示通知("融合失败：无法将产物放入背包！", "错误");
-			            const 能量条 = document.querySelector(".power-bar");
-			            const 当前能量 = parseFloat(能量条.style.width) || 0;
-			            if (能量条) 能量条.style.width = `${Math.min(100, 当前能量 + energyCost/自定义全局设置.初始能量值*100)}%`;
+			            玩家属性.当前能量值 =Math.min(100, 玩家属性.当前能量值 + energyCost/自定义全局设置.初始能量值*100)
 			            return;
 			        }
 
@@ -46308,9 +46563,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			显示通知(`${延长后的药水.名称} 持续时间已延长！`, "成功");
 			        } else {
 			 显示通知("融合失败：无法将产物放入背包！", "错误");
-			 const 能量条 = document.querySelector(".power-bar");
-			 const 当前能量 = parseFloat(能量条.style.width) || 0;
-			 if (能量条) 能量条.style.width = `${Math.min(100, 当前能量 + potionExtendEnergyCost/自定义全局设置.初始能量值*100)}%`;
+			 玩家属性.当前能量值 =Math.min(100, 玩家属性.当前能量值 + potionExtendEnergyCost/自定义全局设置.初始能量值*100)
 			 return;
 			        }
 			
@@ -46339,9 +46592,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			            显示通知(`${glassItem.获取名称()} 成功转化为铁质！`, "成功");
 			        } else {
 			            显示通知("融合失败：无法将产物放入背包！", "错误");
-			            const 能量条 = document.querySelector(".power-bar");
-			            const 当前能量 = parseFloat(能量条.style.width) || 0;
-			            if (能量条) 能量条.style.width = `${Math.min(100, 当前能量 + energyCost / 自定义全局设置.初始能量值 * 100)}%`;
+			            玩家属性.当前能量值 =Math.min(100, 玩家属性.当前能量值 + energyCost / 自定义全局设置.初始能量值 * 100)
 			            return;
 			        }
 			        } else if (当前匹配的融合配方 === "木材转化融合" || 当前匹配的融合配方 === "铁器锈蚀融合") {
@@ -46358,9 +46609,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			            显示通知(`${产物.获取名称()} 转化成功！`, "成功");
 			        } else {
 			            显示通知("融合失败：无法将产物放入背包！", "错误");
-			            const 能量条 = document.querySelector(".power-bar");
-			            const 当前能量 = parseFloat(能量条.style.width) || 0;
-			            if (能量条) 能量条.style.width = `${Math.min(100, 当前能量 + energyCost/自定义全局设置.初始能量值*100)}%`;
+			            玩家属性.当前能量值 =Math.min(100, 玩家属性.当前能量值 + energyCost/自定义全局设置.初始能量值*100)
 			            return;
 			        }
 			    } else if(当前匹配的融合配方 === "岩浆淬火") {
@@ -46383,9 +46632,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
             显示通知(`${武器实例.获取名称()} 已被岩浆淬火！`, "成功");
         } else {
             显示通知("融合失败：无法将产物放入背包！", "错误");
-            const 能量条 = document.querySelector(".power-bar");
-            const 当前能量 = parseFloat(能量条.style.width) || 0;
-            if (能量条) 能量条.style.width = `${Math.min(100, 当前能量 + energyCost/自定义全局设置.初始能量值*100)}%`;
+            玩家属性.当前能量值 =Math.min(100, 玩家属性.当前能量值 + energyCost/自定义全局设置.初始能量值*100)
             return;
         }
 
@@ -46422,9 +46669,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
         } else {
             显示通知("融合失败：无法将产物放入背包！", "错误");
             // 返还能量
-            const 能量条 = document.querySelector(".power-bar");
-            const 当前能量 = parseFloat(能量条.style.width) || 0;
-            if (能量条) 能量条.style.width = `${Math.min(100, 当前能量 + energyCost/自定义全局设置.初始能量值*100)}%`;
+            玩家属性.当前能量值 =Math.min(100, 玩家属性.当前能量值+ energyCost/自定义全局设置.初始能量值*100)
             return;
         }
 
@@ -46449,9 +46694,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
             显示通知(`${药水实例.名称} 已被稀释！`, "成功");
         } else {
             显示通知("融合失败：无法将产物放入背包！", "错误");
-            const 能量条 = document.querySelector(".power-bar");
-            const 当前能量 = parseFloat(能量条.style.width) || 0;
-            if (能量条) 能量条.style.width = `${Math.min(100, 当前能量 + energyCost/自定义全局设置.初始能量值*100)}%`;
+            玩家属性.当前能量值 =Math.min(100, 玩家属性.当前能量值 + energyCost/自定义全局设置.初始能量值*100)
             return;
         }
 
@@ -46476,9 +46719,7 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			显示通知(`成功融合出 ${实际输出物品.获取名称()}！`, "成功");
 			        } else {
 			显示通知("融合失败：无法将产物放入背包！", "错误");
-			const 能量条 = document.querySelector(".power-bar");
-			const 当前能量 = parseFloat(能量条.style.width) || 0;
-			if (能量条) 能量条.style.width = `${Math.min(100, 当前能量 + recipeEnergyCost/自定义全局设置.初始能量值*100)}%`;
+			玩家属性.当前能量值 =Math.min(100, 玩家属性.当前能量值+ recipeEnergyCost/自定义全局设置.初始能量值*100)
 			return;
 			        }
 			    } else if (当前匹配的融合配方 === "磨刀石打磨") {
@@ -48209,241 +48450,181 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			}
 			
 			function 伤害玩家(原始攻击力, 伤害来源 = null) {
-			    if (调试无限生命) return;
-			    if (地牢[玩家.y]?.[玩家.x]?.关联物品 instanceof 烟雾) {
-			        添加日志("烟雾保护了你！", "成功");
-			        return;
-			    }
-			    const hasFireResistance = 玩家状态.some(s => s.类型 === '抗火');
-			    if (hasFireResistance && (伤害来源 === '火焰' || 伤害来源 === '岩浆')) {
-			        return;
-			    }
-			    let 最终攻击力 = 原始攻击力;
-			    let 伤害来源文本 =
-			        伤害来源 instanceof 怪物
-			            ? 伤害来源.类型
-			            : 伤害来源 || "未知来源";
-			
-			    let 闪避成功 = false;
-			    if (prng() < (玩家属性.闪避率 || 0)) {
-        显示浮动文字("闪避", 玩家.x, 玩家.y, "#4caf50");
-        添加日志(`你凭借身法闪避了 ${伤害来源文本} 的攻击！`, "成功");
-        触发HUD显示();
+    if (调试无限生命) return;
+    if (地牢[玩家.y]?.[玩家.x]?.关联物品 instanceof 烟雾) {
+        添加日志("烟雾保护了你！", "成功");
         return;
     }
-			    const 纵火狂装备 = Array.from({ length: 装备栏每页装备数 }, (_, i) => 
-			        玩家装备.get(当前装备页 * 装备栏每页装备数 + i + 1)
-			    ).find(item => item instanceof 纵火狂);
-			    const 是爆炸伤害 = (伤害来源 === '炸弹' || 伤害来源 instanceof 炸弹怪物 || 伤害来源?.名称 === '陨石法杖');
-			
-			    if (纵火狂装备 && 是爆炸伤害) {
-			        const 治疗量 = 原始攻击力;
-			        const 生命条 = document.querySelector(".health-bar");
-			        const 当前宽度 = parseFloat(生命条.style.width) || 0;
-			        const 玩家最大生命值 = 100 + (玩家属性.最大生命值加成 || 0);
-			        const 新宽度 = Math.min(100, 当前宽度 + (治疗量 / 玩家最大生命值) * 100);
-			        生命条.style.width = `${新宽度}%`;
-			        纵火狂装备.当被攻击(最终攻击力, 伤害来源);
-			        添加日志(`爆炸治愈了你 ${治疗量.toFixed(1)} 点生命！`, "成功");
-			        显示浮动文字(`+${治疗量.toFixed(0)}`, 玩家.x, 玩家.y, "#00ff00");
-			        触发HUD显示();
-			        return;
-			    }
-			    for (const 装备 of Array.from({ length: 装备栏每页装备数 }, (_, i) => 玩家装备.get(当前装备页 * 装备栏每页装备数 + i + 1)).filter(v => v != null)) {
-			        if (装备 instanceof 防御装备类) {
-			            const buffs = 装备.自定义数据.get("fusedBuffs") || [];
-			            const dodgeBuff = buffs.find(
-			                (b) => b.type === 融合Buff类型.闪避几率
-			            );
-			            if (dodgeBuff && prng() < dodgeBuff.value) {
-			                闪避成功 = true;
-			                添加日志(
-			                    `通过 ${装备.获取名称()} 闪避了来自 ${伤害来源文本} 的攻击！`,
-			                    "成功"
-			                );
-			                break;
-			            }
-			        }
-			    }
-			
-			    if (闪避成功) {
-			        显示浮动文字("闪避", 玩家.x, 玩家.y, "#4caf50");
-			        触发HUD显示();
-			        return;
-			    }
-			    let 守卫者减伤比例 = 0;
-			    Array.from({ length: 装备栏每页装备数 }, (_, i) => 玩家装备.get(当前装备页 * 装备栏每页装备数 + i + 1)).filter(v => v != null).forEach((装备) => {
-			        if (装备 instanceof 守卫者盔甲) {
-			            守卫者减伤比例 += 装备.强化 ? 0.10 : 0.05;
-			        }
-			    });
-			
-			    守卫者减伤比例 = Math.min(0.85, 守卫者减伤比例);
-			
-			    if (守卫者减伤比例 > 0) {
-			        最终攻击力 *= (1 - 守卫者减伤比例);
-			    }
-			
-			    Array.from({ length: 装备栏每页装备数 }, (_, i) => 玩家装备.get(当前装备页 * 装备栏每页装备数 + i + 1)).filter(v => v != null).forEach((装备) => {
-			            if (最终攻击力 <= 0) return; 
-			
-			            if (
-			                装备 instanceof 宠物 &&
-			                !装备.自定义数据.get("休眠中")
-			            ) {
-			                最终攻击力 = 装备.当玩家被攻击(
-			                    最终攻击力,
-			                    伤害来源
-			                );
-			            }
-			            if (装备 instanceof 防御装备类) {
-			                最终攻击力 = 装备.当被攻击(最终攻击力, 伤害来源);
-			            }
-			        });
-			
-			    最终攻击力 = Math.max(0, 最终攻击力 - (玩家属性.防御加成 || 0));
-			
-			    if (最终攻击力 <= 0 && 原始攻击力 > 0)
-			        最终攻击力 = Math.round(prng() * 100) / 100;
-			
-			    if (最终攻击力 > 0 && 游戏设置.自动移动可打断) {
-			        玩家总受到伤害 += 最终攻击力;
-			        if (isAutoMoving) {
-			        moveQueue = [];
-			        isAutoMoving = false;
-			    }
-			    }
-			
-			    更新装备显示();
-			    触发扣血特效();
-			
-			    const 玩家最大生命值 = 100 + (玩家属性.最大生命值加成 || 0);
-			
-			    const 生命条 = document.querySelector(".health-bar");
-			    const 当前宽度 = parseFloat(生命条.style.width) || 100;
-			    let 新宽度 = Math.max(0, 当前宽度 - (最终攻击力 / 玩家最大生命值) * 100);
-			    if (新宽度<=5) {
-			        const 空桶实例 = Array.from({ length: 装备栏每页装备数 }, (_, i) => 
-			            玩家装备.get(当前装备页 * 装备栏每页装备数 + i + 1)
-			        ).find(item => item instanceof 空桶);
-			        if (空桶实例) {
-			            显示通知(`${空桶实例.获取名称()} 抵挡了伤害，但被摧毁了！`, "警告");
-			            处理销毁物品(空桶实例.唯一标识, true);
-			            return;
-			        }
-			    }
-			    if (游戏状态 === "图鉴" && 最终攻击力 > 0)
-			        新宽度 = Math.max(1, 新宽度);
-			    生命条.style.width = `${新宽度}%`;
-			    更新胜利条件显示();
-			
-			    if (最终攻击力 > 0) {
-			        音效管理器.播放音效('玩家受伤');
-			        显示浮动文字(`-${最终攻击力.toFixed(0)}`, 玩家.x, 玩家.y, "#ff0000");
-			        添加日志(
-			            `受到了 ${伤害来源文本} 的伤害！损失了 ${最终攻击力.toFixed(
-			                1
-			            )} 点血量！`,
-			            `警告`
-			        );
-			    } else if (原始攻击力 > 0) {
-			        显示浮动文字(`格挡`, 玩家.x, 玩家.y, "#cccccc");
-			        添加日志(`成功抵挡了来自 ${伤害来源文本} 的攻击！`, `成功`);
-			    }
-			
-			    触发HUD显示();
-			    let 实际击退 = false;
-			    let 击退后X = 玩家.x,
-			        原始X = 玩家.x;
-			    let 击退后Y = 玩家.y,
-			        原始Y = 玩家.y;
-			    if (新宽度 > 0 && 伤害来源 instanceof 怪物 && 游戏设置.受伤时击退) {
-			        let dx = 玩家.x - 伤害来源?.x;
-			        let dy = 玩家.y - 伤害来源?.y;
-			        let 击退DX = 0,
-			            击退DY = 0;
-			
-			        if (Math.abs(dx) > Math.abs(dy))
-			            击退DX =
-			                Math.sign(dx) ||
-			                (dy === 0 ? (prng() < 0.5 ? 1 : -1) : 0);
-			        else if (Math.abs(dy) > Math.abs(dx))
-			            击退DY =
-			                Math.sign(dy) ||
-			                (dx === 0 ? (prng() < 0.5 ? 1 : -1) : 0);
-			        else if (dx !== 0 && dy !== 0) {
-			            if (prng() < 0.5) 击退DX = Math.sign(dx);
-			            else 击退DY = Math.sign(dy);
-			        }
-			        if (击退DX === 0 && 击退DY === 0) {
-			            if (prng() < 0.5)
-			                击退DX = prng() < 0.5 ? 1 : -1;
-			            else 击退DY = prng() < 0.5 ? 1 : -1;
-			        }
-			
-			        if (击退DX !== 0 || 击退DY !== 0) {
-			            const 新X = 玩家.x + 击退DX;
-			            const 新Y = 玩家.y + 击退DY;
-			            if (
-			                新X >= 0 &&
-			                新X < 地牢大小 &&
-			                新Y >= 0 &&
-			                新Y < 地牢大小 &&
-			                检查移动可行性(玩家.x, 玩家.y, 新X, 新Y) &&
-			                ![单元格类型.墙壁, 单元格类型.上锁的门].includes(
-			                    地牢[新Y]?.[新X]?.背景类型
-			                )
-			            ) {
-			                const 目标单元格 = 地牢[新Y]?.[新X];
-			                const 目标物品 = 目标单元格?.关联物品;
-			                const 不可移动类型列表 = ["楼梯"];
-			                const 目标不可移动 =
-			                    目标物品 &&
-			                    (不可移动类型列表.includes(目标物品.类型) ||
-			                        目标物品.能否拾起 === false);
-			                if (!目标不可移动) {
-			                    玩家.x = 新X;
-			                    玩家.y = 新Y;
-			                    击退后X = 新X;
-			                    击退后Y = 新Y;
-			                    实际击退 = true;
-			                }
-			            }
-			        }
-			    }
-			    if (实际击退) {
-			        const 触发中断 = 处理玩家着陆效果(
-			            原始X,
-			            原始Y,
-			            击退后X,
-			            击退后Y
-			        );
-			        if (!触发中断) 更新视口();
-			    }
-			
-			    if (新宽度 <= 0) {
-			        玩家死亡(伤害来源);
-			    } else if (自定义游戏设置.极限模式 && 生存挑战激活 && 新宽度 <= 50) {
-			        恢复挑战区域();
-			        生存挑战激活 = false;
-			        
-			        let 石碑 = null;
-			        for (const row of 地牢) {
-			            for (const cell of row) {
-			                if (cell.关联物品 instanceof 挑战石碑 && cell.关联物品.自定义数据.get("已激活")) {
-			                    石碑 = cell.关联物品;
-			                    break;
-			                }
-			            }
-			            if(石碑) break;
-			        }
-			        if (石碑) {
-			            石碑.发放奖励(石碑.自定义数据.get("当前波数")); 
-			            石碑.自定义数据.set("已激活", false);
-			        }
-			        显示通知("生命垂危，生存挑战结束！", "警告", true);
-			    }
-			}
+    const hasFireResistance = 玩家状态.some(s => s.类型 === '抗火');
+    if (hasFireResistance && (伤害来源 === '火焰' || 伤害来源 === '岩浆')) {
+        return;
+    }
+
+    let 最终攻击力 = 原始攻击力;
+    let 伤害来源文本 = 伤害来源 instanceof 怪物 ? 伤害来源.类型 : 伤害来源 || "未知来源";
+    let 闪避成功 = false;
+
+    if (prng() < (玩家属性.闪避率 || 0)) {
+        显示浮动文字("闪避", 玩家.x, 玩家.y, "#4caf50");
+        添加日志(`你凭借身法闪避了 ${伤害来源文本} 的攻击！`, "成功");
+        return;
+    }
+
+    const 纵火狂装备 = Array.from({ length: 装备栏每页装备数 }, (_, i) => 
+        玩家装备.get(当前装备页 * 装备栏每页装备数 + i + 1)
+    ).find(item => item instanceof 纵火狂);
+    const 是爆炸伤害 = (伤害来源 === '炸弹' || 伤害来源 instanceof 炸弹怪物 || 伤害来源?.名称 === '陨石法杖');
+
+    if (纵火狂装备 && 是爆炸伤害) {
+        const 治疗量 = 原始攻击力;
+        const 玩家最大生命值 = 100 + (玩家属性.最大生命值加成 || 0);
+        玩家属性.当前生命值 = Math.min(玩家最大生命值, (玩家属性.当前生命值 || 玩家最大生命值) + 治疗量);
+        纵火狂装备.当被攻击(最终攻击力, 伤害来源);
+        添加日志(`爆炸治愈了你 ${治疗量.toFixed(1)} 点生命！`, "成功");
+        显示浮动文字(`+${治疗量.toFixed(0)}`, 玩家.x, 玩家.y, "#00ff00");
+        
+        return;
+    }
+
+    for (const 装备 of Array.from({ length: 装备栏每页装备数 }, (_, i) => 玩家装备.get(当前装备页 * 装备栏每页装备数 + i + 1)).filter(v => v != null)) {
+        if (装备 instanceof 防御装备类) {
+            const buffs = 装备.自定义数据.get("fusedBuffs") || [];
+            const dodgeBuff = buffs.find((b) => b.type === 融合Buff类型.闪避几率);
+            if (dodgeBuff && prng() < dodgeBuff.value) {
+                闪避成功 = true;
+                添加日志(`通过 ${装备.获取名称()} 闪避了来自 ${伤害来源文本} 的攻击！`, "成功");
+                break;
+            }
+        }
+    }
+
+    if (闪避成功) {
+        显示浮动文字("闪避", 玩家.x, 玩家.y, "#4caf50");
+        return;
+    }
+
+    let 守卫者减伤比例 = 0;
+    Array.from({ length: 装备栏每页装备数 }, (_, i) => 玩家装备.get(当前装备页 * 装备栏每页装备数 + i + 1)).filter(v => v != null).forEach((装备) => {
+        if (装备 instanceof 守卫者盔甲) {
+            守卫者减伤比例 += 装备.强化 ? 0.10 : 0.05;
+        }
+    });
+    守卫者减伤比例 = Math.min(0.85, 守卫者减伤比例);
+    if (守卫者减伤比例 > 0) {
+        最终攻击力 *= (1 - 守卫者减伤比例);
+    }
+
+    Array.from({ length: 装备栏每页装备数 }, (_, i) => 玩家装备.get(当前装备页 * 装备栏每页装备数 + i + 1)).filter(v => v != null).forEach((装备) => {
+        if (最终攻击力 <= 0) return; 
+        if (装备 instanceof 宠物 && !装备.自定义数据.get("休眠中")) {
+            最终攻击力 = 装备.当玩家被攻击(最终攻击力, 伤害来源);
+        }
+        if (装备 instanceof 防御装备类) {
+            最终攻击力 = 装备.当被攻击(最终攻击力, 伤害来源);
+        }
+    });
+
+    最终攻击力 = Math.max(0, 最终攻击力 - (玩家属性.防御加成 || 0));
+    if (最终攻击力 <= 0 && 原始攻击力 > 0) 最终攻击力 = Math.round(prng() * 100) / 100;
+
+    if (最终攻击力 > 0 && 游戏设置.自动移动可打断) {
+        玩家总受到伤害 += 最终攻击力;
+        if (isAutoMoving) {
+            moveQueue = [];
+            isAutoMoving = false;
+        }
+    }
+
+    更新装备显示();
+    const 玩家最大生命值 = 100 + (玩家属性.最大生命值加成 || 0);
+    if (玩家属性.当前生命值 === undefined) 玩家属性.当前生命值 = 玩家最大生命值;
+    
+    let 预测生命 = Math.max(0, 玩家属性.当前生命值 - 最终攻击力);
+    
+    if (预测生命 <= 5 && 预测生命 > 0) {
+        const 空桶实例 = Array.from({ length: 装备栏每页装备数 }, (_, i) => 
+            玩家装备.get(当前装备页 * 装备栏每页装备数 + i + 1)
+        ).find(item => item instanceof 空桶);
+        if (空桶实例) {
+            显示通知(`${空桶实例.获取名称()} 抵挡了伤害，但被摧毁了！`, "警告");
+            处理销毁物品(空桶实例.唯一标识, true);
+            return;
+        }
+    }
+    
+    if (游戏状态 === "图鉴" && 最终攻击力 > 0) 预测生命 = Math.max(1, 预测生命);
+    玩家属性.当前生命值 = 预测生命;
+    
+    更新胜利条件显示();
+
+    if (最终攻击力 > 0) {
+        显示浮动文字(`-${最终攻击力.toFixed(0)}`, 玩家.x, 玩家.y, "#ff0000");
+        添加日志(`受到了 ${伤害来源文本} 的伤害！损失了 ${最终攻击力.toFixed(1)} 点血量！`, `警告`);
+    } else if (原始攻击力 > 0) {
+        显示浮动文字(`格挡`, 玩家.x, 玩家.y, "#cccccc");
+        添加日志(`成功抵挡了来自 ${伤害来源文本} 的攻击！`, `成功`);
+    }
+
+    let 实际击退 = false;
+    let 击退后X = 玩家.x, 原始X = 玩家.x;
+    let 击退后Y = 玩家.y, 原始Y = 玩家.y;
+    
+    if (玩家属性.当前生命值 > 0 && 伤害来源 instanceof 怪物 && 游戏设置.受伤时击退) {
+        let dx = 玩家.x - 伤害来源?.x;
+        let dy = 玩家.y - 伤害来源?.y;
+        let 击退DX = 0, 击退DY = 0;
+
+        if (Math.abs(dx) > Math.abs(dy)) 击退DX = Math.sign(dx) || (dy === 0 ? (prng() < 0.5 ? 1 : -1) : 0);
+        else if (Math.abs(dy) > Math.abs(dx)) 击退DY = Math.sign(dy) || (dx === 0 ? (prng() < 0.5 ? 1 : -1) : 0);
+        else if (dx !== 0 && dy !== 0) { if (prng() < 0.5) 击退DX = Math.sign(dx); else 击退DY = Math.sign(dy); }
+        if (击退DX === 0 && 击退DY === 0) { if (prng() < 0.5) 击退DX = prng() < 0.5 ? 1 : -1; else 击退DY = prng() < 0.5 ? 1 : -1; }
+
+        if (击退DX !== 0 || 击退DY !== 0) {
+            const 新X = 玩家.x + 击退DX;
+            const 新Y = 玩家.y + 击退DY;
+            if (新X >= 0 && 新X < 地牢大小 && 新Y >= 0 && 新Y < 地牢大小 && 检查移动可行性(玩家.x, 玩家.y, 新X, 新Y) && ![单元格类型.墙壁, 单元格类型.上锁的门].includes(地牢[新Y]?.[新X]?.背景类型)) {
+                const 目标单元格 = 地牢[新Y]?.[新X];
+                const 目标物品 = 目标单元格?.关联物品;
+                const 不可移动类型列表 = ["楼梯"];
+                const 目标不可移动 = 目标物品 && (不可移动类型列表.includes(目标物品.类型) || 目标物品.能否拾起 === false);
+                if (!目标不可移动) {
+                    玩家.x = 新X;
+                    玩家.y = 新Y;
+                    击退后X = 新X;
+                    击退后Y = 新Y;
+                    实际击退 = true;
+                }
+            }
+        }
+    }
+    
+    if (实际击退) {
+        const 触发中断 = 处理玩家着陆效果(原始X, 原始Y, 击退后X, 击退后Y);
+        if (!触发中断) 更新视口();
+    }
+
+    if (玩家属性.当前生命值 <= 0) {
+        玩家死亡(伤害来源);
+    } else if (自定义游戏设置.极限模式 && 生存挑战激活 && 玩家属性.当前生命值 <= 50) {
+        恢复挑战区域();
+        生存挑战激活 = false;
+        let 石碑 = null;
+        for (const row of 地牢) {
+            for (const cell of row) {
+                if (cell.关联物品 instanceof 挑战石碑 && cell.关联物品.自定义数据.get("已激活")) {
+                    石碑 = cell.关联物品;
+                    break;
+                }
+            }
+            if(石碑) break;
+        }
+        if (石碑) {
+            石碑.发放奖励(石碑.自定义数据.get("当前波数"));
+            石碑.自定义数据.set("已激活", false);
+        }
+        显示通知("生命垂危，生存挑战结束！", "警告", true);
+    }
+}
 			function 更新武器冷却() {
 			    const 时间加速 = 当前激活卷轴列表.has(Array.from(当前激活卷轴列表).find(item => item instanceof 时间卷轴));
 			    const 冷却减少量 = 时间加速 ? 2 : 1;
@@ -48598,6 +48779,27 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			function 处理怪物回合() {
 			    
 			    if (地牢.length !== 地牢大小) return;
+			    if (所有怪物 && Array.isArray(所有怪物)) {
+        所有怪物 = 所有怪物.filter(m => {
+            if (m.当前生命值 <= 0) {
+                // 执行清理逻辑
+                if (m.恢复背景类型) m.恢复背景类型(); // 从地图格子中移除关联
+                if (m.血条元素) m.血条元素.remove(); // 移除UI
+                if (typeof 怪物状态表 !== 'undefined') 怪物状态表.delete(m); // 清理状态
+                if (typeof 怪物动画状态 !== 'undefined') 怪物动画状态.delete(m); // 清理动画
+                
+                // 确保地图格子上没有残留引用 (双重保险)
+                if (m.x !== null && m.y !== null && 地牢[m.y]?.[m.x]?.关联怪物 === m) {
+                    地牢[m.y][m.x].关联怪物 = null;
+                    if (地牢[m.y][m.x].类型 === 单元格类型.怪物) {
+                        地牢[m.y][m.x].类型 = null;
+                    }
+                }
+                return false; // 从数组中移除
+            }
+            return true; // 保留存活怪物
+        });
+    }
 			        const 当前房间ID = 房间地图[玩家.y][玩家.x];
 			        跟踪玩家怪物数 = 0;
 			        
@@ -48790,6 +48992,8 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			            function 切换背包显示() {
 			            if (死亡界面已显示) return;
 			    if (游戏设置.自动移动可打断) 停止自动移动();
+			    const 搜索栏 = document.getElementById("背包搜索栏");
+			    if (搜索栏 && 游戏状态 !== '地图编辑器') 搜索栏.style.display = 'none';
 			    const 弹窗 = document.querySelector(".背包弹窗");
 			    const 融合窗口 = document.getElementById("融合窗口");
 			    const 背包标题元素 = 弹窗.querySelector(":scope > .弹窗头部 > h3");
@@ -48876,6 +49080,10 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
 			switch (动作) {
 				case 'equip':
 					const 装备按钮 = { style: {} };
+					if (联机模式) {
+        socket.emit('playerAction', { type: 'equip', id: 物品实例.唯一标识.toString() });
+        return;
+    }
 					if (物品实例.已装备) {
 						物品实例.取消装备();
 						显示通知("已卸下", "成功");
@@ -48906,6 +49114,10 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
             事件.stopPropagation();
             if (目标按钮.classList.contains('装备按钮')) {
                 const 起始元素 = 物品条目;
+                if (联机模式) {
+        socket.emit('playerAction', { type: 'equip', id: 物品实例.唯一标识.toString() });
+        return;
+    }
                 if (物品实例.已装备) {
                     物品实例.取消装备();
                     显示通知("已卸下", "成功");
@@ -48956,6 +49168,10 @@ function 处理宠物着陆效果(宠物, 旧X, 旧Y, 新X, 新Y) {
         const 物品实例 = 物品条目.__物品实例;
         if (!物品实例) return;
         const 起始元素 = 物品条目;
+                        if (联机模式) {
+        socket.emit('playerAction', { type: 'equip', id: 物品实例.唯一标识.toString() });
+        return;
+    }
         if (物品实例.已装备) {
             物品实例.取消装备();
             显示通知("已卸下", "成功");
@@ -49359,6 +49575,7 @@ function 更新光源地图() {
              检查并添加光源(计时器);
         }
     });
+    if (地牢.length>=地牢大小){
     for (let y = 0; y < 地牢大小; y++) {
 			        for (let x = 0; x < 地牢大小; x++) {
 			            const cell = 地牢[y][x];
@@ -49366,6 +49583,7 @@ function 更新光源地图() {
 			                检查并添加光源(cell?.关联物品);
 			        }
 			        }
+			    }
 			    }
 
     // 检查怪物身上的光源 (如燃烧状态)
@@ -49435,9 +49653,13 @@ function 更新光源地图() {
 			}
 			function 使用装备槽物品(槽位编号) {
 			    if (死亡界面已显示) return;
+			    if (联机模式) {
+        socket.emit('playerAction', { type: 'useItem', id: 玩家装备.get(槽位编号).唯一标识.toString() });
+        
+    }
 			    if (游戏设置.自动移动可打断) 停止自动移动();
+			    
 			    const 物品实例 = 玩家装备.get(槽位编号);
-			
 			    if (!物品实例) return;
 			
 			    // 无需考虑堆叠
@@ -49506,7 +49728,7 @@ function 更新光源地图() {
         显示通知(`${物品实例.获取名称()} 被浸湿了，暂时无法使用！(剩余 ${物品实例.自定义数据.get("静默回合")} 回合)`, "警告");
         return false;
     }
-			    if (物品实例.使用(所有怪物,[],玩家)) {
+			    if (物品实例.使用()) {
 			        if (物品实例.堆叠数量 <= 0) {
 			            if (物品实例.装备槽位)
 			                玩家装备.delete(物品实例.装备槽位);
@@ -49699,8 +49921,13 @@ function 显示收集特效(物品, 使用中文通道) {
 }
 			
 			function 使用背包物品(物品标识) {
+			if (联机模式) {
+        socket.emit('playerAction', { type: 'useItem', id: 物品标识.toString() });
+        
+    }
 			    const 物品实例 = 玩家背包.get(物品标识);
 			    if (!物品实例) return false;
+			    
 			    if (物品实例.类型 === "武器") {
 			        if (
 			            物品实例.堆叠数量 > 0 &&
@@ -49836,6 +50063,29 @@ function 获取墙壁字符(单元格,地牢数组=地牢) {
 
 			function 更新背包显示() {
 			    const 容器 = document.getElementById("背包物品栏");
+			    if (!容器._scrollHandlerSet) {
+			        容器._scrollHandlerSet = true;
+			        let _scrollRAF = 0;
+			        容器.addEventListener('scroll', () => {
+			            if (_scrollRAF) return;
+			            _scrollRAF = requestAnimationFrame(() => {
+			                _scrollRAF = 0;
+			                // 逐个强制重绘可见子元素
+			                const contRect = 容器.getBoundingClientRect();
+			                const children = 容器.children;
+			                for (let i = 0; i < children.length; i++) {
+			                    const el = children[i];
+			                    if (!el.classList.contains('物品条目')) continue;
+			                    const rect = el.getBoundingClientRect();
+			                    if (rect.bottom >= contRect.top && rect.top <= contRect.bottom) {
+			                        void el.offsetWidth;
+			                        el.style.willChange = 'transform';
+			                        requestAnimationFrame(() => { el.style.willChange = 'auto'; });
+			                    }
+			                }
+			            });
+			        }, { passive: true });
+			    }
 			    if(游戏状态!=="地图编辑器") document.getElementById("最大容量").textContent = 最大背包容量;
 			    if (命令行模式开启) {
         容器.innerHTML = '';
@@ -49922,6 +50172,14 @@ function 获取墙壁字符(单元格,地牢数组=地牢) {
 			    }
 			
 			    if(document.getElementById("当前容量")) document.getElementById("当前容量").textContent = [...玩家背包.values()].reduce((sum, i) => sum + (i.是否隐藏 ? 0 : 1), 0);
+			    
+			    // 强制逐个重绘所有子元素，防止 Chromium grid 跳过渲染
+			    requestAnimationFrame(() => {
+			        const children = 容器.children;
+			        for (let i = 0; i < children.length; i++) {
+			            void children[i].offsetWidth;
+			        }
+			    });
 			}
 			
 			function 初始化装备系统() {
@@ -50029,6 +50287,11 @@ function 获取墙壁字符(单元格,地牢数组=地牢) {
 			    });
 			}
 			function 切换装备页(方向) {
+			    if (联机模式) {
+        socket.emit('playerAction', { type: 'switchPage', dir: 方向 });
+        // 客户端预表现
+        
+    }
 			    const 旧页 = 当前装备页;
 			    当前装备页 += 方向;
 			
@@ -50793,7 +51056,8 @@ function 计算新增威胁格子数(x, y, 棋子类, 棋盘) {
 }
 
 			
-			        function 显示通知(内容, 类型 = "信息", 强制显示 = false, 持续时间 = 1500) {
+			        function 显示通知(内容, 类型 = "信息", 强制显示 = false, 持续时间 = 1500,从服务器=false) {
+			        if (联机模式&&!从服务器) return;
 			添加日志(内容, 类型);
 			if (!是否显示通知 && !强制显示) {
 			    return;
@@ -51166,6 +51430,25 @@ function 计算新增威胁格子数(x, y, 棋子类, 棋盘) {
 			 更新装备显示();
 			}
 			function 执行重铸() {
+			    if (联机模式) {
+			        const 选中元素 = document.querySelector("#repairableItemsContainer .selected");
+                 if (!选中元素) {
+                     显示通知("请先选择装备", "错误");
+                     return;
+                 }
+                 const 物品 = 选中元素.__物品实例;
+                 let idStr = 物品.唯一标识.toString();
+                 let slot = 物品.装备槽位;
+                 
+                 socket.emit('playerAction', { 
+                    type: 'repairItemAction', 
+                    stationId: data.data.id,
+                    itemId: idStr,
+                    slot: slot
+                 });
+                 关闭修复界面();
+                 return
+			    }
 			    const 源元素 = document.querySelector("#sourceItems .selected");
 			    const 材料元素 = document.querySelector(
 			        "#materialItems .selected"
@@ -51688,6 +51971,10 @@ function 计算新增威胁格子数(x, y, 棋子类, 棋盘) {
 			}
 			
 			function 尝试出售(物品实例, 价格, npc) {
+			if (联机模式) {
+			        socket.emit('playerAction', { type: 'sell', x: npc.x, y: npc.y, id: 物品实例.唯一标识.toString() });
+			        return;
+			    }
 			    if (npc.自定义数据.get("交易次数") <= 0) {
 			        显示通知("探险家已经不想再收购了。", "警告");
 			        关闭收购窗口();
@@ -51806,6 +52093,15 @@ function 计算新增威胁格子数(x, y, 棋子类, 棋盘) {
 			}
 			
 			function 尝试购买(物品, 价格) {
+			if (联机模式) {
+			        const stock = npc.自定义数据.get("库存");
+        const index = stock.findIndex(i => i === 物品);
+        if(联机模式) socket.emit('playerAction', { type: 'buy', x: npc.x, y: npc.y, index: index });
+        document.getElementById("交易窗口").style.display = "none";
+        玩家属性.允许移动 -= 1;
+        NPC互动中 = false;
+			        return;
+			    }
 			    const npc = 当前NPC;
 			    const 金币列表 = [...玩家背包.values()].filter(
 			        (i) => i instanceof 金币
@@ -51902,8 +52198,8 @@ function 计算新增威胁格子数(x, y, 棋子类, 棋盘) {
 			    });
 			    玩家状态 = [];
 			    // 重置 HUD
-			    document.querySelector(".health-bar").style.width = "100%";
-			    document.querySelector(".power-bar").style.width = "100%";
+			    玩家属性.当前生命值 = 自定义全局设置.初始生命值;
+    玩家属性.当前能量值 = 自定义全局设置.初始能量值;
 			    更新装备显示();
 			    更新背包显示();
 			    应用职业效果(玩家职业);
@@ -53373,7 +53669,7 @@ function 触发药水水域效果(实体, 单元格) {
 			    ];
 			    return 渐变[Math.min(距离, 2)];
 			}
-			function getCellTypeString(type) {
+			function 获取单元格类名(type) {
 			    if (type === null || type === undefined) return '';
 			    const typeMap = {
 			        [单元格类型.墙壁]: '墙',
@@ -53438,7 +53734,7 @@ function 触发药水水域效果(实体, 单元格) {
 			                
 
 			                
-			                    const typeString = getCellTypeString(单元格.类型);
+			                    const typeString = 获取单元格类名(单元格.类型);
 			                    if (typeString) {
 			                        const 屏幕X = (x - 当前相机X) * 单元格大小;
 			                        const 屏幕Y = (y - 当前相机Y) * 单元格大小;
@@ -53625,7 +53921,7 @@ function 触发药水水域效果(实体, 单元格) {
 			            if(游戏状态 !== '地图编辑器') 怪物实例.绘制血条();
 
 			            if (开发者模式 && 怪物实例.当前格 !== null && 怪物实例.当前格 !== undefined) {
-			                const currentCellTypeString = getCellTypeString(怪物实例.当前格);
+			                const currentCellTypeString = 获取单元格类名(怪物实例.当前格);
 			                if (currentCellTypeString) {
 			                    const screenXForText = (绘制逻辑X - 当前相机X) * 单元格大小;
 			                    const screenYForText = (绘制逻辑Y - 当前相机Y) * 单元格大小;
@@ -53865,6 +54161,35 @@ function 触发药水水域效果(实体, 单元格) {
 			        }
 			        ctx.restore();
 			    }
+			   
+            其他玩家列表.forEach(p => {
+                //直接绘制
+                const 屏幕X = (p.x - 当前相机X + 0.5) * 单元格大小;
+                const 屏幕Y = (p.y - 当前相机Y + 0.5) * 单元格大小;
+                
+                // 检查是否在视口内
+                 if (
+                    p.x >= 视口偏移X &&
+                    p.x < 视口偏移X + 相机显示边长 &&
+                    p.y >= 视口偏移Y &&
+                    p.y < 视口偏移Y + 相机显示边长 &&
+                    是否在光源范围内(p.x, p.y)
+                ) {
+                    ctx.fillStyle = "#00AAFF"; // 其他玩家用蓝色表示
+                    ctx.beginPath();
+                    ctx.arc(屏幕X, 屏幕Y, 单元格大小 / 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = "#ffffff";
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    
+                    // 绘制名字 (简略)
+                    ctx.fillStyle = "#FFFFFF";
+                    ctx.font = `${单元格大小 * 0.3}px Arial`;
+                    ctx.textAlign = "center";
+                    ctx.fillText(p.名称 || "冒险者", 屏幕X, 屏幕Y - 单元格大小/2);
+                }
+            });
 			const hexArray_ = [];
 			if (玩家状态.length > 0) {
 			    玩家状态.forEach((item) => {
@@ -54250,7 +54575,7 @@ const markers = 地图标记.get(当前层数) || [];
 						所有已知配方.forEach(配方 => {
 							const 条目元素 = document.createElement('div');
 							条目元素.className = '命令行条目';
-							条目元素.textContent = `> ${配方.说明 || `${配方.输入.join(" + ")} → ${配方.输出类名称 || 配方.输出类}`}`;
+							条目元素.textContent = `> ${配方.说明 || `${配方.输入.join(" + ")} → ${配方.输出类名称 || 配方.输出类}`}${配方.输出配置?.强化 ? ' [强]' : ''}`;
 							内容容器.appendChild(条目元素);
 						});
 					}
@@ -54272,10 +54597,10 @@ const markers = 地图标记.get(当前层数) || [];
 							text-align: left;
 						`;
 							配方条目.textContent =
-								配方.说明 ||
+								(配方.说明 ||
 								`${配方.输入.join(" + ")} → ${
 									配方.输出类名称 || 配方.输出类
-								}`;
+								}`) + (配方.输出配置?.强化 ? ' [强]' : '');
 							内容容器.appendChild(配方条目);
 						});
 					}
@@ -54593,6 +54918,7 @@ async function 启动游戏(存档数据 = null, 是否是创意关卡 = false, 
 			
 			function 显示浮动文字(内容, x, y, 颜色 = "#ffffff") {
 			    if (!游戏设置.显示伤害文本) return;
+			    
 			    const 画布 = document.getElementById("dungeonCanvas");
 			    if (!画布) return;
 			    const 画布Rect = 画布.getBoundingClientRect();
@@ -54733,7 +55059,7 @@ async function 启动游戏(存档数据 = null, 是否是创意关卡 = false, 
 			    融合结果 = null;
 			    传送点列表 = [];
 			    所有怪物.forEach((m) => {
-			        m.绘制血条(true);
+			        if(m.绘制血条) m.绘制血条(true);
 			    });
 			    所有怪物.forEach((怪物) => {
 			        怪物动画状态.delete(怪物);
@@ -54749,6 +55075,8 @@ async function 启动游戏(存档数据 = null, 是否是创意关卡 = false, 
 			    调试无限能量=false
 			    玩家仆从列表 = [];
 			    所有怪物 = [];
+			    玩家属性.当前生命值 = 自定义全局设置.初始生命值;
+                玩家属性.当前能量值 = 自定义全局设置.初始能量值;
 			    已揭示洞穴格子 = new Set();
 			    //自定义游戏设置 = {
 		        
@@ -54782,6 +55110,8 @@ async function 启动游戏(存档数据 = null, 是否是创意关卡 = false, 
 			};
 			        初始玩家属性 = {
             移动步数: 1,
+            当前生命值:100,
+            当前能量值:100,
             攻击加成: 0,
             防御加成: 0,
             掉落倍率: 1,
@@ -54881,8 +55211,8 @@ async function 启动游戏(存档数据 = null, 是否是创意关卡 = false, 
 			        .forEach((槽) => (槽.innerHTML = ""));
 			    document.getElementById("logContent").innerHTML = ""; // 清空日志面板内容
 			
-			    document.querySelector(".health-bar").style.width = "100%";
-			    document.querySelector(".power-bar").style.width = "100%";
+			    玩家属性.当前生命值 = 自定义全局设置.初始生命值;
+    玩家属性.当前能量值 = 自定义全局设置.初始能量值;
 			    怪物追踪提示.更新({ 内容: `追踪怪物：0` });
 			    击杀提示.更新({ 内容: `已击杀怪物：0` });
 			
@@ -55191,8 +55521,8 @@ document.getElementById('编辑器迷宫模板按钮').onclick = () => {
 			}
 			function 检查胜利条件() {
 			    const 条件 = 自定义全局设置.胜利条件;
-			    const 生命条 = document.querySelector(".health-bar");
-			    const 当前生命 = parseFloat(生命条.style.width) || 100;
+			    
+			    const 当前生命 = 玩家属性.当前生命值
 			
 			    let 失败消息 = [];
 			    if (条件.死亡次数限制 > 0 && 玩家死亡次数 >= 条件.死亡次数限制) {
@@ -56355,7 +56685,18 @@ const 初始房间 = {
 			    document.getElementById('编辑器重做按钮').onclick = redoEditorAction;
 			    
 			    
-			    document.getElementById('编辑器游玩按钮').onclick = 进入编辑器游玩模式;
+			    document.getElementById('编辑器游玩按钮').onclick = function(e) {
+        if (编辑器游玩按钮双击计时器) {
+            clearTimeout(编辑器游玩按钮双击计时器);
+            编辑器游玩按钮双击计时器 = null;
+            从当前位置开始游玩();
+        } else {
+            编辑器游玩按钮双击计时器 = setTimeout(() => {
+                编辑器游玩按钮双击计时器 = null;
+                进入编辑器游玩模式();
+            }, 300);
+        }
+    };
 			    document.getElementById('返回编辑器按钮').onclick = 返回编辑器模式;
 
 				const 笔刷工具容器 = document.getElementById('笔刷工具容器');
@@ -56379,6 +56720,7 @@ const 初始房间 = {
 					尺寸值.textContent = 尺寸滑块.value;
 				};
 			}
+			let 编辑器游玩按钮双击计时器 = null;
 			let 编辑器状态备份 = null;
 			let 编辑器玩家 = {...玩家};
 			
@@ -56637,6 +56979,8 @@ function 创建编辑器快照() {
 			    显示通知(`已生成第 ${levelNumber} 层地牢模板。`, '成功');
 			}
 			function 返回编辑器模式() {
+			    const 搜索栏 = document.getElementById("背包搜索栏");
+			    if (搜索栏) 搜索栏.style.display = 'block';
 			    游戏状态 = '地图编辑器';
 			    if (编辑器状态备份) {
 			        编辑器玩家 = {...玩家}
@@ -56822,9 +57166,86 @@ function 创建编辑器快照() {
 			function 填充编辑器背包() {
 			    const 容器 = document.getElementById("背包物品栏");
 			    const 弹窗 = document.querySelector(".背包弹窗");
+			    const 搜索栏 = document.getElementById("背包搜索栏");
+			    const 搜索输入 = document.getElementById("背包搜索输入");
+			    
+			    // 显示搜索栏
+			    if (搜索栏) 搜索栏.style.display = 'block';
+			    if (搜索输入) 搜索输入.value = '';
 			    
 			    容器.innerHTML = "";
 			    玩家背包.clear(); 
+			    
+			    // 滚动时逐个强制重绘可见子元素，解决 Chromium 跳过 grid item 渲染的 bug
+			    let _editorScrollRAF = 0;
+			    容器.onscroll = () => {
+			        if (_editorScrollRAF) return;
+			        _editorScrollRAF = requestAnimationFrame(() => {
+			            _editorScrollRAF = 0;
+			            const contRect = 容器.getBoundingClientRect();
+			            const children = 容器.children;
+			            for (let i = 0; i < children.length; i++) {
+			                const el = children[i];
+			                if (!el.classList.contains('物品条目')) continue;
+			                const rect = el.getBoundingClientRect();
+			                // 只处理可视区域内的元素
+			                if (rect.bottom >= contRect.top && rect.top <= contRect.bottom) {
+			                    void el.offsetWidth;
+			                    el.style.willChange = 'transform';
+			                    requestAnimationFrame(() => { el.style.willChange = 'auto'; });
+			                }
+			            }
+			        });
+			    };
+			    
+			    // 搜索过滤逻辑
+			    const 执行搜索过滤 = () => {
+			        const 关键词 = (搜索输入?.value || '').toLowerCase().trim();
+			        容器.querySelectorAll('.物品条目').forEach(el => {
+			            const name = (el.querySelector('.物品名称')?.textContent || '').toLowerCase();
+			            const sectionTitle = el.previousElementSibling;
+			            if (!关键词 || name.includes(关键词)) {
+			                el.style.display = '';
+			            } else {
+			                el.style.display = 'none';
+			            }
+			        });
+			        // 隐藏空分区标题
+			        容器.querySelectorAll('h4').forEach(h4 => {
+			            let next = h4.nextElementSibling;
+			            let hasVisible = false;
+			            while (next && next.tagName !== 'H4') {
+			                if (next.classList.contains('物品条目') && next.style.display !== 'none') {
+			                    hasVisible = true;
+			                    break;
+			                }
+			                next = next.nextElementSibling;
+			            }
+			            h4.style.display = hasVisible || !关键词 ? '' : 'none';
+			        });
+			    };
+			    
+			    if (搜索输入) {
+			        搜索输入.oninput = 执行搜索过滤;
+			    }
+			    
+			    // 保存搜索过滤函数供后续使用，并立即执行一次
+			    容器._执行搜索过滤 = 执行搜索过滤;
+			    setTimeout(() => 执行搜索过滤(), 50);
+			    
+			    // 延迟逐个强制重绘所有子元素，解决 Chromium grid 渲染 bug
+			    let _fillDelay = 0;
+			    function _forceAllChildren() {
+			        const kids = 容器.children;
+			        for (let i = 0; i < kids.length; i++) {
+			            void kids[i].offsetWidth;
+			        }
+			        if (_fillDelay < 3) {
+			            _fillDelay++;
+			            requestAnimationFrame(_forceAllChildren);
+			        }
+			    }
+			    requestAnimationFrame(_forceAllChildren);
 			    
 			    const { items: allItems, monsters: allMonsters } = 获取所有可用的定义();
 			
@@ -56868,7 +57289,7 @@ function 创建编辑器快照() {
 			        { 名称: '开关脉冲器', 类型: '物品', 图标: 图标映射.开关脉冲器, 类: 开关脉冲器 },
 			        { 名称: '侦测器', 类型: '物品', 类: 侦测器, 图标: 图标映射.侦测器 },
 			        { 名称: '发生器', 类型: '物品', 类: 发生器, 图标: 图标映射.发生器 },
-			        { 名称: '钥匙', 类型: '物品', 类: 钥匙,默认配置:{地牢层数:-1} },
+			        { 名称: '钥匙', 类型: '物品', 类: 钥匙,默认配置:{地牢层数:-1, 对应门ID:-1} },
 			        { 名称: '配方卷轴', 类型: '物品', 类: 配方卷轴, 图标: 图标映射.卷轴 },
 			        { 名称: '胜利旗帜', 类型: '物品', 图标: 图标映射.旗帜, 类: 旗帜 },
 			        { 名称: '告示牌', 类型: '物品', 图标: 图标映射.告示牌, 类: 告示牌 },
@@ -57748,6 +58169,8 @@ function 应用扳手规则(目标实体, 规则列表) {
 			}
 			
 			function 从当前位置开始游玩() {
+			    const 搜索栏 = document.getElementById("背包搜索栏");
+			    if (搜索栏) 搜索栏.style.display = 'none';
 			    临时测试 = true;
 			    
 			    处理房间状态();
@@ -57790,8 +58213,8 @@ function 应用扳手规则(目标实体, 规则列表) {
 			    玩家属性.最大生命值加成 = 自定义全局设置.初始生命值 - 100;
 			    初始玩家属性 = {...玩家属性};
 			    最大背包容量 = 自定义全局设置.初始背包容量;
-			    document.querySelector(".health-bar").style.width = "100%";
-			    document.querySelector(".power-bar").style.width = `100%`;
+			    玩家属性.当前生命值 = 自定义全局设置.初始生命值;
+    玩家属性.当前能量值 = 自定义全局设置.初始能量值;
 			    玩家总移动回合数 = 0;
 			    玩家总受到伤害 = 0;
 			    当前天气效果 = [...自定义全局设置.全局天气];
@@ -57830,7 +58253,7 @@ function 应用扳手规则(目标实体, 规则列表) {
 			            }
 			        }
 			    }
-			    克隆实例.唯一标识 = Symbol(Date.now().toString() + prng().toString());
+			    克隆实例.唯一标识 = Symbol.for(Date.now().toString() + prng().toString());
 			    return 克隆实例;
 			}
 			
@@ -58448,7 +58871,7 @@ function 编辑器画布事件处理(clientX, clientY, eventType, originalEvent)
 			        if (!胜利条件提示元素组.生命) {
 			            胜利条件提示元素组.生命 = new 进度条元素({图标: 图标映射.修补心, 初始值: 100});
 			        }
-			        const 当前生命 = parseFloat(document.querySelector(".health-bar")?.style.width) || 100;
+			        const 当前生命 = 玩家属性.当前生命值
 			        const 颜色 = 当前生命 < 条件.生命下限 ? '#ff4444' : '#4caf50';
 			        胜利条件提示元素组.生命.更新({
 			            数值: 当前生命,
@@ -61166,6 +61589,8 @@ function 重置单元格(横坐标, 纵坐标,刷新墙壁=true) {
 			}
 			
 			function 进入编辑器游玩模式() {
+			    const 搜索栏 = document.getElementById("背包搜索栏");
+			    if (搜索栏) 搜索栏.style.display = 'none';
 			    处理房间状态();
 			    编辑器状态备份 = 导出地图();
 			    编辑器玩家 = {...玩家}
@@ -61210,8 +61635,8 @@ function 重置单元格(横坐标, 纵坐标,刷新墙壁=true) {
 			
 			    最大背包容量 = 自定义全局设置.初始背包容量;
 			    
-			    document.querySelector(".health-bar").style.width = "100%";
-			    document.querySelector(".power-bar").style.width = "100%";
+			    玩家属性.当前生命值 = 自定义全局设置.初始生命值;
+    玩家属性.当前能量值 = 自定义全局设置.初始能量值;
 			    
 			    
 			    玩家总移动回合数 = 0;
@@ -61424,11 +61849,11 @@ function 保存游戏状态() {
 			
 			        const 当前生命值百分比 =
 			            parseFloat(
-			                document.querySelector(".health-bar")?.style.width
+			                玩家属性.当前生命值
 			            ) || 100;
 			        const 当前能量值百分比 =
 			            parseFloat(
-			                document.querySelector(".power-bar")?.style.width
+			                玩家属性.当前能量值
 			            ) || 100;
 
 					let 编辑器状态数据 = {};
@@ -61588,357 +62013,364 @@ function 保存游戏状态() {
 			}
 			
 			async function 恢复游戏状态(存档数据, 是否是创意关卡 = false) {
-			    if (存档数据.游戏版本 && 存档数据.游戏版本 > 游戏版本) {
-			    显示通知(`存档版本 (${存档数据.游戏版本}) 高于当前游戏版本 (${游戏版本})，无法加载！`, "错误");
-			    
-			    return;
-			}
-			    console.log("开始恢复游戏状态...");
-			    if (!存档数据) {
-			        console.error("无效的存档数据，无法恢复。");
-			        显示通知("存档数据损坏，无法加载！", "错误");
-			        return;
-			    }
-			    重置所有游戏状态();
-			    try {
-			        当前层数 = 存档数据.当前层数 ?? 0;
-			        地图标记 = new Map(Object.entries(存档数据.地图标记 || {}).map(([k, v]) => [parseInt(k, 10), v]));
-			        游戏开始时间 = 存档数据.游戏开始时间 || Date.now();
-			        当前游戏种子 = 存档数据.当前游戏种子 || Date.now().toString();
-			        初始化随机数生成器(当前游戏种子);
-			        自定义全局设置 = 存档数据.自定义全局设置 || {
-			    初始生命值: 100,
-			    初始能量值: 100,
-			    初始背包容量: 12,
-			    玩家属性: {
-			        移动步数: 1,
-			        攻击加成: 0,
-			        防御加成: 0,
-			    },
-			    胜利条件: {
-			        回合数限制: 0,
-			        伤害限制: 0,
-			        生命下限: 0,
-			        清除所有怪物: false,
-			        死亡次数限制: 0,
-			    },
-			    全局天气: [],
-			    禁用传送菜单: false,
-			    诡魅天气怪物层级: 1,
-			    奖励物品层级: 1,
-			};
-			//if (是否是自定义关卡) {
-						if (存档数据.作者设置_相机视野) {
-							相机显示边长 = 存档数据.作者设置_相机视野;
-							游戏设置.相机视野大小 = 存档数据.作者设置_相机视野;
-							自定义全局设置.作者设置_相机视野 = 存档数据.作者设置_相机视野;
-						}
-						if (存档数据.作者设置_受伤击退 !== undefined) {
-							游戏设置.受伤时击退 = 存档数据.作者设置_受伤击退;
-							自定义全局设置.作者设置_受伤击退 = 存档数据.作者设置_受伤击退;
-						}
-						if (存档数据.强制动画模式 !== undefined) {
-							切换动画 = 存档数据.强制动画模式;
-							自定义全局设置.强制动画模式 = 存档数据.强制动画模式;
-						}
-					//}
-			        
-			        教程阶段 = 存档数据.教程?.阶段 ?? 0;
-			        玩家职业 = 存档数据.玩家职业 || null;
-			        最高教程阶段 = 存档数据.教程?.最高阶段 ?? 0;
-			        是否为教程层 = 存档数据.教程?.是否教程层 ?? false;
-			        hud模式 = 存档数据.UI?.hud模式 ?? "默认";
-			        显示模式 = 存档数据.UI?.显示模式 ?? "装备";
-			        日志历史 = 存档数据.UI?.日志历史 || [];
-			        最大装备槽数量 = 存档数据.玩家?.最大装备槽数量 ?? 8;
-			        红蓝开关状态 = 存档数据?.红蓝开关状态 ?? '红';
-			        绿紫开关状态 = 存档数据?.绿紫开关状态 ?? '绿';
-			        当前装备页 = 存档数据.UI?.当前装备页 ?? 0;
-			        上次死亡地点 = 存档数据.上次死亡地点 || null;
-			        程序生成配方列表 =
-			            存档数据.配方信息?.程序生成配方列表 || [];
-			        已发现的程序生成配方 =
-			            存档数据.配方信息?.已发现的程序生成配方 || [];
-			        自定义游戏设置 = 存档数据.自定义游戏设置 || {
-			        开启怪物等级: true, 开启药水增益怪物: true, 开启巡逻怪物: true, 开启红蓝砖块谜题: true,
-			        开启Boss战: true, 天气系统: '三层一次', 陷阱密度: '普通', 物品掉落率: 1.0,
-			        地牢初始大小: 100, 初始房间数量: 15, 洞穴开阔度: 55, 剔除死胡同: 0.20,洞穴随机重生:true,
-			        禁用传送菜单: false, 极限模式: false,
-			        怪物强度系数: 1.0,开启升级奖励: true,
-			    };
-			        已发现的程序生成配方.forEach((discoveredRecipe) => {
-			            if (
-			                !融合配方列表.some(
-			                    (r) => r.说明 === discoveredRecipe.说明
-			                )
-			            ) {
-			                融合配方列表.push(discoveredRecipe);
-			            }
-			        });
-			
-			        日志历史.forEach((log) => 添加日志(log.内容, log.类型));
-			        
-			        const 全局物品实例映射 = new Map();
-			        const 全局物品标识映射 = new Map();
-			        
-			        当前天气效果 = null;
-			
-			        if (是否是创意关卡) {
-			            玩家属性 = { ...初始玩家属性, ...自定义全局设置.玩家属性 };
-			            初始玩家属性 = {...玩家属性};
-			            玩家属性.最大生命值加成 = 自定义全局设置.初始生命值 - 100;
-			            初始玩家属性.最大生命值加成 = 自定义全局设置.初始生命值 - 100;
-			            当前天气效果 = 自定义全局设置.全局天气
-			            最大背包容量 = 自定义全局设置.初始背包容量;
-			            玩家背包 = new Map();
-			            玩家装备 = new Map();
-			            玩家状态 = [];
-			            当前激活卷轴列表 = new Set();
-			        } else {
-			            玩家属性 = { ...初始玩家属性, ...(存档数据.玩家?.属性 || {}) };
-			            最大背包容量 = 存档数据.玩家?.最大背包容量 ?? 12;
-			            已击杀怪物数 = 存档数据.游戏统计?.已击杀怪物数 ?? 0;
-			            玩家总移动回合数 = 存档数据.游戏统计?.玩家总移动回合数 ?? 0;
-			            玩家总受到伤害 = 存档数据.游戏统计?.玩家总受到伤害 ?? 0;
-			            击杀提示.更新({ 内容: `已击杀怪物: ${已击杀怪物数}` });
-			
-			            玩家背包 = new Map();
-			            if (存档数据.玩家?.背包) {
-			                存档数据.玩家.背包.forEach((物品数据) => {
-			                    const 实例 = 恢复物品(物品数据, 全局物品标识映射);
-			                    if (实例) {
-			                        玩家背包.set(实例.唯一标识, 实例);
-			                        全局物品实例映射.set(物品数据.唯一标识符串, 实例);
-			                    }
-			                });
-			            }
-			
-			            玩家装备 = new Map();
-			            if (存档数据.玩家?.装备) {
-			                存档数据.玩家.装备.forEach((装备数据) => {
-			                    const 实例 = 全局物品实例映射.get(装备数据.唯一标识符串);
-			                    if (实例) {
-			                        实例.已装备 = true;
-			                        实例.装备槽位 = 装备数据.槽位;
-			                        玩家装备.set(实例.装备槽位, 实例);
-			                    }
-			                });
-			            }
-			            
-			            玩家状态 = [];
-			            if (存档数据.玩家?.状态) {
-			                存档数据.玩家.状态.forEach((状态数据) => {
-			                    let 来源实例 = null;
-			                    if (状态数据.来源标识符串) {
-			                        来源实例 = 全局物品实例映射.get(状态数据.来源标识符串);
-			                    }
-			                    new 状态效果(状态数据.类型, 状态数据.颜色, 状态数据.图标, 状态数据.持续时间, 状态数据.剩余回合, 来源实例, null, 状态数据.强度);
-			                });
-			            }
-			
-			            当前激活卷轴列表 = new Set();
-			            if (存档数据.UI?.激活卷轴列表) {
-			                存档数据.UI.激活卷轴列表.forEach((标识符串) => {
-			                    const 实例 = 全局物品实例映射.get(标识符串);
-			                    if (实例 instanceof 卷轴类) {
-			                        当前激活卷轴列表.add(实例);
-			                        实例.使用();
-			                    }
-			                });
-			            }
-			        }
-			
-			        当前出战宠物列表 = [];
-if (存档数据.当前出战宠物列表) {
-    存档数据.当前出战宠物列表.forEach(petData => {
-        const petInstance = 恢复物品(petData, 全局物品标识映射);
-        if (petInstance) {
-            当前出战宠物列表.push(petInstance);
-            if (!全局物品实例映射.has(petData.唯一标识符串)) {
-                 全局物品实例映射.set(petData.唯一标识符串, petInstance);
+    if (存档数据.游戏版本 && 存档数据.游戏版本 > 游戏版本) {
+        显示通知(`存档版本 (${存档数据.游戏版本}) 高于当前游戏版本 (${游戏版本})，无法加载！`, "错误");
+        return;
+    }
+    console.log("开始恢复游戏状态...");
+    if (!存档数据) {
+        console.error("无效的存档数据，无法恢复。");
+        显示通知("存档数据损坏，无法加载！", "错误");
+        return;
+    }
+    重置所有游戏状态();
+    try {
+        当前层数 = 存档数据.当前层数 ?? 0;
+        地图标记 = new Map(Object.entries(存档数据.地图标记 || {}).map(([k, v]) => [parseInt(k, 10), v]));
+        游戏开始时间 = 存档数据.游戏开始时间 || Date.now();
+        当前游戏种子 = 存档数据.当前游戏种子 || Date.now().toString();
+        初始化随机数生成器(当前游戏种子);
+        自定义全局设置 = 存档数据.自定义全局设置 || {
+            初始生命值: 100,
+            初始能量值: 100,
+            初始背包容量: 12,
+            玩家属性: {
+                移动步数: 1,
+                攻击加成: 0,
+                防御加成: 0,
+            },
+            胜利条件: {
+                回合数限制: 0,
+                伤害限制: 0,
+                生命下限: 0,
+                清除所有怪物: false,
+                死亡次数限制: 0,
+            },
+            全局天气: [],
+            禁用传送菜单: false,
+            诡魅天气怪物层级: 1,
+            奖励物品层级: 1,
+        };
+
+        if (存档数据.作者设置_相机视野) {
+            相机显示边长 = 存档数据.作者设置_相机视野;
+            游戏设置.相机视野大小 = 存档数据.作者设置_相机视野;
+            自定义全局设置.作者设置_相机视野 = 存档数据.作者设置_相机视野;
+        }
+        if (存档数据.作者设置_受伤击退 !== undefined) {
+            游戏设置.受伤时击退 = 存档数据.作者设置_受伤击退;
+            自定义全局设置.作者设置_受伤击退 = 存档数据.作者设置_受伤击退;
+        }
+        if (存档数据.强制动画模式 !== undefined) {
+            切换动画 = 存档数据.强制动画模式;
+            自定义全局设置.强制动画模式 = 存档数据.强制动画模式;
+        }
+
+        教程阶段 = 存档数据.教程?.阶段 ?? 0;
+        玩家职业 = 存档数据.玩家职业 || null;
+        最高教程阶段 = 存档数据.教程?.最高阶段 ?? 0;
+        是否为教程层 = 存档数据.教程?.是否教程层 ?? false;
+        hud模式 = 存档数据.UI?.hud模式 ?? "默认";
+        显示模式 = 存档数据.UI?.显示模式 ?? "装备";
+        日志历史 = 存档数据.UI?.日志历史 || [];
+        最大装备槽数量 = 存档数据.玩家?.最大装备槽数量 ?? 8;
+        红蓝开关状态 = 存档数据?.红蓝开关状态 ?? '红';
+        绿紫开关状态 = 存档数据?.绿紫开关状态 ?? '绿';
+        当前装备页 = 存档数据.UI?.当前装备页 ?? 0;
+        上次死亡地点 = 存档数据.上次死亡地点 || null;
+        程序生成配方列表 = 存档数据.配方信息?.程序生成配方列表 || [];
+        已发现的程序生成配方 = 存档数据.配方信息?.已发现的程序生成配方 || [];
+        自定义游戏设置 = 存档数据.自定义游戏设置 || {
+            开启怪物等级: true, 开启药水增益怪物: true, 开启巡逻怪物: true, 开启红蓝砖块谜题: true,
+            开启Boss战: true, 天气系统: '三层一次', 陷阱密度: '普通', 物品掉落率: 1.0,
+            地牢初始大小: 100, 初始房间数量: 15, 洞穴开阔度: 55, 剔除死胡同: 0.20, 洞穴随机重生: true,
+            禁用传送菜单: false, 极限模式: false,
+            怪物强度系数: 1.0, 开启升级奖励: true,
+        };
+        已发现的程序生成配方.forEach((discoveredRecipe) => {
+            if (
+                !融合配方列表.some(
+                    (r) => r.说明 === discoveredRecipe.说明
+                )
+            ) {
+                融合配方列表.push(discoveredRecipe);
+            }
+        });
+
+        日志历史.forEach((log) => 添加日志(log.内容, log.类型));
+
+        const 全局物品实例映射 = new Map();
+        const 全局物品标识映射 = new Map();
+
+        当前天气效果 = null;
+
+        // 1. 应用职业效果 (更新初始玩家属性)
+        if (玩家职业) {
+            应用职业效果(玩家职业, false);
+        }
+
+        if (是否是创意关卡) {
+            // 创意关卡覆盖初始属性
+            Object.assign(初始玩家属性, 自定义全局设置.玩家属性);
+            玩家属性 = { ...初始玩家属性 };
+            玩家属性.最大生命值加成 = 自定义全局设置.初始生命值 - 100;
+            初始玩家属性.最大生命值加成 = 自定义全局设置.初始生命值 - 100;
+            当前天气效果 = 自定义全局设置.全局天气;
+            最大背包容量 = 自定义全局设置.初始背包容量;
+            玩家背包 = new Map();
+            玩家装备 = new Map();
+            玩家状态 = [];
+            当前激活卷轴列表 = new Set();
+        } else {
+            // 普通存档
+            最大背包容量 = 存档数据.玩家?.最大背包容量 ?? 12;
+            已击杀怪物数 = 存档数据.游戏统计?.已击杀怪物数 ?? 0;
+            玩家总移动回合数 = 存档数据.游戏统计?.玩家总移动回合数 ?? 0;
+            玩家总受到伤害 = 存档数据.游戏统计?.玩家总受到伤害 ?? 0;
+            击杀提示.更新({ 内容: `已击杀怪物: ${已击杀怪物数}` });
+
+            玩家背包 = new Map();
+            if (存档数据.玩家?.背包) {
+                存档数据.玩家.背包.forEach((物品数据) => {
+                    const 实例 = 恢复物品(物品数据, 全局物品标识映射);
+                    if (实例) {
+                        玩家背包.set(实例.唯一标识, 实例);
+                        全局物品实例映射.set(物品数据.唯一标识符串, 实例);
+                    }
+                });
+            }
+
+            玩家装备 = new Map();
+            if (存档数据.玩家?.装备) {
+                存档数据.玩家.装备.forEach((装备数据) => {
+                    const 实例 = 全局物品实例映射.get(装备数据.唯一标识符串);
+                    if (实例) {
+                        实例.已装备 = true;
+                        实例.装备槽位 = 装备数据.槽位;
+                        玩家装备.set(实例.装备槽位, 实例);
+                    }
+                });
+            }
+
+            玩家状态 = [];
+            if (存档数据.玩家?.状态) {
+                存档数据.玩家.状态.forEach((状态数据) => {
+                    let 来源实例 = null;
+                    if (状态数据.来源标识符串) {
+                        来源实例 = 全局物品实例映射.get(状态数据.来源标识符串);
+                    }
+                    new 状态效果(状态数据.类型, 状态数据.颜色, 状态数据.图标, 状态数据.持续时间, 状态数据.剩余回合, 来源实例, null, 状态数据.强度);
+                });
+            }
+
+            当前激活卷轴列表 = new Set();
+            if (存档数据.UI?.激活卷轴列表) {
+                存档数据.UI.激活卷轴列表.forEach((标识符串) => {
+                    const 实例 = 全局物品实例映射.get(标识符串);
+                    if (实例 instanceof 卷轴类) {
+                        当前激活卷轴列表.add(实例);
+                        实例.使用();
+                    }
+                });
             }
         }
-    });
+
+        // 2. 恢复并应用永久Buff (基于最新的初始玩家属性重新计算)
+        if (存档数据.永久Buffs) {
+            永久Buffs = { ...存档数据.永久Buffs };
+            永久Buffs.已获得效果 = new Set(存档数据.永久Buffs.已获得效果 || []);
+        } else {
+            永久Buffs = { 已获得效果: new Set() };
+        }
+        应用永久Buffs();
+
+        // 3. 覆盖存档中的当前属性 (如当前生命值、能量值等可能在属性中的变动)
+        if (!是否是创意关卡) {
+            Object.assign(玩家属性, 存档数据.玩家?.属性 || {});
+        }
+
+        当前出战宠物列表 = [];
+        if (存档数据.当前出战宠物列表) {
+            存档数据.当前出战宠物列表.forEach(petData => {
+                const petInstance = 恢复物品(petData, 全局物品标识映射);
+                if (petInstance) {
+                    当前出战宠物列表.push(petInstance);
+                    if (!全局物品实例映射.has(petData.唯一标识符串)) {
+                        全局物品实例映射.set(petData.唯一标识符串, petInstance);
+                    }
+                }
+            });
+        }
+
+        所有地牢层 = new Map();
+        if (存档数据.所有地牢层数据) {
+            for (const [层号Str, 楼层存档] of Object.entries(存档数据.所有地牢层数据)) {
+                const 层号 = parseInt(层号Str);
+                if (!isNaN(层号) && 楼层存档) {
+                    const 恢复后楼层 = 恢复楼层(层号, 楼层存档, 全局物品实例映射, 全局物品标识映射);
+                    if (恢复后楼层) {
+                        所有地牢层.set(层号, 恢复后楼层);
+                    }
+                }
+            }
+        }
+        生存挑战激活 = 存档数据.生存挑战激活 || false;
+        生存挑战备份单元格 = [];
+        if (存档数据.序列化生存挑战备份单元格 && 生存挑战激活) {
+            const 当前楼层数据 = 所有地牢层.get(当前层数);
+            if (当前楼层数据) {
+                存档数据.序列化生存挑战备份单元格.forEach(序列化备份 => {
+                    const 恢复的备份 = {
+                        x: 序列化备份.x,
+                        y: 序列化备份.y,
+                        类型: 序列化备份.类型,
+                        背景类型: 序列化备份.背景类型,
+                        墙壁: { ...序列化备份.墙壁 },
+                        颜色索引: 序列化备份.颜色索引,
+                        标识: 序列化备份.标识 ? Symbol.for(序列化备份.标识.slice(7, -1)) : null,
+                        关联物品: null,
+                        关联怪物: null,
+                    };
+
+                    if (序列化备份.关联物品标识) {
+                        恢复的备份.关联物品 = 全局物品实例映射.get(序列化备份.关联物品标识) || null;
+                    }
+                    if (序列化备份.关联怪物索引 !== null) {
+                        恢复的备份.关联怪物 = 当前楼层数据.所有怪物[序列化备份.关联怪物索引] || null;
+                    }
+                    生存挑战备份单元格.push(恢复的备份);
+                });
+            }
+        }
+
+        传送点列表 = 存档数据.传送点列表 || [];
+        if (所有地牢层.has(当前层数)) {
+            const 当前楼层数据 = 所有地牢层.get(当前层数);
+            地牢 = 当前楼层数据.地牢数组;
+            地牢大小 = 地牢.length;
+            房间列表 = 当前楼层数据.房间列表;
+            上锁房间列表 = 当前楼层数据.上锁房间列表;
+            已访问房间 = 当前楼层数据.已访问房间;
+            房间地图 = 当前楼层数据.房间地图;
+            门实例列表 = 当前楼层数据.门实例列表;
+            所有怪物 = 当前楼层数据.所有怪物;
+            所有计时器 = 当前楼层数据.所有计时器;
+            玩家初始位置 = 当前楼层数据.玩家初始位置;
+            当前天气效果 = 当前楼层数据.当前天气效果;
+            地牢生成方式 = 当前楼层数据.地牢生成方式;
+            已揭示洞穴格子 = 当前楼层数据.已揭示洞穴格子 || new Set();
+
+            if (是否是创意关卡) {
+                玩家.x = 玩家初始位置.x;
+                玩家.y = 玩家初始位置.y;
+            } else {
+                玩家.x = 存档数据.玩家?.x ?? 当前楼层数据.玩家位置?.x ?? 玩家初始位置.x;
+                玩家.y = 存档数据.玩家?.y ?? 当前楼层数据.玩家位置?.y ?? 玩家初始位置.y;
+            }
+
+            怪物状态表 = new WeakMap();
+            所有怪物.forEach((怪物) => {
+                const 怪物存档数据 = 存档数据.所有地牢层数据[当前层数]?.序列化怪物列表?.find((m) => 怪物.x === m.配置.x && 怪物.y === m.配置.y);
+                if (怪物存档数据?.状态效果) {
+                    new 状态效果(怪物存档数据.状态效果.类型, 怪物存档数据.状态效果.颜色, 怪物存档数据.状态效果.图标, 怪物存档数据.状态效果.持续时间, 怪物存档数据.状态效果.剩余回合, null, 怪物, 怪物存档数据.状态效果.强度);
+                }
+            });
+        } else {
+            console.warn(`存档中未找到当前层 ${当前层数} 的数据，将重新生成！`);
+            房间列表 = [];
+            上锁房间列表 = [];
+            所有怪物 = [];
+            所有计时器 = [];
+            已访问房间 = new Set();
+            门实例列表 = new Map();
+            房间地图 = Array(地牢大小).fill().map(() => Array(地牢大小).fill(-1));
+            await 生成地牢();
+            更新洞穴视野();
+
+            玩家.x = 玩家初始位置.x;
+            玩家.y = 玩家初始位置.y;
+            if (房间列表.length > 0) 已访问房间.add(房间列表[房间列表.findIndex(item => item?.id == 0)].id);
+        }
+
+        const healthBar = document.querySelector(".health-bar");
+        const powerBar = document.querySelector(".power-bar");
+
+        if (是否是创意关卡) {
+            if (healthBar) healthBar.style.width = "100%";
+            if (powerBar) powerBar.style.width = `100%`;
+        } else {
+            const 保存的生命百分比 = 存档数据.玩家?.当前生命值百分比 ?? 100;
+            const 保存的能量百分比 = 存档数据.玩家?.当前能量值百分比 ?? 100;
+            if (healthBar) {
+                healthBar.style.width = `${Math.max(0, Math.min(100, 保存的生命百分比))}%`;
+                if (保存的生命百分比 <= 20) healthBar.classList.add("低数值警告");
+                else healthBar.classList.remove("低数值警告");
+            }
+            if (powerBar) {
+                powerBar.style.width = `${Math.max(0, Math.min(100, 保存的能量百分比))}%`;
+                if (保存的能量百分比 <= 20) powerBar.classList.add("低数值警告");
+                else powerBar.classList.remove("低数值警告");
+            }
+        }
+        所有传送门 = [];
+        if (存档数据.所有传送门) {
+            存档数据.所有传送门.forEach(传送门数据 => {
+                const 实例 = 全局物品实例映射.get(传送门数据.唯一标识符串);
+                if (实例) {
+                    所有传送门.push(实例);
+
+                }
+            });
+        }
+        地牢大小 = 地牢.length;
+
+        if (存档数据.编辑器状态数据 && Object.keys(存档数据.编辑器状态数据).length > 0) {
+            玩家.x = 存档数据.编辑器状态数据.玩家位置.x;
+            玩家.y = 存档数据.编辑器状态数据.玩家位置.y;
+            当前相机X = 存档数据.编辑器状态数据.相机位置.x;
+            当前相机Y = 存档数据.编辑器状态数据.相机位置.y;
+            相机目标X = 当前相机X;
+            相机目标Y = 当前相机Y;
+            编辑器状态.模式 = 存档数据.编辑器状态数据.模式;
+            编辑器工具栏模式 = 存档数据.编辑器状态数据.工具栏模式;
+
+            if (存档数据.编辑器状态数据.笔刷设置) {
+                编辑器状态.笔刷模式 = 存档数据.编辑器状态数据.笔刷设置.模式;
+                编辑器状态.笔刷形状 = 存档数据.编辑器状态数据.笔刷设置.形状;
+                编辑器状态.笔刷半径 = 存档数据.编辑器状态数据.笔刷设置.半径;
+            }
+
+            if (存档数据.编辑器状态数据.当前选中) {
+                const 选中数据 = 存档数据.编辑器状态数据.当前选中;
+                if (选中数据.isVirtual) {
+                    编辑器状态.当前选中 = 选中数据;
+                } else {
+                    const { items, monsters } = 获取所有可用的定义();
+                    const 集合 = 选中数据.图鉴类型 === '物品' ? items : monsters;
+                    const 定义 = 集合.find(def => def.类.name === 选中数据.类名);
+                    if (定义) 编辑器状态.当前选中 = new 定义.类({});
+                }
+            }
+
+            扳手规则集 = 存档数据.编辑器状态数据.扳手规则集 || { '1': [], '2': [], '3': [] };
+            编辑器最近使用列表 = (存档数据.编辑器状态数据.最近使用列表 || []).map(itemData => {
+                if (itemData.isVirtual) {
+                    return itemData;
+                } else {
+
+                    const definition = window[itemData.类名];
+                    return definition ? new definition({ 玩家放置: true }) : null;
+                }
+            }).filter(Boolean);
+        }
+
+        console.log("游戏状态恢复完成！");
+    } catch (错误) {
+        console.error("恢复游戏状态时发生严重错误:", 错误);
+        显示通知("加载存档时发生严重错误，将开始新游戏。", "错误");
+        显示主菜单();
+    }
 }
-			
-			        所有地牢层 = new Map();
-			        if (存档数据.所有地牢层数据) {
-			            for (const [层号Str, 楼层存档] of Object.entries(存档数据.所有地牢层数据)) {
-			                const 层号 = parseInt(层号Str);
-			                if (!isNaN(层号) && 楼层存档) {
-			                    const 恢复后楼层 = 恢复楼层(层号, 楼层存档, 全局物品实例映射, 全局物品标识映射);
-			                    if (恢复后楼层) {
-			                        所有地牢层.set(层号, 恢复后楼层);
-			                    }
-			                }
-			            }
-			        }
-			        生存挑战激活 = 存档数据.生存挑战激活 || false;
-			        生存挑战备份单元格 = [];
-			        if (存档数据.序列化生存挑战备份单元格 && 生存挑战激活) {
-			            const 当前楼层数据 = 所有地牢层.get(当前层数);
-			            if (当前楼层数据) {
-			                存档数据.序列化生存挑战备份单元格.forEach(序列化备份 => {
-			                    const 恢复的备份 = {
-			                        x: 序列化备份.x,
-			                        y: 序列化备份.y,
-			                        类型: 序列化备份.类型,
-			                        背景类型: 序列化备份.背景类型,
-			                        墙壁: { ...序列化备份.墙壁 },
-			                        颜色索引: 序列化备份.颜色索引,
-			                        标识: 序列化备份.标识 ? Symbol(序列化备份.标识.slice(7, -1)) : null,
-			                        关联物品: null,
-			                        关联怪物: null,
-			                    };
-			
-			                    if (序列化备份.关联物品标识) {
-			                        恢复的备份.关联物品 = 全局物品实例映射.get(序列化备份.关联物品标识) || null;
-			                    }
-			                    if (序列化备份.关联怪物索引 !== null) {
-			                        恢复的备份.关联怪物 = 当前楼层数据.所有怪物[序列化备份.关联怪物索引] || null;
-			                    }
-			                    生存挑战备份单元格.push(恢复的备份);
-			                });
-			            }
-			        }
-			
-			        传送点列表 = 存档数据.传送点列表 || [];
-			        if (所有地牢层.has(当前层数)) {
-			            const 当前楼层数据 = 所有地牢层.get(当前层数);
-			            地牢 = 当前楼层数据.地牢数组;
-			            地牢大小 = 地牢.length;
-			            房间列表 = 当前楼层数据.房间列表;
-			            上锁房间列表 = 当前楼层数据.上锁房间列表;
-			            已访问房间 = 当前楼层数据.已访问房间;
-			            房间地图 = 当前楼层数据.房间地图;
-			            门实例列表 = 当前楼层数据.门实例列表;
-			            所有怪物 = 当前楼层数据.所有怪物;
-			            所有计时器 = 当前楼层数据.所有计时器;
-			            玩家初始位置 = 当前楼层数据.玩家初始位置;
-			            当前天气效果 = 当前楼层数据.当前天气效果;
-			            地牢生成方式 = 当前楼层数据.地牢生成方式;
-			            已揭示洞穴格子 = 当前楼层数据.已揭示洞穴格子 || new Set();
-			            
-			            if (是否是创意关卡) {
-			                玩家.x = 玩家初始位置.x;
-			                玩家.y = 玩家初始位置.y;
-			            } else {
-			                玩家.x = 存档数据.玩家?.x ?? 当前楼层数据.玩家位置?.x ?? 玩家初始位置.x;
-			                玩家.y = 存档数据.玩家?.y ?? 当前楼层数据.玩家位置?.y ?? 玩家初始位置.y;
-			            }
-			
-			            怪物状态表 = new WeakMap();
-			            所有怪物.forEach((怪物) => {
-			                const 怪物存档数据 = 存档数据.所有地牢层数据[当前层数]?.序列化怪物列表?.find((m) => 怪物.x === m.配置.x && 怪物.y === m.配置.y);
-			                if (怪物存档数据?.状态效果) {
-			                    new 状态效果(怪物存档数据.状态效果.类型, 怪物存档数据.状态效果.颜色, 怪物存档数据.状态效果.图标, 怪物存档数据.状态效果.持续时间, 怪物存档数据.状态效果.剩余回合, null, 怪物, 怪物存档数据.状态效果.强度);
-			                }
-			            });
-			        } else {
-			            console.warn(`存档中未找到当前层 ${当前层数} 的数据，将重新生成！`);
-			            房间列表 = [];
-			            上锁房间列表 = [];
-			            所有怪物 = [];
-			            所有计时器 = [];
-			            已访问房间 = new Set();
-			            门实例列表 = new Map();
-			            房间地图 = Array(地牢大小).fill().map(() => Array(地牢大小).fill(-1));
-			            await 生成地牢();
-			            更新洞穴视野();
-			            
-			            玩家.x = 玩家初始位置.x;
-			            玩家.y = 玩家初始位置.y;
-			            if (房间列表.length > 0) 已访问房间.add(房间列表[房间列表.findIndex(item=>item?.id==0)].id);
-			        }
-			
-			        if (存档数据.永久Buffs) {
-			            永久Buffs = { ...存档数据.永久Buffs };
-			            永久Buffs.已获得效果 = new Set(存档数据.永久Buffs.已获得效果 || []);
-			        } else {
-			            永久Buffs = { 已获得效果: new Set() };
-			        }
-			        应用永久Buffs();
-			
-			        const healthBar = document.querySelector(".health-bar");
-			        const powerBar = document.querySelector(".power-bar");
-			
-			        if (是否是创意关卡) {
-			            if (healthBar) healthBar.style.width = "100%";
-			            if (powerBar) powerBar.style.width = `100%`;
-			        } else {
-			            const 保存的生命百分比 = 存档数据.玩家?.当前生命值百分比 ?? 100;
-			            const 保存的能量百分比 = 存档数据.玩家?.当前能量值百分比 ?? 100;
-			            if (healthBar) {
-			                healthBar.style.width = `${Math.max(0, Math.min(100, 保存的生命百分比))}%`;
-			                if (保存的生命百分比 <= 20) healthBar.classList.add("低数值警告");
-			                else healthBar.classList.remove("低数值警告");
-			            }
-			            if (powerBar) {
-			                powerBar.style.width = `${Math.max(0, Math.min(100, 保存的能量百分比))}%`;
-			                if (保存的能量百分比 <= 20) powerBar.classList.add("低数值警告");
-			                else powerBar.classList.remove("低数值警告");
-			            }
-			        }
-			        所有传送门 = [];
-			        if (存档数据.所有传送门) {
-			            存档数据.所有传送门.forEach(传送门数据 => {
-			                const 实例 = 全局物品实例映射.get(传送门数据.唯一标识符串);
-			                if (实例) {
-			                    所有传送门.push(实例);
-			                    
-			                }
-			            });
-			        }
-			        地牢大小 = 地牢.length;
-			        应用职业效果(玩家职业,false);
-
-					if (存档数据.编辑器状态数据 && Object.keys(存档数据.编辑器状态数据).length > 0) {
-						玩家.x = 存档数据.编辑器状态数据.玩家位置.x;
-						玩家.y = 存档数据.编辑器状态数据.玩家位置.y;
-						当前相机X = 存档数据.编辑器状态数据.相机位置.x;
-						当前相机Y = 存档数据.编辑器状态数据.相机位置.y;
-						相机目标X = 当前相机X;
-						相机目标Y = 当前相机Y;
-						编辑器状态.模式 = 存档数据.编辑器状态数据.模式;
-						编辑器工具栏模式 = 存档数据.编辑器状态数据.工具栏模式;
-						
-						if(存档数据.编辑器状态数据.笔刷设置){
-							编辑器状态.笔刷模式 = 存档数据.编辑器状态数据.笔刷设置.模式;
-							编辑器状态.笔刷形状 = 存档数据.编辑器状态数据.笔刷设置.形状;
-							编辑器状态.笔刷半径 = 存档数据.编辑器状态数据.笔刷设置.半径;
-						}
-						
-						if (存档数据.编辑器状态数据.当前选中) {
-							const 选中数据 = 存档数据.编辑器状态数据.当前选中;
-							if (选中数据.isVirtual) {
-								编辑器状态.当前选中 = 选中数据;
-							} else {
-								const { items, monsters } = 获取所有可用的定义();
-								const 集合 = 选中数据.图鉴类型 === '物品' ? items : monsters;
-								const 定义 = 集合.find(def => def.类.name === 选中数据.类名);
-								if (定义) 编辑器状态.当前选中 = new 定义.类({});
-							}
-							}
-
-						扳手规则集 = 存档数据.编辑器状态数据.扳手规则集 || { '1': [], '2': [], '3': [] };
-						编辑器最近使用列表 = (存档数据.编辑器状态数据.最近使用列表 || []).map(itemData => {
-							if (itemData.isVirtual) {
-								return itemData;
-							} else {
-								
-								const definition = window[itemData.类名];
-								return definition ? new definition({玩家放置:true}) : null;
-							}
-						}).filter(Boolean);
-					}
-			
-			        console.log("游戏状态恢复完成！");
-			    } catch (错误) {
-			        console.error("恢复游戏状态时发生严重错误:", 错误);
-			        显示通知("加载存档时发生严重错误，将开始新游戏。", "错误");
-			        显示主菜单();
-			    }
-			}
 			function 序列化单元格(单元格实例, 物品标识映射, 怪物索引映射) {
     if (!单元格实例) return null;
     try {
@@ -62044,7 +62476,7 @@ function 恢复单元格(
             图标: 图标,
             显示图标: 图标,
             颜色索引: 颜色表.length,
-            唯一标识: Symbol(`楼梯_${单元格实例.类型}`),
+            唯一标识: Symbol.for(`楼梯_${单元格实例.类型}`),
             获取名称: () =>
                 单元格实例.类型 === 单元格类型.楼梯下楼
                     ? "下楼楼梯"
@@ -62512,7 +62944,7 @@ if (怪物实例 instanceof 佣兵单位) {
 			.filter((b) => b != null);
 			        序列化物品列表.forEach((炸弹数据) => {
 			if (炸弹数据) {
-			    const 符号 = Symbol(
+			    const 符号 = Symbol.for(
 			        炸弹数据.唯一标识符串.slice(7, -1)
 			    );
 			    if (!全局物品标识映射.has(符号)) {
@@ -62655,32 +63087,15 @@ if (怪物实例 instanceof 佣兵单位) {
 			        let 唯一标识 = 全局物品标识映射.get(标识符串);
 			
 			        if (!唯一标识) {
-			if (物品数据.类名 === "钥匙") {
-			    配置.对应门ID = 配置.数据?.对应门ID;
-			    配置.地牢层数 = 配置.数据?.地牢层数;
-			    if (
-			        配置.对应门ID !== undefined &&
-			        配置.地牢层数 !== undefined
-			    ) {
-			        唯一标识 = Symbol.for(
-			            `${配置.地牢层数}层${配置.对应门ID}`
-			        );
-			    } else {
-			        console.warn(
-			            "钥匙缺少门ID或层数信息，无法恢复Symbol.for:",
-			            配置
-			        );
-			        唯一标识 = Symbol(标识符串);
-			    }
-			} else if (标识符串 && 标识符串.startsWith("Symbol(")) {
+			if (标识符串 && 标识符串.startsWith("Symbol(")) {
 			    const description = 标识符串.slice(7, -1);
-			    唯一标识 = Symbol(description);
+			    唯一标识 = Symbol.for(description);
 			} else {
 			    console.warn(
 			        "物品缺少有效唯一标识符串，生成新Symbol:",
 			        物品数据
 			    );
-			    唯一标识 = Symbol(
+			    唯一标识 = Symbol.for(
 			        `恢复_${物品数据.类名}_${Date.now()}`
 			    );
 			}
@@ -62701,6 +63116,7 @@ if (怪物实例 instanceof 佣兵单位) {
 			        实例.图标 = 配置.图标;
 			        实例.材质=配置.材质
 			        实例.唯一标识 = 唯一标识
+			        实例.已装备 = 配置.已装备??false
 			
 			        if (实例 instanceof 武器类) {
 			实例.自定义数据.set(
@@ -62737,8 +63153,8 @@ if (怪物实例 instanceof 佣兵单位) {
 			        实例.y = 配置.y ?? null;
 			        实例.是否被丢弃 = 配置.是否被丢弃 ?? false;
 			
-			        实例.已装备 = false;
-			        实例.装备槽位 = null;
+			        
+			        
 			
 			        return 实例;
 			    } catch (e) {
@@ -63018,7 +63434,7 @@ if (实例 instanceof 佣兵单位) {
 			    if (现有符号) {
 			        唯一标识 = 现有符号;
 			    } else {
-			        唯一标识 = Symbol(
+			        唯一标识 = Symbol.for(
 			            门数据.唯一标识符串.slice(7, -1)
 			        );
 			        全局物品标识映射.set(
@@ -63362,7 +63778,7 @@ if (实例 instanceof 佣兵单位) {
 			                                    -1
 			                                );
 			                            门符号 =
-			                                Symbol(description);
+			                                Symbol.for(description);
 			                            全局物品标识映射.set(
 			                                门数据.原标识,
 			                                门符号
@@ -63524,7 +63940,7 @@ if (实例 instanceof 佣兵单位) {
 			});
 			
 			
-			
+			/*
 			读凭证按钮.addEventListener("click", () => {
 			    const 凭证 = prompt("请输入死亡凭证:");
 			    if (凭证) {
@@ -63541,6 +63957,8 @@ if (实例 instanceof 佣兵单位) {
 			        }
 			    }
 			});
+			*/
+			
 			function 生成图鉴地牢(分区索引 = 0, 每层条目数 = 9) {
 			    // 提供默认值
 			    
@@ -63888,8 +64306,8 @@ if (实例 instanceof 佣兵单位) {
 			    最大背包容量 = 24;
 			    所有地牢层 = new Map();
 			    document.getElementById("logContent").innerHTML = "";
-			    document.querySelector(".health-bar").style.width = "100%";
-			    document.querySelector(".power-bar").style.width = "100%";
+			    玩家属性.当前生命值 = 自定义全局设置.初始生命值;
+    玩家属性.当前能量值 = 自定义全局设置.初始能量值;
 			
 			    生成图鉴地牢(分区索引, 每层条目数); // 调用生成函数，传入分区信息
 			
@@ -63902,6 +64320,7 @@ if (实例 instanceof 佣兵单位) {
 			    //document.getElementById("跳过教程按钮").style.display = "none";
 			    最高教程阶段 = 6;
 			    游戏状态 = "图鉴";
+			    地牢生成方式 = 'default';
 			    显示通知(`已进入图鉴分区 ${分区索引 + 1}`, "信息");
 			}
 			function 打开图鉴分区选择() {
@@ -64965,7 +65384,7 @@ function deepClone(target) {
 			        使用: () => {
 			            切换楼层(当前层数 + 1, false, null, true);
 			        },
-			        唯一标识: Symbol(`楼梯_下楼`),
+			        唯一标识: Symbol.for(`楼梯_下楼`),
 			        获取名称: () => "下楼楼梯",
 			        自定义数据: new Map(),
 			        品质: 1,
@@ -66132,13 +66551,13 @@ function deepClone(target) {
 			    });
 			}
 			function 初始化随机数生成器(种子) {
-			    let 当前种子 = 哈希字符串(种子.toString());
-			    // 什么？你说不安全？
-			    prng = () => {
-			        当前种子 = (当前种子 * 9301 + 49297) % 233280;
-			        return 当前种子 / 233280;
-			    };
-			}
+    随机数状态 = 哈希字符串(种子.toString());
+    // 什么？你说不安全？
+    prng = () => {
+        随机数状态 = (随机数状态 * 9301 + 49297) % 233280;
+        return 随机数状态 / 233280;
+    };
+}
 			function 应用职业效果(职业,给予物品=true) {
 			    if (!职业) return;
 			
@@ -67295,7 +67714,7 @@ function 创建楼梯实例(类型) {
         使用: () => {
             切换楼层(当前层数 + (isDown ? 1 : -1), false, null, true);
         },
-        唯一标识: Symbol(`楼梯_${类型}`),
+        唯一标识: Symbol.for(`楼梯_${类型}`),
         获取名称: () => isDown ? "下楼楼梯" : "上楼楼梯",
         自定义数据: new Map(),
         品质: 1, 能否拾起: false, 是否正常物品: false, 是否隐藏: false, 是否为隐藏物品: false,
@@ -67675,6 +68094,579 @@ function db() {
 尝试收集物品(new 调试工具({}), true);
 开发者模式=true;
 }
+
+function 构建联机设置窗口() {
+    if (document.getElementById("联机设置窗口")) return;
+
+    const 遮罩 = document.createElement("div");
+    遮罩.id = "联机设置遮罩";
+    遮罩.className = "重铸遮罩";
+    遮罩.style.zIndex = "20000";
+    
+    const 窗口 = document.createElement("div");
+    窗口.id = "联机设置窗口";
+    窗口.className = "重铸弹窗";
+    窗口.style.maxWidth = "350px";
+    
+    窗口.innerHTML = `
+        <div class="重铸弹窗-header">
+            <h3>联机大厅</h3>
+            <button class="关闭按钮" onclick="关闭联机设置窗口()">×</button>
+        </div>
+        <div class="重铸弹窗-items" style="display:flex; flex-direction:column; gap:15px; padding:20px;">
+            <div style="text-align:left;">
+                <label style="color:#aaa; font-size:0.9em;">冒险者昵称</label>
+                <input type="text" id="输入_玩家名称" value="${玩家名称}" class="属性输入" style="width:100%; margin-top:5px; padding:8px; font-size:1rem;">
+            </div>
+            <div style="text-align:left;">
+                <label style="color:#aaa; font-size:0.9em;">服务器地址</label>
+                <input type="text" id="输入_服务器地址" value="http://localhost:3000" class="属性输入" style="width:100%; margin-top:5px; padding:8px; font-size:1rem;">
+            </div>
+        </div>
+        <div class="交易底部" style="padding-top:10px; border-top:1px solid #444; justify-content: flex-end; gap: 10px;">
+             <button class="菜单按钮" onclick="关闭联机设置窗口()" style="background:#444;">取消</button>
+             <button class="菜单按钮" onclick="执行联机连接()" style="background:#4CAF50; border-color:#4CAF50;">连接服务器</button>
+        </div>
+    `;
+    
+    遮罩.appendChild(窗口);
+    document.body.appendChild(遮罩);
+    
+    遮罩.onclick = (e) => {
+        if (e.target === 遮罩) 关闭联机设置窗口();
+    };
+}
+
+function 打开联机设置窗口() {
+    构建联机设置窗口();
+    const 遮罩 = document.getElementById("联机设置遮罩");
+    const 窗口 = document.getElementById("联机设置窗口");
+    遮罩.style.display = "flex";
+    requestAnimationFrame(() => {
+        遮罩.classList.add("显示");
+        窗口.style.transform = "translate(-50%, -50%) scale(1)";
+        窗口.style.opacity = "1";
+    });
+}
+
+function 关闭联机设置窗口() {
+    const 遮罩 = document.getElementById("联机设置遮罩");
+    const 窗口 = document.getElementById("联机设置窗口");
+    if (!遮罩 || !窗口) return;
+    
+    窗口.style.transform = "translate(-50%, -50%) scale(0.9)";
+    窗口.style.opacity = "0";
+    setTimeout(() => {
+        遮罩.classList.remove("显示");
+        遮罩.style.display = "none";
+    }, 300);
+}
+
+function 执行联机连接() {
+    const 名称输入 = document.getElementById("输入_玩家名称").value.trim();
+    const 地址输入 = document.getElementById("输入_服务器地址").value.trim();
+    
+    if (!名称输入) {
+        显示通知("请输入玩家名称！", "错误");
+        return;
+    }
+    if (!地址输入) {
+        显示通知("请输入服务器地址！", "错误");
+        return;
+    }
+    
+    玩家名称 = 名称输入;
+    localStorage.setItem("ChineseDungeon_PlayerName", 玩家名称);
+    localStorage.setItem("ChineseDungeon_ServerUrl", 地址输入);
+    
+    初始化Socket连接(地址输入);
+    关闭联机设置窗口();
+}
+
+
+
+let 联机模式 = false;
+let 玩家名称 = "冒险者";
+let socket = null;
+// 在初始化时读取本地存储
+const storedName = localStorage.getItem("ChineseDungeon_PlayerName");
+if (storedName) 玩家名称 = storedName;
+function 初始化Socket连接(url) {
+    if (socket) {
+        socket.disconnect();
+    }
+    
+    显示通知(`正在连接至 ${url}...`, "信息");
+    
+    try {
+        socket = io(url, {
+            query: {
+                name: 玩家名称
+            }
+        });
+        
+        联机模式 = true;
+        
+        socket.on('initGame', (data) => {
+            隐藏主菜单();
+            本地玩家ID = data.玩家ID;
+            当前层数=0
+            const 伪存档 = {
+                所有地牢层数据: {[当前层数]:data.地图数据},
+                玩家: { x: data.玩家.x, y: data.玩家.y }
+            };
+            //伪存档.所有地牢层数据.set(当前层数,data.地图数据)
+            恢复游戏状态(伪存档);
+            初始化装备系统()
+            初始化背包事件监听()
+            初始化canvas();
+            动画帧();
+        });
+        socket.on('gameover', (data) => {
+            玩家死亡(data.reason);
+        });
+        socket.on('floorSwitch', (data) => {
+        const 遮罩 = document.getElementById("transitionMask");
+        const 标题 = document.getElementById("floorTitle");
+        const 升级遮罩 = document.getElementById("升级选择遮罩");
+
+        if (升级遮罩) {
+             升级遮罩.classList.remove("显示");
+             升级遮罩.style.display = "none";
+        }
+        
+        if (遮罩 && 标题) {
+            if (data.层数 === 5) 标题.textContent = `米诺陶的迷宫`;
+            else if (data.层数 === 10) 标题.textContent = `法师图书馆`;
+            else if (data.层数 === 15) 标题.textContent = `最终战场`;
+            else 标题.textContent = `地牢 ${data.层数}`;
+            
+            遮罩.style.opacity = 1;
+            标题.style.opacity = 1;
+        }
+
+        const 全局物品实例映射 = new Map();
+        const 恢复后数据 = 恢复楼层(data.层数, data.地图数据, 全局物品实例映射, new Map());
+        
+        当前层数 = data.层数;
+        地牢 = 恢复后数据.地牢数组;
+        地牢大小 = 地牢.length;
+        玩家 = data.玩家;
+        房间列表 = 恢复后数据.房间列表;
+        门实例列表 = 恢复后数据.门实例列表;
+        上锁房间列表 = 恢复后数据.上锁房间列表;
+        已访问房间 = 恢复后数据.已访问房间;
+        已揭示洞穴格子 = 恢复后数据.已揭示洞穴格子;
+        地牢生成方式 = 恢复后数据.地牢生成方式;
+        房间地图 = 恢复后数据.房间地图;
+        所有怪物 = 恢复后数据.所有怪物;
+        所有计时器 = 恢复后数据.所有计时器;
+        玩家初始位置 = 恢复后数据.玩家初始位置;
+        当前天气效果 = 恢复后数据.当前天气效果 || [];
+        
+        if (data.地图数据.所有传送门) {
+            所有传送门 = [];
+             data.地图数据.所有传送门.forEach(传送门数据 => {
+                const 实例 = 全局物品实例映射.get(传送门数据.唯一标识符串);
+                if (实例) 所有传送门.push(实例);
+            });
+        }
+
+        怪物状态表 = new WeakMap();
+        所有怪物.forEach((怪物) => {
+             if (data.地图数据.序列化怪物列表) {
+                const 怪物存档数据 = data.地图数据.序列化怪物列表.find((m) => 怪物.x === m.配置.x && 怪物.y === m.配置.y);
+                if (怪物存档数据?.状态效果) {
+                    new 状态效果(怪物存档数据.状态效果.类型, 怪物存档数据.状态效果.颜色, 怪物存档数据.状态效果.图标, 怪物存档数据.状态效果.持续时间, 怪物存档数据.状态效果.剩余回合, null, 怪物, 怪物存档数据.状态效果.强度);
+                }
+             }
+        });
+        
+        if (data.地图数据.序列化玩家仆从索引) {
+             玩家仆从列表 = [];
+             data.地图数据.序列化玩家仆从索引.forEach(索引 => {
+                const 仆从 = 所有怪物[索引];
+                if (仆从 && !玩家仆从列表.includes(仆从)) 玩家仆从列表.push(仆从);
+            });
+        }
+
+        setTimeout(() => {
+            if (标题) 标题.style.opacity = 0;
+            if (遮罩) 遮罩.style.opacity = 0;
+            
+            更新视口(true);
+            绘制小地图();
+            更新界面状态();
+            更新物体指示器();
+            更新洞穴视野();
+            所有怪物.forEach((m) => { m.绘制血条(true); });
+            
+            if (当前出战宠物列表) {
+                 当前出战宠物列表.forEach(pet => {
+                    if (pet && pet.是否已放置) {
+                        const 瞬间移动 = Object.values(pet.自定义数据.get("装备") || {}).find(item => item instanceof 瞬间移动饰品);
+                        if (瞬间移动) pet.瞬移到玩家身旁();
+                    }
+                });
+            }
+        }, 1000);
+    });
+        socket.on('worldUpdate', (data) => {
+            // 1. 更新单元格
+            data.脏单元格.forEach(update => {
+                const { x, y, 单元格: cellData, 物品: itemData, 怪物: monsterData } = update;
+                const cell = 恢复单元格(cellData, x, y, new Map(), new Map(), new Map());
+                地牢[y][x] = cell;
+                
+                if (itemData) {
+                    const item = 恢复物品(itemData, new Map());
+                    cell.关联物品 = item;
+                }
+                if (monsterData) {
+                    const monster = 恢复怪物(monsterData, new Map(), new Map());
+                    cell.关联怪物 = monster;
+                }
+            });
+
+            // 2. 更新怪物列表
+            const 新所有怪物 = [];
+            data.活跃怪物.forEach(mData => {
+                const monster = 恢复怪物(mData, new Map(), new Map());
+                if (monster) {
+                    新所有怪物.push(monster);
+                    // 确保关联到格子
+                    if (地牢[monster.y]?.[monster.x]) {
+                        地牢[monster.y][monster.x].关联怪物 = monster;
+                    }
+                }
+            });
+            所有怪物 = 新所有怪物;
+
+            // 3. 更新计时器物品
+            const 新计时器 = [];
+            data.计时器物品.forEach(iData => {
+                const item = 恢复物品(iData, new Map());
+                if (item) {
+                    新计时器.push(item);
+                    if (地牢[item.y]?.[item.x]) {
+                        地牢[item.y][item.x].关联物品 = item;
+                    }
+                }
+            });
+            所有计时器 = 新计时器;
+            if (data.在线玩家) {
+                其他玩家列表 = data.在线玩家.filter(p => p.id !== 本地玩家ID);
+            }
+            
+            if (data.怪物移动事件) {
+                data.怪物移动事件.forEach(evt => {
+                    const monster = 所有怪物.find(m => m.x === evt.终点.x && m.y === evt.终点.y);
+                    if (monster) {
+                        怪物动画状态.set(monster, {
+                            正在动画: true,
+                            旧逻辑X: evt.起点.x,
+                            旧逻辑Y: evt.起点.y,
+                            目标逻辑X: evt.终点.x,
+                            目标逻辑Y: evt.终点.y,
+                            视觉X: evt.起点.x,
+                            视觉Y: evt.起点.y,
+                            动画开始时间: Date.now()
+                        });
+                    }
+                });
+            }
+            
+            if (data.格子特效事件) {
+                data.格子特效事件.forEach(evt => {
+                    计划显示格子特效(evt.路径, evt.颜色, evt.间隔);
+                });
+            }
+            
+            if (data.爆炸特效事件) {
+                data.爆炸特效事件.forEach(evt => {
+                    待显示爆炸范围.push({
+                        范围: evt.范围,
+                        爆炸范围: evt.爆炸点列表
+                    });
+                });
+            }
+            
+            if (data.活跃宠物) {
+                const 新宠物列表 = [];
+                data.活跃宠物.forEach(petData => {
+                    const pet = 恢复物品(petData, new Map());
+                    if (pet) {
+                        pet.是否已放置 = true;
+                        新宠物列表.push(pet);
+                    }
+                });
+                // 简单的列表替换，因为绘制时会重新获取位置
+                当前出战宠物列表 = 新宠物列表;
+            }
+
+            if (data.宠物移动事件) {
+                data.宠物移动事件.forEach(evt => {
+                    const pet = 当前出战宠物列表[evt.索引];
+                    if (pet) {
+                        怪物动画状态.set(pet, {
+                            正在动画: true,
+                            旧逻辑X: evt.起点.x,
+                            旧逻辑Y: evt.起点.y,
+                            目标逻辑X: evt.终点.x,
+                            目标逻辑Y: evt.终点.y,
+                            视觉X: evt.起点.x,
+                            视觉Y: evt.起点.y,
+                            动画开始时间: Date.now()
+                        });
+                    }
+                });
+            }
+            
+            if (data.随机数状态 !== undefined) {
+                随机数状态 = data.随机数状态;
+            }
+            
+            更新光源地图();
+            绘制();
+        });
+        
+        
+        
+        socket.on('gridEffect', (data) => {
+        计划显示格子特效(data.路径, data.颜色, data.间隔);
+    });
+
+    socket.on('playerMoved', (data) => {
+        const existing = 其他玩家列表.find(p => p.id === data.id);
+        if (existing) {
+            existing.x = data.x;
+            existing.y = data.y;
+        } else {
+            其他玩家列表.push(data);
+        }
+        绘制();
+    });
+        
+        
+        socket.on('notification', (data) => {
+        显示通知(data.content, data.type,false,1500,true);
+    });
+    socket.on('logging', (data) => {
+        添加日志(data.content, data.type);
+    });
+        socket.on('selfUpdate', (data) => {
+        if(死亡界面已显示) return
+            if(data.位置){
+            玩家.x = data.位置.x;
+            玩家.y = data.位置.y;
+            更新光源地图();
+            绘制小地图();
+            
+            更新视口()
+            }
+            if (data.融合区) {
+                融合区物品 = data.融合区.物品.map(itemData => itemData ? 恢复物品(itemData, new Map()) : null);
+                fusionGoldQuantities = data.融合区.金币数量;
+                更新融合窗口();
+                检查融合配方();
+            }
+            if (data.属性) {
+                const 旧生命值 = 玩家属性.当前生命值;
+                Object.assign(玩家属性, data.属性);
+
+                const 最大生命 = 100 + (玩家属性.最大生命值加成 || 0);
+                const 最大能量 = 自定义全局设置.初始能量值 || 100;
+                const 当前生命 = 玩家属性.当前生命值 ?? 最大生命;
+                const 当前能量 = 玩家属性.当前能量值 ?? 最大能量;
+
+                const 生命条 = document.querySelector(".health-bar");
+                if (生命条) {
+                    生命条.style.width = `${Math.min(100, (当前生命 / 最大生命) * 100)}%`;
+                    if (旧生命值 !== undefined && 当前生命 < 旧生命值) {
+                        let 最终攻击力=旧生命值-当前生命
+                        触发扣血特效();
+                        触发HUD显示();
+                        显示浮动文字(`-${最终攻击力.toFixed(0)}`, 玩家.x, 玩家.y, "#ff0000");
+                    }
+                }
+                const 能量条 = document.querySelector(".power-bar");
+                if (能量条) 能量条.style.width = `${Math.min(100, (当前能量 / 最大能量) * 100)}%`;
+            }
+            if (data.背包) {
+                玩家背包.clear();
+                data.背包.forEach(itemData => {
+                    const item = 恢复物品(itemData, new Map());
+                    if (item) 玩家背包.set(item.唯一标识, item);
+                });
+                更新背包显示();
+            }
+            if (data.装备) {
+                玩家装备.clear();
+                data.装备.forEach(equipData => {
+                    const item = 恢复物品(equipData.物品, new Map());
+                    if (item) {
+                        item.已装备 = true;
+                        item.装备槽位 = parseInt(equipData.槽位);
+                        玩家装备.set(item.装备槽位, item);
+                    }
+                });
+                更新装备显示();
+            }
+            if (data.状态效果) {
+                玩家状态.forEach(s => {
+                    if (s.进度条实例) s.进度条实例.销毁();
+                });
+                玩家状态 = [];
+                data.状态效果.forEach(sData => {
+                    new 状态效果(sData.类型, sData.颜色, sData.图标, sData.持续时间, sData.剩余回合, null, null, sData.强度);
+                });
+            }
+            
+            
+            if(data.装备页) 当前装备页 = data.装备页;
+            更新界面状态();
+            更新装备显示();
+            更新背包显示();
+            const healthBar = document.querySelector(".health-bar");
+			        const powerBar = document.querySelector(".power-bar");
+			        if (healthBar) {
+			                healthBar.style.width = `${Math.max(0, Math.min(100, 玩家属性.当前生命值))}%`;
+			                if (玩家属性.当前能量值 <= 20) healthBar.classList.add("低数值警告");
+			                else healthBar.classList.remove("低数值警告");
+			            }
+			            if (powerBar) {
+			                powerBar.style.width = `${Math.max(0, Math.min(100, 玩家属性.当前能量值))}%`;
+			                if (玩家属性.当前能量值 <= 20) powerBar.classList.add("低数值警告");
+			                else powerBar.classList.remove("低数值警告");
+			            }
+            
+        });
+        
+        socket.on('startUpgradePhase', () => {
+        // 隐藏转场遮罩，显示升级界面
+        const transMask = document.getElementById("transitionMask");
+        if (transMask) transMask.style.opacity = 0;
+        显示升级界面();
+    });
+
+    socket.on('forceClientFloorSwitch', (data) => {
+        // 收到服务端强制切换信号，执行视觉转场
+        // 此时数据已经通过 worldUpdate 同步，只需要做视觉效果
+        const 遮罩 = document.getElementById("transitionMask");
+        const 标题 = document.getElementById("floorTitle");
+        const 升级遮罩 = document.getElementById("升级选择遮罩");
+
+        if (升级遮罩) {
+             升级遮罩.classList.remove("显示");
+             升级遮罩.style.display = "none";
+        }
+
+        if (遮罩 && 标题) {
+            标题.textContent = `地牢 ${data.层数}`;
+            遮罩.style.opacity = 1;
+            标题.style.opacity = 1;
+            
+            setTimeout(() => {
+                标题.style.opacity = 0;
+                遮罩.style.opacity = 0;
+                当前层数 = data.层数; // 同步层数显示
+                更新界面状态(); // 刷新层数UI
+            }, 1000);
+        }
+    });
+        
+        
+        
+        let 待放置物品ID = null;
+
+    socket.on('startPlacement', (data) => {
+        待放置物品ID = data.id;
+        玩家正在放置障碍物 = true;
+        显示通知("请点击地图位置放置", "信息");
+    });
+
+    socket.on('openConfirm', (data) => {
+        显示自定义确认对话框(data.msg, () => {
+            socket.emit('playerAction', { 
+                type: 'confirmAction', 
+                action: data.action, 
+                data: data.data 
+            });
+        });
+    });
+
+    socket.on('openUI', (data) => {
+        if (data.type === 'reforge') {
+            const 模拟重铸台 = new 重铸台({ 
+                数据: { 耐久: data.data.durability, 最大耐久: data.data.maxDurability } 
+            });
+            
+
+            显示修复界面(模拟重铸台);
+        } else if (data.type === 'wishingWell') {
+            const 许愿物品列表 = [...玩家背包.values()].filter(i => !i.已装备 && !i.是否隐藏 && (i instanceof 武器类 || i instanceof 防御装备类));
+            if (许愿物品列表.length === 0) {
+                显示通知("没有可投入的装备", "错误");
+                return;
+            }
+            显示自定义确认对话框("投入一件随机闲置装备许愿？", () => {
+                const 随机物品 = 许愿物品列表[Math.floor(Math.random() * 许愿物品列表.length)];
+                socket.emit('playerAction', { 
+                    type: 'wishingWellTradeAction', 
+                    itemId: 随机物品.唯一标识.toString(),
+                    wellId: data.data.id, 
+                    wellX: data.data.x,
+                    wellY: data.data.y,
+                    isMapObject: data.data.mapObject
+                });
+            });
+        }
+    });
+        
+        socket.on('connect', () => {
+            显示通知(`成功连接服务器！欢迎，${玩家名称}`, "成功");
+            隐藏主菜单();
+            if (document.getElementById("联机状态指示器")) {
+                document.getElementById("联机状态指示器").style.display = "block";
+                document.getElementById("联机状态文本").textContent = "🟢 已联机";
+            }
+            socket.emit('login', 玩家名称);
+        });
+        socket.on('connect_error', (err) => {
+            显示通知(`连接失败: ${err.message}`, "错误");
+            if (document.getElementById("联机状态指示器")) {
+                document.getElementById("联机状态文本").textContent = "🔴 断开";
+            }
+        });
+
+        socket.on('disconnect', () => {
+            显示通知("与服务器断开连接", "警告");
+            if (document.getElementById("联机状态指示器")) {
+                document.getElementById("联机状态文本").textContent = "🔴 断开";
+            }
+        });
+
+
+
+    } catch (e) {
+        显示通知("Socket初始化失败: " + e.message, "错误");
+    }
+}
+
+
+document.getElementById('联机按钮').addEventListener('click', () => {
+    
+    
+    // 动态加载 Socket.io
+    const script = document.createElement('script');
+    script.src = "https://cdn.socket.io/4.5.4/socket.io.min.js";
+    
+    document.body.appendChild(script);
+    打开联机设置窗口()
+});
+
+
+
 			const 设置按钮_主菜单 = document.getElementById("设置按钮_主菜单");
 			设置按钮_主菜单.addEventListener("click", 打开设置窗口);
 			
@@ -67683,6 +68675,60 @@ function db() {
 			加载设置();
 			当前层数 = null;
 			显示主菜单();
+			const backgroundCanvas = document.getElementById('backgroundCanvas');
+const bgCtx = backgroundCanvas.getContext('2d');
+
+let particles = [];
+const particleCount = 100;
+
+function resizeBackgroundCanvas() {
+    backgroundCanvas.width = window.innerWidth;
+    backgroundCanvas.height = window.innerHeight;
+}
+
+function initParticles() {
+    particles = [];
+    for (let i = 0; i < particleCount; i++) {
+        particles.push({
+            x: Math.random() * backgroundCanvas.width,
+            y: Math.random() * backgroundCanvas.height,
+            speed: Math.random() * 0.5 + 0.1,
+            size: Math.random() * 1.5 + 0.5,
+            opacity: Math.random() * 0.5 + 0.2
+        });
+    }
+}
+
+function animateBackground() {
+    bgCtx.clearRect(0, 0, backgroundCanvas.width, backgroundCanvas.height);
+    bgCtx.fillStyle = 'rgba(76, 175, 80, 0.8)'; // 粒子颜色
+
+    particles.forEach(p => {
+        p.y -= p.speed;
+        if (p.y < 0) {
+            p.y = backgroundCanvas.height;
+            p.x = Math.random() * backgroundCanvas.width;
+        }
+
+        bgCtx.globalAlpha = p.opacity;
+        bgCtx.beginPath();
+        bgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        bgCtx.fill();
+    });
+
+    bgCtx.globalAlpha = 1.0;
+    requestAnimationFrame(animateBackground);
+}
+
+window.addEventListener('resize', () => {
+    resizeBackgroundCanvas();
+    initParticles();
+});
+
+// 初始化
+resizeBackgroundCanvas();
+initParticles();
+animateBackground();
 			注册全局类();
 			游戏设置.emojiCDN是否可用=true
 			setTimeout(() =>{初始化创意工坊()},500);
@@ -67692,7 +68738,10 @@ function db() {
 			//更新背包显示();
 			//更新界面状态();
 			//动画帧(); // 启动动画循环
+			
+
+
 		</script>
-	</body>
+</body>
 </html>
 <!-- 我来组成第67000行代码 刻舟求剑的来了 -->
