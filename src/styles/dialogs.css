@@ -1,0 +1,1078 @@
+
+			/* --- 游戏信息弹窗 --- */
+.game-info-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 10015; /* 确保在最上层 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+
+
+.game-info-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+
+.game-info-window {
+    background: linear-gradient(160deg, #1e1e1e 0%, #2c2c2c 100%);
+    border: 1px solid #4caf50;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 0 50px rgba(76, 175, 80, 0.25);
+    width: 90%;
+    max-width: 700px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    color: #e0e0e0;
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+
+.game-info-overlay.show .game-info-window {
+    transform: scale(1);
+}
+
+
+
+.game-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+
+
+
+.game-info-header h2 {
+    margin: 0;
+    font-size: 1.6em;
+    color: #4caf50;
+    text-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+}
+
+
+
+.game-info-content {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 15px; /* for scrollbar */
+    line-height: 1.7;
+}
+
+
+
+.game-info-content h3 {
+    font-size: 1.3em;
+    color: #e0e0e0;
+    border-bottom: 1px dashed #555;
+    padding-bottom: 8px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+
+.game-info-content h3:first-child {
+    margin-top: 0;
+}
+
+
+
+.game-info-content ul {
+    list-style-type: disc;
+    padding-left: 25px;
+}
+
+
+
+.game-info-content li {
+    margin-bottom: 10px;
+}
+
+
+
+#种子筛选器按钮:hover {
+    border-color: #2196f3; /* 蓝色高亮 */
+    box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+}
+
+
+			#职业选择遮罩 {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background: rgba(0, 0, 0, 0.7);
+			backdrop-filter: blur(8px);
+			z-index: 10005;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: none;
+			animation: none;
+			}
+
+
+			#职业选择窗口 {
+			position: absolute;
+			background: linear-gradient(160deg, #1a1a1a 0%, #2a2a2a 100%);
+			border: 1px solid #4caf50;
+			border-radius: 12px;
+			padding: 25px;
+			box-shadow: 0 0 40px rgba(76, 175, 80, 0.2);
+			width: 90%;
+			display: flex;
+			flex-direction: column;
+			color: #e0e0e0;
+			font-family: inherit;
+			opacity: 0; /* 初始状态由 GSAP 控制 */
+			visibility: hidden; /* 初始状态由 GSAP 控制 */
+			transition: none;
+			animation: none;
+			}
+
+
+			.职业选择标题 {
+			font-size: 1.6em;
+			color: #4caf50;
+			text-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+			margin: 0 0 20px 0;
+			padding-bottom: 15px;
+			border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+			text-align: center;
+			}
+
+
+		    .职业选择页脚 {
+			display: flex;
+			justify-content: space-between;
+			gap: 15px;
+			margin-top: 20px;
+			padding-top: 20px;
+			border-top: 1px solid rgba(76, 175, 80, 0.3);
+			}
+
+
+			.种子输入容器 {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			}
+
+
+			.职业选项容器 {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			overflow-x: auto;
+			padding: 20px 0;
+			margin: 15px -25px;
+			scrollbar-width: none;
+			-ms-overflow-style: none;
+			scroll-snap-type: x mandatory;
+			-webkit-overflow-scrolling: touch;
+			}
+
+
+			.职业选项容器::-webkit-scrollbar {
+			display: none;
+			}
+
+
+			.职业按钮 {
+			flex: 0 0 140px;
+			padding: 20px 15px;
+			margin: 0 10px;
+			border: 2px solid #555;
+			border-radius: 12px;
+			background: rgba(255,255,255,0.05);
+			color: #ccc;
+			cursor: pointer;
+			transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+			text-align: center;
+			transform: scale(0.85);
+			opacity: 0.6;
+			scroll-snap-align: center;
+			}
+
+
+			.职业按钮:first-child {
+			margin-left: calc(50% - 80px);
+			}
+
+
+			.职业按钮:last-child {
+			margin-right: calc(50% - 80px);
+			}
+
+
+			.职业按钮:hover {
+			transform: scale(0.9) translateY(-2px);
+			}
+
+
+			.职业按钮.active {
+			background: rgba(76, 175, 80, 0.2);
+			border-color: #4caf50;
+			transform: scale(1.1) translateY(-5px);
+			box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+			color: #fff;
+			opacity: 1;
+			}
+
+
+			.职业按钮 .职业图标 {
+			font-size: 3em;
+			display: block;
+			margin-bottom: 10px;
+			color: white;
+			font-family: 'color-emoji';
+			transition: transform 0.4s ease;
+			}
+
+
+			.职业按钮.active .职业图标 {
+			transform: rotate(-10deg) scale(1.1);
+			}
+
+
+			/* --- Tooltip (浮动提示框) --- */
+			#浮动提示框 {
+			/* Tooltip */
+			position: absolute;
+			background: rgba(0, 0, 0, 0.9);
+			color: white;
+			padding: 10px;
+			border-radius: 6px;
+			font-family: Arial;
+			font-size: 12px;
+			max-width: 200px;
+			pointer-events: none;
+			z-index: 1002;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+			display: none;
+			line-height: 1.4;
+			}
+
+
+			#浮动提示框 br {
+			margin: 4px 0;
+			content: "";
+			display: block;
+			}
+
+
+			/* --- Level Transition (楼层过渡遮罩) --- */
+			.楼层过渡遮罩 {
+			/* Level Transition Overlay */
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: black;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.5s ease;
+			z-index: 10001;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			}
+
+
+			.层数标题 {
+			/* Level Number Title */
+			color: #ffffff;
+			font-size: 4em;
+			text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+			opacity: 0;
+			transform: scale(3);
+			transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+			font-family: "Arial Black", sans-serif;
+			letter-spacing: 4px;
+			}
+
+
+			/* --- Notifications (通知) --- */
+			.通知容器 {
+			/* Notification Container */
+			position: fixed;
+			top: 20px;
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 9999999;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 10px;
+			font-family: Arial, "微软雅黑";
+			}
+
+
+			.通知条目 {
+			/* Notification Item */
+			background: rgba(40, 40, 40, 0.95);
+			color: #e0e0e0;
+			padding: 12px 24px;
+			border-radius: 6px;
+			min-width: 280px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+			border-left: 4px solid;
+			opacity: 0;
+			transform: translateY(-30px);
+			animation: 通知入场 0.3s ease-out forwards;
+			transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+			opacity 0.2s linear;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			backdrop-filter: blur(5px);
+			}
+
+
+			.通知条目.离场 {
+			/* Leaving Notification */
+			animation: 通知离场 0.3s ease-in forwards;
+			transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+			opacity 0.2s linear;
+			}
+
+
+			.通知条目.成功 {
+			border-color: #4caf50;
+			}
+
+
+			.通知条目.警告 {
+			border-color: #ff9800;
+			}
+
+
+			.通知条目.错误 {
+			border-color: #f44336;
+			}
+
+
+			.通知条目.信息 {
+			border-color: #2196f3;
+			}
+
+
+			.重铸弹窗.关闭中 {
+			opacity: 0;
+			transform: translate(-50%, -50%) scale(0.9);
+			pointer-events: none;
+			}
+
+
+			#交易窗口.关闭中 {
+			opacity: 0;
+			transform: translate(-50%, -50%) scale(0.9);
+			pointer-events: none;
+			}
+
+
+			#交易窗口 .按钮 {
+			padding: 8px 20px;
+			font-size: 1em;
+			border: 2px solid #4caf50;
+			border-radius: 6px;
+			background: linear-gradient(145deg,
+			rgba(76, 175, 80, 0.4),
+			rgba(67, 160, 71, 0.3));
+			color: #e0e0e0;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			font-family: inherit;
+			}
+
+
+			#交易窗口 .按钮:hover {
+			background: linear-gradient(145deg,
+			rgba(76, 175, 80, 0.6),
+			rgba(67, 160, 71, 0.5));
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+			border-color: #66bb6a;
+			}
+
+
+			#交易窗口 .按钮:active {
+			transform: translateY(0px);
+			box-shadow: 0 2px 5px rgba(76, 175, 80, 0.2);
+			}
+
+
+			#收购窗口.关闭中 {
+			opacity: 0;
+			transform: translate(-50%, -50%) scale(0.9);
+			pointer-events: none;
+			}
+
+
+			#收购窗口 .窗口标题 {
+			color: #ff9800;
+			border-bottom: 1px solid rgba(255, 152, 0, 0.3);
+			text-shadow: 0 0 5px rgba(255, 152, 0, 0.4);
+			padding: 15px 20px;
+			font-size: 1.3em;
+			text-align: center;
+			font-weight: bold;
+			flex-shrink: 0;
+			}
+
+
+			#收购窗口 .交易底部 {
+			border-top: 1px solid rgba(255, 152, 0, 0.3);
+			}
+
+
+			#收购窗口 .玩家金币 {
+			color: #ffd700;
+			font-weight: bold;
+			}
+
+
+			#收购窗口 .按钮 {
+			padding: 8px 20px;
+			font-size: 1em;
+			border: 2px solid #ff9800;
+			border-radius: 6px;
+			background: linear-gradient(145deg,
+			rgba(255, 152, 0, 0.4),
+			rgba(245, 124, 0, 0.3));
+			color: #e0e0e0;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			font-family: inherit;
+			}
+
+
+			#收购窗口 .按钮:hover {
+			background: linear-gradient(145deg,
+			rgba(255, 152, 0, 0.6),
+			rgba(245, 124, 0, 0.5));
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+			border-color: #ffb74d;
+			}
+
+
+			#收购窗口 .按钮:active {
+			transform: translateY(0px);
+			box-shadow: 0 2px 5px rgba(255, 152, 0, 0.2);
+			}
+
+
+			.附魔弹窗.关闭中 {
+			opacity: 0;
+			transform: translate(-50%, -50%) scale(0.9);
+			pointer-events: none;
+			}
+
+
+			/* 关闭按钮优化 */
+			.附魔弹窗 .关闭按钮 {
+			background: none;
+			border: none;
+			color: #c792ea;
+			font-size: 1.8em;
+			cursor: pointer;
+			transition: all 0.3s;
+			padding: 5px;
+			line-height: 1;
+			}
+
+
+			.附魔弹窗 .关闭按钮:hover {
+			color: #ff4081;
+			transform: rotate(90deg);
+			}
+
+
+			.重铸弹窗-header {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 15px;
+			border-bottom: 1px solid #444;
+			padding-bottom: 10px;
+			}
+
+
+			.重铸弹窗-column {
+			flex: 1;
+			padding: 10px;
+			}
+
+
+			.重铸弹窗-items {
+			display: grid;
+			grid-template-rows: repeat(auto-fill, minmax(85px, 1fr));
+			max-height: 50vh;
+			overflow-y: scroll;
+			gap: 10px;
+			padding-right: 20px;
+			padding-left: 20px;
+			}
+
+
+			.宠物管理窗口 {
+			position: fixed;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			background: #1a1a1ae6;
+			border: 2px solid #4a4a4a;
+			border-radius: 12px;
+			padding: 20px;
+			width: 90%;
+			max-width: 500px;
+			color: #e0e0e0;
+			z-index: 10000;
+			box-shadow: 0 0 30px #00000080;
+			transition: opacity 0.3s ease,
+			transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+			max-height: 80vh;
+			overflow-y: auto;
+			}
+
+
+			.宠物遮罩 {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.75);
+			z-index: 9999;
+			}
+
+
+			.宠物管理窗口 .关闭按钮 {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			background: none;
+			border: none;
+			font-size: 1.5em;
+			color: #e74c3c;
+			cursor: pointer;
+			transition: transform 0.3s;
+			padding: 5px;
+			}
+
+
+			.宠物管理窗口 .关闭按钮:hover {
+			color: #ff4081;
+			transform: rotate(90deg);
+			/* 旋转动画 */
+			}
+
+
+			.宠物管理窗口 .通用按钮 {
+			background: linear-gradient(145deg,
+			rgba(76, 175, 80, 0.9) 30%,
+			rgba(67, 160, 71, 0.9) 100%);
+			box-shadow: 0 4px 20px #4caf504d;
+			color: #fff;
+			border: 2px solid #fff;
+			opacity: 0.95;
+			border: none;
+			border-radius: 5px;
+			padding: 5px 10px;
+			color: white;
+			cursor: pointer;
+			transition: background-color 0.2s, transform 0.2s;
+			font-family: inherit;
+			margin-top: 10px;
+			width: 100%;
+			}
+
+
+			.确认对话框 h3 {
+			margin-top: 0;
+			font-size: 1.4em;
+			color: #ff8a80;
+			text-shadow: 0 0 8px #ff0000;
+			}
+
+
+			.确认对话框 p {
+			margin: 15px 0 25px 0;
+			font-size: 1em;
+			line-height: 1.6;
+			color: #ccc;
+			}
+
+
+			.教程提示窗口 p {
+			font-size: 1.1em;
+			line-height: 1.5;
+			margin-bottom: 15px;
+			}
+
+
+			.教程提示窗口 .关闭按钮 {
+			background: linear-gradient(145deg,
+			rgba(76, 175, 80, 0.9) 30%,
+			rgba(67, 160, 71, 0.9) 100%);
+			box-shadow: 0 2px 8px #4caf5066;
+			color: #fff;
+			padding: 8px 16px;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			font-size: 1em;
+			font-family: inherit;
+			}
+
+
+			.教程提示窗口 .关闭按钮:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px #4caf5080;
+			background: linear-gradient(145deg,
+			rgba(67, 160, 71, 0.9) 30%,
+			rgba(58, 140, 62, 0.9) 100%);
+			}
+
+
+			#传送点菜单 .菜单操作按钮 {
+			padding: 5px 10px;
+			/* 统一基础内边距 */
+			font-size: 0.9em;
+			/* 统一基础字号 */
+			border: 1px solid transparent;
+			/* 初始透明边框 */
+			border-radius: 5px;
+			color: #e0e0e0;
+			cursor: pointer;
+			transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+			/* 平滑过渡 */
+			font-family: inherit;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+			/* 基础阴影 */
+			text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+			display: inline-flex;
+			/* 保证图标和文字对齐 */
+			align-items: center;
+			gap: 4px;
+			/* 图标和文字间距 */
+			}
+
+
+			#传送点菜单 .菜单操作按钮:hover {
+			transform: translateY(-2px);
+			/* 悬浮上移 */
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+			/* 更深的阴影 */
+			}
+
+
+			#传送点菜单 .菜单操作按钮:active {
+			transform: translateY(0px) scale(0.95);
+			/* 按下效果 */
+			box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+			/* 内阴影 */
+			}
+
+
+			/* 传送按钮 (绿色系) */
+			#传送点菜单 .传送菜单按钮-传送 {
+			background: linear-gradient(145deg, #4caf50, #388e3c);
+			border-color: #66bb6a;
+			box-shadow: 0 2px 5px rgba(76, 175, 80, 0.3);
+			}
+
+
+			#传送点菜单 .传送菜单按钮-传送:hover {
+			background: linear-gradient(145deg, #66bb6a, #4caf50);
+			border-color: #81c784;
+			box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+			}
+
+
+			/* 删除按钮 (深红/灰红系) */
+			#传送点菜单 .传送菜单按钮-删除 {
+			background: linear-gradient(145deg, #7f0000, #9e2b25);
+			/* 更深的红色 */
+			border-color: #b71c1c;
+			box-shadow: 0 2px 5px rgba(127, 0, 0, 0.3);
+			}
+
+
+			#传送点菜单 .传送菜单按钮-删除:hover {
+			background: linear-gradient(145deg, #9e2b25, #b71c1c);
+			border-color: #d32f2f;
+			box-shadow: 0 4px 12px rgba(127, 0, 0, 0.4);
+			}
+
+
+			#传送点菜单 .传送菜单按钮-保存 {
+			background: linear-gradient(145deg, #4caf50, #388e3c);
+			/* 青色系 */
+			border-color: #009688;
+			box-shadow: 0 2px 5px rgba(0, 121, 107, 0.3);
+			/* 微调标题栏内按钮的样式 */
+			font-size: 0.9em;
+			margin-left: 10px;
+			}
+
+
+			#传送点菜单 .传送菜单按钮-保存:hover {
+			background: linear-gradient(145deg, #66bb6a, #4caf50);
+			border-color: #81c784;
+			box-shadow: 0 4px 12px rgba(0, 121, 107, 0.4);
+			}
+
+
+			#融合窗口 {
+			position: absolute;
+			bottom: 100%;
+			/* 调整垂直位置，使其在背包上方或旁边 */
+			right: 0%;
+			/* 调整水平位置 */
+			width: 330px;
+			/* 根据需要调整宽度 */
+			background: rgba(0, 0, 0, 0.9);
+			padding: 15px;
+			z-index: 1002;
+			/* 比背包高一级 */
+			display: flex;
+			/* 改为 flex 布局 */
+			flex-direction: column;
+			/* 垂直排列 */
+			align-items: center;
+			/* 居中对齐 */
+			gap: 10px;
+			/* 元素间距 */
+			box-shadow: 0 3px 15px rgba(0, 0, 0, 0.5);
+			transition: opacity 0.3s ease, transform 0.3s ease;
+			/* 添加过渡效果 */
+			opacity: 0;
+			/* 初始隐藏 */
+			transform: translateX(20px);
+			/* 初始向右偏移一点，用于动画 */
+			pointer-events: none;
+			/* 初始不可交互 */
+			}
+
+
+			#融合窗口.显示中 {
+			opacity: 1;
+			transform: translateX(0);
+			pointer-events: auto;
+			}
+
+
+			#融合窗口 .物品条目 {
+			transform: scale(0.65);
+			/* 缩小物品显示 */
+			padding: 0;
+			margin: 0;
+			border: none;
+			/* 移除边框 */
+			background: transparent;
+			/* 透明背景 */
+			box-shadow: none;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+			/* 明确指针 */
+			}
+
+
+			#融合窗口 .物品条目 .物品图标 {
+			font-size: 1.8em;
+			/* 调整图标大小 */
+			margin-bottom: 2px;
+			}
+
+
+			#融合窗口 .物品条目 .物品名称 {
+			font-size: 0.7em;
+			/* 调整名称大小 */
+			display: none;
+			/* 默认隐藏名称，空间太小 */
+			}
+
+
+			#融合窗口 .物品条目 .物品堆叠 {
+			font-size: 0.6em;
+			/* 调整堆叠数字大小 */
+			bottom: 2px;
+			right: 2px;
+			padding: 1px 4px;
+			}
+
+
+			/*-------------结局界面-----------*/
+			#结算界面遮罩 {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background: rgba(0, 0, 0, 0.8);
+			backdrop-filter: blur(12px);
+			z-index: 10009;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.5s ease;
+			overflow: hidden;
+			}
+
+
+			.结算界面 {
+			position: relative;
+			background: linear-gradient(160deg, rgba(30, 30, 30, 0.95) 0%, rgba(10, 10, 10, 0.95) 100%);
+			border: 1px solid rgba(255, 215, 0, 0.3);
+			border-radius: 16px;
+			padding: 30px 40px;
+			box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+			text-align: center;
+			color: #e0e0e0;
+			font-family: inherit;
+			width: 90%;
+			max-width: 650px;
+			transform: translateY(20px) scale(0.95);
+			opacity: 0;
+			transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+			}
+
+
+			#结算界面遮罩.显示 {
+			opacity: 1;
+			pointer-events: auto;
+			}
+
+
+			#结算界面遮罩.显示 .结算界面 {
+			transform: translateY(0) scale(1);
+			opacity: 1;
+			}
+
+
+#等待界面遮罩 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 10025; /* 确保在最上层 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+
+
+#等待界面遮罩.显示 {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+
+#等待界面窗口 {
+    background: linear-gradient(160deg, #1e1e1e 0%, #2c2c2c 100%);
+    border: 1px solid #4caf50;
+    border-radius: 12px;
+    padding: 30px 40px;
+    box-shadow: 0 0 50px rgba(76, 175, 80, 0.25);
+    text-align: center;
+    color: #e0e0e0;
+    transform: scale(0.95);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+
+#等待界面遮罩.显示 #等待界面窗口 {
+    transform: scale(1);
+}
+
+
+
+#等待界面窗口 h2 {
+    margin: 0 0 10px 0;
+    color: #e0e0e0;
+}
+
+
+
+#等待界面窗口 p {
+    margin: 0;
+    color: #aaa;
+}
+
+
+			/* -----------玩家渐进式升级---------*/
+			#升级选择遮罩 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 20000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+
+#升级选择遮罩.显示 {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+
+.天赋卡片容器 {
+    display: flex;
+    gap: 25px;
+    perspective: 1000px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+}
+
+
+
+.天赋卡片 {
+    width: 220px;
+    height: 320px;
+    background: linear-gradient(160deg, #2a2a2a 0%, #1a1a1a 100%);
+    border: 2px solid #4a4a4a;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+
+
+.天赋卡片:hover {
+    transform: translateY(-15px) scale(1.05);
+    border-color: #4caf50;
+    box-shadow: 0 20px 40px rgba(76, 175, 80, 0.3);
+    background: linear-gradient(160deg, #333 0%, #222 100%);
+}
+
+
+
+.天赋卡片::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: 0.5s;
+}
+
+
+
+.天赋卡片:hover::before {
+    left: 100%;
+}
+
+
+
+.天赋卡片容器 {
+    display: flex;
+    gap: 20px;
+    perspective: 1000px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 40px 20px;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+
+
+
+.天赋卡片容器::-webkit-scrollbar {
+    display: none;
+}
+
+
+
+.天赋卡片 {
+    flex: 0 0 auto;
+    width: 180px;
+    height: 280px;
+    background: linear-gradient(160deg, #2a2a2a 0%, #1a1a1a 100%);
+    border: 2px solid #4a4a4a;
+    border-radius: 16px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    scroll-snap-align: center;
+}
+
+
+
+.天赋卡片:hover {
+    transform: translateY(-15px) scale(1.05);
+    border-color: #4caf50;
+    box-shadow: 0 20px 40px rgba(76, 175, 80, 0.3);
+    background: linear-gradient(160deg, #333 0%, #222 100%);
+    z-index: 10;
+}

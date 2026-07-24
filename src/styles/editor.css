@@ -1,0 +1,359 @@
+
+			.重铸弹窗 select,
+			#编辑器属性面板 select,
+			#全局设置窗口 select {
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23cccccc' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+			background-repeat: no-repeat;
+			background-position: right 12px center;
+			background-size: 16px;
+			padding-right: 40px;
+			}
+
+
+			.重铸弹窗 textarea,
+			#编辑器属性面板 textarea,
+			#全局设置窗口 textarea {
+			min-height: 60px;
+			resize: vertical;
+			}
+
+
+			.重铸弹窗 .设置项目,
+			#编辑器属性面板 .设置项目,
+			#全局设置窗口 .设置项目 {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: 15px;
+			margin-bottom: 10px;
+			}
+
+
+			.重铸弹窗 input[type="checkbox"],
+			#编辑器属性面板 input[type="checkbox"],
+			#全局设置窗口 input[type="checkbox"] {
+			position: relative;
+			width: 22px;
+			height: 22px;
+			cursor: pointer;
+			border-radius: 4px;
+			}
+
+
+			.重铸弹窗 input[type="checkbox"]:checked::after,
+			#编辑器属性面板 input[type="checkbox"]:checked::after,
+			#全局设置窗口 input[type="checkbox"]:checked::after {
+			content: '✓';
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			color: white;
+			font-size: 16px;
+			line-height: 1;
+			}
+
+
+			body:not(.地图编辑器模式) #编辑器工具栏,
+			body:not(.地图编辑器模式) #编辑器属性面板遮罩,
+			body:not(.地图编辑器模式):not(.编辑器游玩模式) #返回编辑器按钮 {
+			display: none;
+			}
+
+
+			.地图编辑器模式 #融合窗口,
+			.编辑器游玩模式 #编辑器工具栏,
+			.编辑器游玩模式 #编辑器属性面板遮罩 {
+			display: none;
+			}
+
+
+			/* -------------地图编辑器------------ */
+			#笔刷工具容器 {
+				position: fixed;
+				top: 215px;
+				right: 5px;
+				background: rgba(0,0,0,0.7);
+				padding: 10px;
+				border-radius: 8px;
+				z-index: 999;
+				display: none;
+				flex-direction: column;
+				gap: 10px;
+				width: 150px;
+				box-sizing: border-box;
+			}
+
+
+#扳手工具菜单 h4 {
+	margin: 0 0 5px 0;
+	text-align: center;
+	color: #4caf50;
+	font-size: 1em;
+}
+
+
+#扳手规则容器 {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-height: 200px;
+	overflow-y: auto;
+	padding-right: 5px;
+}
+
+
+.扳手规则条目 {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	background: rgba(255,255,255,0.05);
+	padding: 5px;
+	border-radius: 4px;
+}
+
+
+.扳手规则条目 select, .扳手规则条目 input {
+	background: #333;
+	border: 1px solid #555;
+	color: #fff;
+	padding: 5px;
+	border-radius: 4px;
+	font-size: 0.8em;
+}
+
+
+
+
+.扳手规则条目 .删除规则按钮 {
+	background: #c62828;
+	color: white;
+	border: none;
+	border-radius: 50%;
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+	padding: 0;
+	line-height: 20px;
+	text-align: center;
+	flex-shrink: 0;
+}
+
+
+#添加扳手规则按钮 {
+	padding: 5px;
+	font-size: 0.8em;
+	min-width: unset;
+}
+
+
+#编辑器教程遮罩 {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background: rgba(0, 0, 0, 0.7);
+			backdrop-filter: blur(8px);
+			z-index: 10015; 
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.3s ease;
+			}
+
+
+			#编辑器教程遮罩.显示 {
+				opacity: 1;
+				pointer-events: auto;
+			}
+
+
+			#编辑器教程窗口 {
+				background: linear-gradient(160deg, #1e1e1e 0%, #2c2c2c 100%);
+				border: 1px solid #4caf50;
+				border-radius: 12px;
+				padding: 25px;
+				box-shadow: 0 0 50px rgba(76, 175, 80, 0.25);
+				width: 90%;
+				max-width: 600px;
+				max-height: 85vh;
+				display: flex;
+				flex-direction: column;
+				color: #e0e0e0;
+				transform: scale(0.95);
+				transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			}
+
+
+
+			#编辑器教程遮罩.显示 #编辑器教程窗口 {
+				transform: scale(1);
+			}
+
+
+			.编辑器教程内容 {
+				overflow-y: auto;
+				flex-grow: 1;
+				padding: 15px;
+				line-height: 1.7;
+				text-align: left;
+			}
+
+
+			.编辑器教程导航 {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-top: 20px;
+				padding-top: 15px;
+				border-top: 1px solid rgba(76, 175, 80, 0.3);
+			}
+
+
+#扳手规则窗口遮罩 {
+	position: fixed;
+	top: 0; left: 0;
+	width: 100vw; height: 100vh;
+	background: rgba(0,0,0,0.7);
+	backdrop-filter: blur(5px);
+	z-index: 10008;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.3s ease-out;
+}
+
+
+#扳手规则窗口遮罩.显示 {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+
+#扳手规则窗口 {
+	background: #2a2a2a;
+	color: #e0e0e0;
+	padding: 20px;
+	border-radius: 8px;
+	width: 90%;
+	max-width: 500px;
+	border: 1px solid #4caf50;
+	transform: scale(0.95);
+	opacity: 0;
+	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out;
+}
+
+
+#扳手规则窗口遮罩.显示 #扳手规则窗口 {
+	transform: scale(1);
+	opacity: 1;
+}
+
+
+#扳手规则窗口 h4 {
+	margin: 0 0 15px 0;
+	text-align: center;
+	color: #4caf50;
+}
+
+
+#扳手规则容器 {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-height: 40vh;
+	overflow-y: auto;
+	padding: 5px;
+	margin-bottom: 10px;
+	border: 1px solid #444;
+	border-radius: 4px;
+}
+
+
+.扳手规则条目 {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	background: rgba(255,255,255,0.05);
+	padding: 8px;
+	border-radius: 4px;
+}
+
+
+.扳手规则条目 input, .扳手规则条目 select {
+	background: #333;
+	border: 1px solid #555;
+	color: #fff;
+	padding: 8px;
+	border-radius: 4px;
+	font-size: 0.9em;
+}
+
+
+.扳手规则条目 .属性输入 { flex: 1; min-width: 0;}
+
+
+.扳手规则条目 .操作选择 { flex: 0.5; min-width: 0;}
+
+
+.扳手规则条目 .数值输入 {
+	flex: 1.5;
+	display: flex;
+	gap: 4px;
+	min-width: 0;
+}
+
+
+.扳手规则条目 .数值输入 input {
+	flex: 1;
+	width: 100%;
+	min-width: 30px;
+	box-sizing: border-box;
+}
+
+
+#扳手规则窗口 .扳手快捷槽容器 {
+				display: flex;
+				justify-content: center;
+				gap: 10px;
+				margin-bottom: 15px;
+				padding-bottom: 10px;
+				border-bottom: 1px solid #444;
+			}
+
+
+			#扳手规则窗口 .扳手快捷槽按钮 {
+				padding: 6px 12px;
+				font-size: 0.9em;
+				min-width: 40px;
+				border: 1px solid #555;
+				background-color: #333;
+			}
+
+
+			#扳手规则窗口 .扳手快捷槽按钮.active {
+				border-color: #4caf50;
+				background-color: rgba(76, 175, 80, 0.3);
+				box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+			}
+
+
+.扳手规则条目 .删除规则按钮 {
+	background: #c62828;
+	color: white;
+	border: none;
+	border-radius: 50%;
+	width: 24px;
+	height: 24px;
+	cursor: pointer;
+	padding: 0;
+	line-height: 24px;
+	text-align: center;
+	flex-shrink: 0;
+}

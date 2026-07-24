@@ -1,0 +1,123 @@
+
+			
+
+			
+			/*-----------大地图窗口------------*/
+			#扳手工具菜单 {
+	position: fixed;
+	top: 215px;
+	right: 5px;
+	background: rgba(0,0,0,0.7);
+	padding: 10px;
+	border-radius: 8px;
+	z-index: 998;
+	display: none;
+	flex-direction: column;
+	gap: 10px;
+	width: 150px;
+	box-sizing: border-box;
+	border: 1px solid #4caf50;
+}
+
+
+			#大地图遮罩 {
+    position: fixed;
+    top: -5%;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(10px);
+    z-index: 10020;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+
+#大地图遮罩.显示 {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+
+#大地图遮罩.显示 #大地图窗口 {
+    transform: scale(1) translateY(0);
+}
+
+
+
+.大地图头部 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+    flex-shrink: 0;
+}
+
+
+
+#大地图画布容器 {
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+    cursor: grab;
+    background-color: var(--canvas-bg);
+}
+
+
+
+#大地图画布容器:active {
+    cursor: grabbing;
+}
+
+
+
+#大地图画布 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    image-rendering: pixelated;
+}
+
+
+
+.大地图控制栏 {
+    display: flex;
+    gap: 12px;
+    padding: 12px 25px;
+    border-top: 1px solid rgba(76, 175, 80, 0.3);
+    background: rgba(0,0,0,0.2);
+    flex-shrink: 0;
+    justify-content: center;
+}
+
+
+
+.大地图控制栏 .菜单按钮 {
+    padding: 8px 18px;
+    font-size: 1.2rem;
+    min-width: 50px;
+    line-height: 1;
+}
+
+
+
+.大地图信息 {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.6);
+    color: #ccc;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    pointer-events: none;
+    z-index: 1;
+}

@@ -1,0 +1,1727 @@
+
+			#游戏种子输入 {
+			flex-grow: 1;
+			}
+
+
+			.热键输入 {
+			background: #1e1e1e;
+			border: 1px solid #555;
+			color: #4caf50;
+			padding: 8px;
+			border-radius: 4px;
+			width: 100px;
+			text-align: center;
+			font-weight: bold;
+			cursor: pointer;
+			transition: all 0.2s;
+			}
+
+
+			.热键输入:focus,
+			.热键输入.capturing {
+			border-color: #4caf50;
+			box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+			outline: none;
+			}
+
+
+			input[type="range"] {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 50%;
+			height: 8px;
+			background: #333;
+			outline: none;
+			border-radius: 4px;
+			border: 1px solid #555;
+			}
+
+
+			input[type="range"]::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 20px;
+			height: 20px;
+			background: #4caf50;
+			cursor: pointer;
+			border-radius: 50%;
+			border: 2px solid #1a1a1a;
+			transition: background 0.2s;
+			}
+
+
+			input[type="range"]::-moz-range-thumb {
+			width: 20px;
+			height: 20px;
+			background: #4caf50;
+			cursor: pointer;
+			border-radius: 50%;
+			border: 2px solid #1a1a1a;
+			}
+
+
+			input[type="range"]:hover::-webkit-slider-thumb {
+			background: #66bb6a;
+			}
+
+
+			input[type="range"]:active::-webkit-slider-thumb {
+			box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+			}
+
+
+			/* --- 编辑器与设置窗口UI --- */
+			.npc-list-editor {
+			    margin-top: 15px;
+			    padding-top: 10px;
+			    border-top: 1px solid #444;
+			}
+
+
+
+			.npc-list-item {
+			    display: flex;
+			    align-items: center;
+			    gap: 10px;
+			    margin-bottom: 8px;
+			    background: rgba(255,255,255,0.05);
+			    padding: 8px;
+			    border-radius: 4px;
+			}
+
+
+
+			.npc-list-item select {
+			    flex-grow: 1;
+			}
+
+
+
+			.npc-list-item .delete-button {
+			    background: #c62828;
+			    color: white;
+			    border: none;
+			    border-radius: 50%;
+			    width: 24px;
+			    height: 24px;
+			    cursor: pointer;
+			    line-height: 24px;
+			    text-align: center;
+			    flex-shrink: 0;
+			}
+
+
+			#返回游戏模式选择按钮:hover {
+			background: rgba(76, 175, 80, 0.4);
+			transform: scale(1.1);
+			border-color: #66bb6a;
+			}
+
+
+			.编辑器游玩模式 #回放教程按钮 {
+			display: none !important
+			}
+
+
+			.health-bar {
+			background: linear-gradient(to right, #ff4444, #ff7676);
+			}
+
+
+			.power-bar {
+			background: linear-gradient(to right, #1554db, #2c73f7);
+			}
+
+
+			.怪物数量警告 {
+			color: #ff4444;
+			}
+
+
+			.界面文本行 {
+			color: #4caf50;
+			font-size: 0.9em;
+			display: flex;
+			justify-content: space-between;
+			}
+
+
+			#upBtn {
+			margin-bottom: -12px;
+			z-index: 2;
+			}
+
+
+			#leftBtn,
+			#rightBtn {
+			margin-left: -64px;
+			margin: 0 1rem;
+			}
+
+
+			#downBtn {
+			margin-top: -12px;
+			z-index: 1;
+			}
+
+
+			#背包按钮 {
+			/* Backpack Button */
+			background: #2196f3;
+			box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+			}
+
+
+			.弹窗头部 {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 10px;
+			}
+
+
+			.弹窗头部 h3 {
+			color: #4caf50;
+			margin: 0;
+			font-size: 1.2em;
+			}
+
+
+			.关闭按钮 {
+			background: transparent;
+			border: none;
+			color: white;
+			font-size: 1.5em;
+			cursor: pointer;
+			padding: 8px;
+			}
+
+
+			#背包搜索栏 {
+			flex-shrink: 0;
+			}
+
+
+			#背包搜索输入::placeholder {
+			color: #666;
+			}
+
+
+			.hover:hover {
+			background: rgba(255, 255, 255, 0.2);
+			transform: translateY(-2px);
+			}
+
+
+			.汉字图标 {
+			font-family: "Microsoft YaHei", sans-serif;
+			}
+
+
+			/* 死亡动画 */
+			.骷髅图标 {
+			font-family: "color-emoji";
+			font-size: 80px;
+			animation: 骷髅抖动 1s infinite;
+			}
+
+
+			.死亡文字 {
+			color: white;
+			font-size: 40px;
+			text-shadow: 0 0 10px red;
+			margin-top: 20px;
+			}
+
+
+			.重生选项 {
+			margin-top: 20px;
+			display: flex;
+			flex-direction: column;
+			gap: 15px;
+			}
+
+
+			.重生按钮 {
+			font-family: "color-emoji";
+			padding: 12px 24px;
+			font-size: 18px;
+			border: 2px solid #fff;
+			border-radius: 8px;
+			background: rgba(255, 255, 255, 0.1);
+			color: white;
+			cursor: pointer;
+			transition: all 0.3s;
+			}
+
+
+			.重生按钮:hover {
+			background: rgba(255, 255, 255, 0.3);
+			transform: scale(1.05);
+			}
+
+
+			#death-display-overlay {
+			    position: fixed;
+			    top: 0;
+			    left: 0;
+			    width: 100vw;
+			    height: 100vh;
+			    pointer-events: none;
+			    z-index: 10007; /* 比死亡界面低一级 */
+			    opacity: 0;
+			    transition: opacity 0.5s ease;
+			    box-shadow: inset 0 0 250px 80px rgba(0, 0, 0, 0.9);
+			}
+
+
+			.死亡内容容器 {
+			font-family: "color-emoji";
+			background: rgba(10, 0, 0, 0.8);
+			border: 2px solid #ff444480;
+			border-radius: 16px;
+			padding: 40px 60px;
+			box-shadow: 0 0 40px rgba(255, 50, 50, 0.3);
+			text-align: center;
+			}
+
+
+			.骷髅容器 {
+			position: relative;
+			margin-bottom: 30px;
+			}
+
+
+			.动态骷髅 {
+			font-size: 6rem;
+			text-shadow: 0 0 30px #ff0000;
+			animation: 骷髅呼吸 2s ease-in-out infinite;
+			display: inline-block;
+			}
+
+
+			.重生选项 {
+			font-family: "color-emoji";
+			display: grid;
+			gap: 20px;
+			margin-top: 30px;
+			}
+
+
+			.重生按钮 {
+			font-family: "color-emoji";
+			padding: 16px 32px;
+			font-size: 1.2rem;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			background: linear-gradient(145deg,
+			rgba(100, 0, 0, 0.8),
+			rgba(150, 0, 0, 0.6));
+			color: #fff;
+			position: relative;
+			overflow: hidden;
+			border: 1px solid #ff4444;
+			}
+
+
+			.重生按钮::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: -100%;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(90deg,
+			transparent,
+			rgba(255, 255, 255, 0.2),
+			transparent);
+			transition: 0.5s;
+			}
+
+
+			.重生按钮:hover::before {
+			left: 100%;
+			}
+
+
+			.重生按钮:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 20px rgba(255, 50, 50, 0.4);
+			}
+
+
+			.重生按钮:active {
+			transform: translateY(1px);
+			}
+
+
+			#重新开始 {
+			background: linear-gradient(145deg,
+			rgba(50, 50, 50, 0.8),
+			rgba(30, 30, 30, 0.6));
+			border-color: #666;
+			}
+
+
+
+.editor-selected-slot {
+	border-color: #4caf50;
+	box-shadow: 0 0 12px rgba(76, 175, 80, 0.7);
+}
+
+
+			/* --- Staircase (楼梯) --- */
+			.楼梯 {
+			background-color: #4a4a4a;
+			font-size: 1.5em;
+			text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+			}
+
+
+			.通知图标 {
+			font-family: "color-emoji";
+			width: 24px;
+			height: 24px;
+			flex-shrink: 0;
+			}
+
+
+			.关闭按钮 {
+			font-family: "color-emoji";
+			background: none;
+			border: none;
+			color: #888;
+			cursor: pointer;
+			margin-left: auto;
+			padding-left: 20px;
+			transition: color 0.2s;
+			}
+
+
+			.关闭按钮:hover {
+			color: #fff;
+			}
+
+
+			#跳过教程按钮 {
+			font-size: 0.8em;
+			display: block;
+			position: fixed;
+			top: 185px;
+			right: 22px;
+			height: 5vmin;
+			width: 20vmin;
+			}
+
+
+			/* 日志容器 */
+			.日志面板 {
+			position: fixed;
+			right: 20px;
+			bottom: -600px;
+			width: 250px;
+			height: 200px;
+			background: rgba(0, 0, 0, 0.9);
+			border-radius: 8px;
+			padding: 12px;
+			transition: bottom 0.3s ease;
+			color: #c0c0c0;
+			display: flex;
+			flex-direction: column;
+			}
+
+
+			.日志内容 {
+			flex: 1;
+			overflow-y: auto;
+			font-size: 0.9em;
+			line-height: 1.4;
+			scrollbar-width: thin;
+			scrollbar-color: #4caf50 #2a2a2a;
+			}
+
+
+			.日志面板.可见 {
+			bottom: 135px;
+			}
+
+
+			.日志内容 .成功 {
+			color: green;
+			}
+
+
+			.日志内容 .错误 {
+			color: red;
+			}
+
+
+			.日志内容 .警告 {
+			color: yellow;
+			}
+
+
+			.窗口标题 {
+			padding: 15px 20px;
+			font-size: 1.3em;
+			color: #4caf50;
+			border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+			text-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+			text-align: center;
+			font-weight: bold;
+			flex-shrink: 0;
+			}
+
+
+			.库存列表 {
+			display: grid;
+			gap: 12px;
+			padding: 20px;
+			overflow-y: auto;
+			flex-grow: 1;
+			}
+
+
+			.物品价格 {
+			color: #ffd700;
+			font-size: 0.9em;
+			font-weight: bold;
+			white-space: nowrap;
+			margin-left: 10px;
+			}
+
+
+			.交易底部 {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 15px 20px;
+			border-top: 1px solid rgba(76, 175, 80, 0.3);
+			background: rgba(0, 0, 0, 0.2);
+			flex-shrink: 0;
+			}
+
+
+			.玩家金币 {
+			color: #ffd700;
+			font-weight: bold;
+			}
+
+
+			.收购内容 {
+			display: flex;
+			flex-grow: 1;
+			overflow: hidden;
+			padding: 15px;
+			gap: 15px;
+			}
+
+
+			.收购物品列表,
+			.玩家背包预览 {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			background: rgba(255, 255, 255, 0.03);
+			border-radius: 8px;
+			padding: 10px;
+			overflow: hidden;
+			}
+
+
+			.收购物品列表 h4,
+			.玩家背包预览 h4 {
+			margin-bottom: 10px;
+			text-align: center;
+			color: #ffcc80;
+			flex-shrink: 0;
+			padding-bottom: 5px;
+			border-bottom: 1px dashed rgba(255, 152, 0, 0.2);
+			}
+
+
+			#收购需求列表,
+			#玩家可售列表 {
+			align-content: start;
+			padding: 10px 5px;
+			overflow-y: auto;
+			flex-grow: 1;
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+			gap: 8px;
+			}
+
+
+			.收购需求条目,
+			.玩家可售条目 {
+			background: rgba(255, 255, 255, 0.05);
+			padding: 10px;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 6px;
+			transition: all 0.2s ease;
+			text-align: center;
+			}
+
+
+			.玩家可售条目 {
+			cursor: pointer;
+			}
+
+
+			.收购需求条目 .需求价格,
+			.玩家可售条目 .出售价格 {
+			font-size: 0.9em;
+			color: #ffd700;
+			font-weight: bold;
+			display: block;
+			}
+
+
+			.玩家可售条目:hover {
+			border-color: #ff9800;
+			background: rgba(255, 152, 0, 0.15);
+			transform: translateY(-2px);
+			box-shadow: 0 3px 10px rgba(255, 152, 0, 0.2);
+			}
+
+
+			.附魔头 {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+			padding-bottom: 15px;
+			border-bottom: 1px solid #4a3560;
+			}
+
+
+			.附魔标题 {
+			color: #c792ea;
+			font-size: 1.4em;
+			text-shadow: 0 0 10px #c792ea80;
+			font-family: "微软雅黑", sans-serif;
+			}
+
+
+			.附魔装备容器 {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+			gap: 15px;
+			max-height: 60vh;
+			overflow-y: auto;
+			padding: 10px;
+			margin-bottom: 20px;
+			}
+
+
+			.可附魔 {
+			cursor: pointer;
+			transition: all 0.3s;
+			position: relative;
+			overflow: hidden;
+			background: #2d1b3c;
+			border-radius: 8px;
+			padding: 15px;
+			border: 1px solid #4a3560;
+			}
+
+
+			.可附魔:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 0 25px #c792ea80;
+			background: #3a254d;
+			}
+
+
+			.附魔确认按钮 {
+			background: linear-gradient(145deg, #c792ea, #9c27b0);
+			color: white;
+			border: none;
+			padding: 12px 24px;
+			border-radius: 6px;
+			cursor: pointer;
+			transition: all 0.3s;
+			font-size: 1.1em;
+			margin-top: 20px;
+			display: block;
+			width: 100%;
+			}
+
+
+			.附魔确认按钮:hover {
+			transform: scale(1.05);
+			box-shadow: 0 0 20px #c792ea80;
+			}
+
+
+			#传送点列表容器 {
+			grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+			}
+
+
+			.重铸物品 {
+			border: 1px solid #444;
+			padding: 10px;
+			border-radius: 8px;
+			cursor: pointer;
+			transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+			transform-origin: center;
+			position: relative;
+			}
+
+
+			.重铸物品.selected {
+			border-color: #4caf50;
+			background: #2b2b2b;
+			transform: scale(1.1);
+			z-index: 1;
+			}
+
+
+			.重铸物品:hover {
+			transform: translateY(-3px) scale(1.05);
+			box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+			}
+
+
+			.重铸遮罩 {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			backdrop-filter: blur(3px);
+			z-index: 9999;
+			}
+
+
+			#repairCost {
+			font-family: "Arial Black";
+			text-shadow: 0 0 5px currentColor;
+			transition: color 0.3s ease;
+			}
+
+
+			/* 强化标识 */
+			.重铸台强化标识 {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			color: #ffd700;
+			font-size: 0.8em;
+			text-shadow: 0 0 3px #ffd700;
+			}
+
+
+			.宠物状态栏 {
+			margin: 15px 0;
+			}
+
+
+			.条容器,
+			.宠物经验条容器 {
+			height: 20px;
+			background: #333;
+			border-radius: 10px;
+			margin: 10px 0;
+			position: relative;
+			}
+
+
+			.宠物血量条 {
+			height: 100%;
+			background: linear-gradient(90deg, #f44336, #ff7043);
+			border-radius: 10px;
+			transition: width 0.3s;
+			}
+
+
+			.宠物经验条 {
+			height: 100%;
+			background: linear-gradient(90deg, #2196f3, #4dabf5);
+			border-radius: 10px;
+			transition: width 0.3s;
+			}
+
+
+			.宠物血量文本,
+			.宠物经验文本 {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			color: white;
+			font-size: 0.9em;
+			}
+
+
+			.宠物属性 {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 10px;
+			color: #ddd;
+			font-size: 0.9em;
+			}
+
+
+			.宠物装备格子容器 {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 15px;
+			margin-top: 15px;
+			}
+
+
+			.宠物装备格子 {
+			border: 1px solid #555;
+			padding: 10px;
+			border-radius: 5px;
+			position: relative;
+			min-height: 60px;
+			background: #2b2b2b;
+			}
+
+
+			.宠物装备选择按钮,
+			.宠物装备卸下按钮 {
+			background: linear-gradient(145deg,
+			rgba(76, 175, 80, 0.9) 30%,
+			rgba(67, 160, 71, 0.9) 100%);
+			box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+			color: #fff;
+			border: 2px solid #fff;
+			opacity: 0.95;
+			border: none;
+			border-radius: 5px;
+			padding: 5px 10px;
+			color: white;
+			cursor: pointer;
+			transition: background 0.2s;
+			font-family: inherit;
+			}
+
+
+			.宠物装备卸下按钮 {
+			background: linear-gradient(145deg,
+			rgba(244, 67, 54, 0.9) 30%,
+			rgba(206, 61, 49, 0.9) 100%);
+			box-shadow: 0 4px 20px rgba(244, 67, 54, 0.3);
+			position: absolute;
+			bottom: 5px;
+			right: 5px;
+			}
+
+
+			.宠物技能容器 {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 10px;
+			margin-top: 15px;
+			}
+
+
+			.宠物技能 {
+			border: 1px solid #555;
+			padding: 10px;
+			border-radius: 5px;
+			background-color: #333;
+			}
+
+
+			.宠物装备选择弹窗 {
+			position: fixed;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			background: #1a1a1ae6;
+			border: 2px solid #4a4a4a;
+			border-radius: 12px;
+			padding: 20px;
+			width: 80%;
+			max-width: 400px;
+			color: #e0e0e0;
+			z-index: 10001;
+			box-shadow: 0 0 30px #00000080;
+			transition: opacity 0.3s ease,
+			transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+			max-height: 75vh;
+			overflow: scroll;
+			}
+
+
+			/* 可选装备样式 */
+			.宠物可选装备 {
+			display: flex;
+			align-items: center;
+			padding: 8px;
+			border: 1px solid #2c3e50;
+			border-radius: 6px;
+			margin-bottom: 5px;
+			background-color: #41586b;
+			transition: background-color 0.2s;
+			}
+
+
+			.宠物可选装备:hover {
+			background-color: #546e7a;
+			}
+
+
+			.宠物装备名称 {
+			position: relative;
+			top: 4px;
+			left: 2px;
+			padding: 0 5px;
+			font-size: 0.8em;
+			color: #aaa;
+			}
+
+
+			.宠物可选装备图标 {
+			font-family: "color-emoji";
+			margin-right: 10px;
+			font-size: 1.2em;
+			}
+
+
+			.宠物装备图标 {
+			font-family: "color-emoji";
+			}
+
+
+			.宠物装备选择弹窗 .关闭按钮 {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			background: none;
+			border: none;
+			font-size: 1.5em;
+			color: #e74c3c;
+			cursor: pointer;
+			padding: 5px;
+			z-index: 1;
+			}
+
+
+			.宠物装备选择确认按钮 {
+			background: linear-gradient(145deg,
+			rgba(76, 175, 80, 0.9) 30%,
+			rgba(67, 160, 71, 0.9) 100%);
+			box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+			color: #fff;
+			border: none;
+			border-radius: 5px;
+			padding: 6px 12px;
+			font-size: 0.9em;
+			cursor: pointer;
+			transition: background-color 0.2s, transform 0.2s;
+			font-family: inherit;
+			margin-left: auto;
+			}
+
+
+			.宠物装备选择确认按钮:hover {
+			background: linear-gradient(145deg,
+			rgba(67, 160, 71, 0.9) 30%,
+			rgba(58, 140, 62, 0.9) 100%);
+			transform: translateY(-2px);
+			/* 上浮效果 */
+			box-shadow: 0 4px 12px rgba(76, 175, 80, 0.5);
+			}
+
+
+			.通用按钮:hover {
+			background: linear-gradient(145deg,
+			rgba(67, 160, 71, 0.9) 30%,
+			rgba(58, 140, 62, 0.9) 100%);
+			transform: translateY(-2px);
+			/* 上浮效果 */
+			box-shadow: 0 4px 12px rgba(76, 175, 80, 0.5);
+			}
+
+
+			.宠物装备选择确认按钮:active {
+			transform: scale(0.95);
+			}
+
+
+			.宠物可选装备 {
+			padding: 10px;
+			}
+
+
+			.宠物可选装备 {
+			justify-content: space-between;
+			}
+
+
+			.宠物基本信息面板 p,
+			.宠物技能面板 p {
+			line-height: 1.6;
+			}
+
+
+			.宠物已装备物品 {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			}
+
+
+			/* 无装备提示 */
+			.无装备提示,
+			.无技能提示 {
+			color: #aaa;
+			text-align: center;
+			padding: 20px;
+			}
+
+
+			.宠物血量标签 {
+			position: absolute;
+			bottom: 5px;
+			left: 50%;
+			transform: translateX(-50%);
+			background: rgba(0, 0, 0, 0.7);
+			color: #fff;
+			padding: 2px 8px;
+			border-radius: 4px;
+			font-size: 0.75em;
+			white-space: nowrap;
+			z-index: 1;
+			}
+
+
+			.确认按钮容器 {
+			display: flex;
+			justify-content: center;
+			gap: 20px;
+			}
+
+
+			.确认按钮 {
+			padding: 12px 28px;
+			font-size: 1.1em;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			font-family: inherit;
+			min-width: 120px;
+			}
+
+
+			.确认按钮-确认 {
+			background: linear-gradient(145deg, #c62828, #e53935);
+			color: white;
+			}
+
+
+			.确认按钮-确认:hover {
+			background: linear-gradient(145deg, #d32f2f, #f44336);
+			transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(255, 82, 82, 0.4);
+			}
+
+
+			.确认按钮-取消 {
+			background: linear-gradient(145deg, #424242, #616161);
+			color: #e0e0e0;
+			}
+
+
+			.确认按钮-取消:hover {
+			background: linear-gradient(145deg, #616161, #757575);
+			transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(100, 100, 100, 0.3);
+			}
+
+
+			#回放教程按钮 {
+			position: fixed;
+			right: 22px;
+			width: 20vmin;
+			}
+
+
+			#教程回放窗口 {
+			display: none;
+			max-width: 90%;
+			}
+
+
+			/* --- 教程选择菜单 --- */
+			#教程关卡选项 {
+				width: 90%;
+				max-width: 600px;
+			}
+
+
+
+			.教程卡片 {
+				background: rgba(255, 255, 255, 0.05);
+				border: 1px solid #444;
+				border-radius: 12px;
+				padding: 20px 25px;
+				margin-bottom: 1.2rem;
+				cursor: pointer;
+				transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+				text-align: left;
+			}
+
+
+
+			.教程卡片:hover {
+				transform: translateY(-3px);
+				border-color: #4caf50;
+				box-shadow: 0 5px 20px rgba(76, 175, 80, 0.2);
+			}
+
+
+
+			.教程卡片-标题 {
+				display: flex;
+				align-items: center;
+				gap: 15px;
+				margin-bottom: 10px;
+			}
+
+
+
+			.教程卡片-标题 h3 {
+				margin: 0;
+				font-size: 1.3em;
+				color: #e0e0e0;
+				transition: color 0.3s ease;
+			}
+
+
+
+			.教程卡片:hover .教程卡片-标题 h3 {
+				color: #4caf50;
+			}
+
+
+			
+			.教程卡片-图标 {
+				font-size: 2.2em;
+				font-family: "color-emoji";
+			}
+
+
+
+			.教程卡片-描述 {
+				margin: 0;
+				color: #aaa;
+				line-height: 1.6;
+			}
+
+
+			.教程导航 {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin: 15px 0;
+			color: #aaa;
+			}
+
+
+			.教程导航 button {
+			background: linear-gradient(145deg,
+			rgba(76, 175, 80, 0.7) 30%,
+			rgba(67, 160, 71, 0.7) 100%) !important;
+			box-shadow: 0 2px 6px #4caf504d !important;
+			padding: 6px 12px !important;
+			font-size: 0.9em !important;
+			}
+
+
+			.教程导航 button:disabled {
+			background: #555 !important;
+			cursor: not-allowed;
+			opacity: 0.6;
+			box-shadow: none !important;
+			}
+
+
+			.融合标题 {
+			color: #4caf50;
+			font-size: 1.1em;
+			margin-bottom: 10px;
+			text-align: center;
+			width: 100%;
+			}
+
+
+			.融合区域 {
+			display: grid;
+			grid-template-columns: repeat(2, 60px);
+			/* 2x2 网格 */
+			grid-template-rows: repeat(2, 60px);
+			gap: 8px;
+			/* 格子间距 */
+			margin-bottom: 10px;
+			/* 与箭头间距 */
+			justify-content: center;
+			top: 5px;
+			position: relative;
+			}
+
+
+			.融合区格子,
+			.融合输出格子 {
+			width: 60px;
+			/* 格子大小 */
+			height: 60px;
+			background: rgba(255, 255, 255, 0.1);
+			border: 1px dashed #555;
+			/* 虚线边框 */
+			border-radius: 6px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			/* 用于定位物品 */
+			cursor: pointer;
+			/* 添加指针手势 */
+			}
+
+
+			.融合区格子:hover,
+			.融合输出格子:hover {
+			background: rgba(255, 255, 255, 0.15);
+			border-color: #888;
+			}
+
+
+			.融合箭头 {
+			font-size: 1.8em;
+			color: #888;
+			margin: 0 10px;
+			}
+
+
+			设置项目 {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+			}
+
+
+			.设置项目 label {
+			font-size: 0.9em;
+			color: #ccc;
+			}
+
+
+			.设置项目 input {
+			background: #333;
+			border: 1px solid #555;
+			color: #fff;
+			padding: 8px;
+			border-radius: 4px;
+			width: 100%;
+			box-sizing: border-box;
+			}
+
+
+			.天气选择容器 {
+			grid-column: 1 / -1;
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+			gap: 10px;
+			margin-top: 5px;
+			}
+
+
+			.天气选项 {
+			display: flex;
+			align-items: center;
+			gap: 5px;
+			font-size: 0.9em;
+			}
+
+
+			.天气选项 input {
+			width: auto;
+			}
+
+
+			#游戏模式内容 {
+			text-align: center;
+			}
+
+
+			#结算粒子容器 {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			}
+
+
+			.结算粒子 {
+			position: absolute;
+			bottom: -20px;
+			width: 2px;
+			height: 2px;
+			background: rgba(255, 215, 0, 0.6);
+			border-radius: 50%;
+			animation: 粒子上浮 15s linear infinite;
+			box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+			}
+
+
+			.结算标题 {
+			font-size: 2.2rem;
+			color: #E0E0E0;
+			text-shadow: none;
+			margin-bottom: 20px;
+			letter-spacing: 1px;
+			font-weight: 300;
+			}
+
+
+			.结局评级 {
+			font-family: "Arial Black", Gadget, sans-serif;
+			font-size: 5rem;
+			font-weight: bold;
+			margin-bottom: 0px;
+			display: inline-block;
+			background: none;
+			line-height: 1;
+			animation: 评级出现 0.8s 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) backwards;
+			}
+
+
+			.评级-S-plus {
+			color: #ff00ff;
+			text-shadow: 0 0 20px #ff00ff, 0 0 10px #ffd700;
+			}
+
+
+			.评级-S {
+			color: #ff4500;
+			text-shadow: 0 0 15px #ff4500;
+			}
+
+
+			.评级-A {
+			color: #4caf50;
+			text-shadow: 0 0 15px #4caf50;
+			}
+
+
+			.评级-B {
+			color: #2196f3;
+			text-shadow: 0 0 15px #2196f3;
+			}
+
+
+			.评级-C {
+			color: #9e9e9e;
+			text-shadow: 0 0 10px #9e9e9e;
+			}
+
+
+			.评级-D {
+			color: #795548;
+			text-shadow: 0 0 10px #795548;
+			}
+
+
+			.结束评语 {
+			white-space: pre-wrap;
+			font-style: italic;
+			color: #bbb;
+			margin-top: 5px;
+			margin-bottom: 25px;
+			height: 1.2em;
+			animation: 评级出现 0.8s 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) backwards;
+			}
+
+
+			.结算内容容器 {
+			display: flex;
+			gap: 30px;
+			margin-bottom: 30px;
+			}
+
+
+			.结算统计容器,
+			.结算时间轴 {
+			flex: 1;
+			text-align: left;
+			}
+
+
+			.结算时间轴 {
+			border-left: 2px solid rgba(255, 215, 0, 0.2);
+			padding-left: 20px;
+			}
+
+
+			.时间轴标题 {
+			font-size: 1.1rem;
+			color: #ffd700;
+			margin-bottom: 15px;
+			padding-bottom: 5px;
+			border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+			}
+
+
+			.时间轴事件 {
+			position: relative;
+			padding: 2px 0 15px 15px;
+			font-size: 0.9rem;
+			color: #ccc;
+			opacity: 0;
+			transform: translateX(-15px);
+			animation: 统计条目出现 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+			}
+
+
+			.时间轴事件::before {
+			content: '';
+			position: absolute;
+			left: -27px;
+			top: 7px;
+			width: 9px;
+			height: 9px;
+			border-radius: 50%;
+			background: #e0e0e0;
+			border: 2px solid #1a1a1a;
+			}
+
+
+			.时间轴事件.关键::before {
+			background: #ffd700;
+			box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+			}
+
+
+			.结算统计容器 {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+			}
+
+
+			.统计条目 {
+			background: none;
+			padding: 0;
+			border-left: none;
+			}
+
+
+			.统计标签 {
+			font-size: 0.9rem;
+			color: #aaa;
+			}
+
+
+			.统计数值 {
+			font-size: 1.2rem;
+			font-weight: normal;
+			color: #fff;
+			}
+
+
+			.通关凭证容器 {
+			margin-top: 20px;
+			animation: 评级出现 0.8s 1.2s cubic-bezier(0.18, 0.89, 0.32, 1.28) backwards;
+			}
+
+
+			.结算统计容器 {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+			gap: 20px;
+			margin-bottom: 30px;
+			padding: 20px 0;
+			border-top: 1px solid rgba(255, 215, 0, 0.2);
+			border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+			}
+
+
+			.统计条目 {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			background: none;
+			padding: 0;
+			border-left: none;
+			opacity: 0;
+			transform: translateY(20px);
+			animation: 统计条目出现 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+			}
+
+
+			.结算统计容器 .统计条目:nth-child(1) {
+			animation-delay: 0.6s;
+			}
+
+
+			.结算统计容器 .统计条目:nth-child(2) {
+			animation-delay: 0.7s;
+			}
+
+
+			.结算统计容器 .统计条目:nth-child(3) {
+			animation-delay: 0.8s;
+			}
+
+
+			.结算统计容器 .统计条目:nth-child(4) {
+			animation-delay: 0.9s;
+			}
+
+
+			.结算统计容器 .统计条目:nth-child(5) {
+			animation-delay: 1.0s;
+			}
+
+
+			.结算统计容器 .统计条目:nth-child(6) {
+			animation-delay: 1.1s;
+			}
+
+
+			.统计图标 {
+			font-size: 2.5rem;
+			line-height: 1;
+			margin-bottom: 8px;
+			color: #ffd700;
+			text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+			}
+
+
+			.统计数值 {
+			font-size: 1.4rem;
+			font-weight: bold;
+			color: #fff;
+			line-height: 1.2;
+			}
+
+
+			.统计标签 {
+			font-size: 0.8rem;
+			color: #aaa;
+			margin-top: 2px;
+			}
+
+
+#扳手窗口按钮容器 {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 15px;
+}
+
+
+
+.等待动画 {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(76, 175, 80, 0.3);
+    border-top-color: #4caf50;
+    border-radius: 50%;
+    margin: 0 auto 20px auto;
+    animation: 等待旋转 1s linear infinite;
+}
+
+
+			/*-------------NPC对话----------*/
+			
+.galgame-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6); z-index: 20000;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    pointer-events: auto;
+}
+
+
+.galgame-container {
+    background: linear-gradient(180deg, rgba(20,20,20,0.95) 0%, rgba(10,10,10,1) 100%);
+    border-top: 2px solid #4caf50;
+    padding: 20px 40px;
+    min-height: 25vh;
+    display: flex; flex-direction: column; gap: 15px;
+    box-shadow: 0 -5px 30px rgba(0,0,0,0.8);
+    position: relative;
+}
+
+
+.galgame-name-tag {
+    position: absolute; top: -30px; left: 40px;
+    background: #4caf50; color: #000;
+    padding: 5px 20px;
+    font-weight: bold; font-size: 1.1em;
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 -2px 10px rgba(76, 175, 80, 0.3);
+}
+
+
+.galgame-text {
+    font-size: 1.2em; line-height: 1.6; color: #e0e0e0;
+    text-shadow: 1px 1px 2px #000;
+    flex-grow: 1;
+}
+
+
+.galgame-options-container {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end;
+}
+
+
+.galgame-btn {
+    background: rgba(255,255,255,0.1); border: 1px solid #555;
+    color: #fff; padding: 8px 20px; border-radius: 4px;
+    cursor: pointer; transition: all 0.2s; font-size: 1em;
+}
+
+
+.galgame-btn:hover {
+    background: rgba(76, 175, 80, 0.2); border-color: #4caf50;
+    transform: translateY(-2px);
+}
+
+
+.galgame-input-wrapper {
+    display: flex; gap: 10px; width: 100%;
+}
+
+
+.galgame-input {
+    flex: 1; background: rgba(0,0,0,0.5); border: 1px solid #444;
+    color: #fff; padding: 10px; font-size: 1.1em; border-radius: 4px;
+}
+
+
+.galgame-input:focus { border-color: #4caf50; outline: none; }
+
+
+
+/* 编辑器样式优化 */
+.editor-btn-icon {
+    background: transparent; border: none; cursor: pointer;
+    color: #888; font-size: 1.2em; padding: 2px 5px; transition: color 0.2s;
+}
+
+
+.editor-btn-icon:hover { color: #fff; }
+
+
+.editor-btn-icon.delete:hover { color: #ff4444; }
+
+
+.editor-btn-icon.config:hover { color: #2196f3; }
+
+
+.editor-section {
+    background: rgba(0,0,0,0.2); border: 1px solid #444;
+    border-radius: 6px; padding: 10px; margin-bottom: 10px;
+}
+
+
+.action-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(33, 150, 243, 0.2); border: 1px solid rgba(33, 150, 243, 0.4);
+    border-radius: 4px; padding: 2px 6px; font-size: 0.75em; color: #90caf9; margin-right: 5px;
+}
+
+
+
+.天赋图标 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+}
+
+
+
+.天赋名称 {
+    font-size: 1.4rem;
+    color: #e0e0e0;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+
+.天赋描述 {
+    font-size: 0.9rem;
+    color: #aaa;
+    text-align: center;
+    line-height: 1.5;
+    flex-grow: 1;
+}
+
+
+
+.天赋稀有度 {
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    border-radius: 12px;
+    margin-top: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+
+
+.稀有度-普通 { color: #ccc; border: 1px solid #555; }
+
+
+.稀有度-稀有 { color: #4caf50; border: 1px solid #4caf50; box-shadow: 0 0 5px rgba(76,175,80,0.3); }
+
+
+.稀有度-史诗 { color: #b388ff; border: 1px solid #b388ff; box-shadow: 0 0 8px rgba(179,136,255,0.4); }
+
+
+.稀有度-传说 { color: #ffd700; border: 1px solid #ffd700; box-shadow: 0 0 12px rgba(255,215,0,0.5); }
+
+
+
+.天赋图标 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+}
+
+
+
+.天赋名称 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+
+
+.天赋描述 {
+    font-size: 0.8rem;
+}
+
+
+
+        @font-face {
+            font-family: "color-emoji";
+            src: local("Fluent Emoji Color"),
+                url('./FluentEmojiColor.ttf') format('truetype'),
+            
+                local("Apple Color Emoji"),
+                url('./AppleColorEmoji.woff') format('woff'),
+                
+                local("Segoe UI Emoji"),
+                local("Segoe UI Symbol"),
+                local("Noto Color Emoji"),
+                local("Arial");
+        }

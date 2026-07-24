@@ -1,0 +1,31 @@
+{
+  "name": "chinese-dungeon",
+  "version": "2.0.0",
+  "description": "Chinese Dungeon - A modern modular browser-based dungeon adventure game",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext .js",
+    "format": "prettier --write src"
+  },
+  "keywords": [
+    "dungeon",
+    "game",
+    "roguelike",
+    "browser-game",
+    "chinese"
+  ],
+  "author": "SUSTechHSAS",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "vite": "^5.4.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.0"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "@supabase/supabase-js": "^2.42.0"
+  }
+}

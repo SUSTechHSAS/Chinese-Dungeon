@@ -1,0 +1,23 @@
+/* Chinese Dungeon - Main Stylesheet - Modern Modular Architecture */
+/* This file imports all modular stylesheets in dependency order */
+
+@import "./reset.css";
+@import "./variables.css";
+@import "./base.css";
+@import "./canvas.css";
+@import "./menu.css";
+@import "./hud.css";
+@import "./controls.css";
+@import "./inventory.css";
+@import "./dialogs.css";
+@import "./settings.css";
+@import "./editor.css";
+@import "./bigmap.css";
+@import "./effects.css";
+@import "./themes.css";
+@import "./responsive.css";
+@import "./other.css";
+
+/* Additional component imports for future modularity */
+@import "./themes/default.css";
+@import "./themes/commandline.css";

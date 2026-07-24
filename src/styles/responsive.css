@@ -1,0 +1,58 @@
+
+@media (min-width: 769px) {
+    .control-pad {
+        
+        bottom: 40px;
+        }
+    .control-pad-actions {
+        right: 2vw;
+        left: auto;
+        top: 42%;
+        bottom: auto;
+        transform: translateY(-50%);
+    }
+    .settings-container {
+        right: 2vw;
+        left: auto;
+        
+        bottom: 5px;
+    }
+    body:not(.手机模式启用) .control-pad,
+    body:not(.手机模式启用) .control-pad-actions,
+    body:not(.手机模式启用) .settings-container {
+        display: none;
+    }
+    #小地图容器 {
+        position: fixed;
+        bottom: 13vmin;
+        right: 20px;
+        transform: none;
+    }
+    #跳过教程按钮 { top: 75px; }
+    #回放教程按钮 { top: 15px; }
+}
+
+
+@media (max-width: 768px) {
+    #跳过教程按钮 {
+    top: 40px;
+    }
+    #回放教程按钮 {
+    top: 10px;
+    }
+}
+
+
+			/* 移动端适配 */
+			@media (max-width: 768px) {
+			.附魔弹窗 {
+			min-width: 300px;
+			padding: 15px;
+			}
+			.附魔标题 {
+			font-size: 1.2em;
+			}
+			.附魔装备容器 {
+			grid-template-columns: repeat(2, 1fr);
+			}
+			}

@@ -1,0 +1,430 @@
+
+			/* --- Inventory (背包) --- */
+			.背包弹窗 {
+			/* Inventory Popup */
+			position: fixed;
+			bottom: -1200px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 80vmin;
+			background: rgba(0, 0, 0, 0.9);
+			border-radius: 12px;
+			padding: 15px;
+			transition: bottom 0.3s ease;
+			z-index: 1001;
+			max-height: 50vh;
+			display: flex;
+			flex-direction: column;
+			}
+
+
+			.背包弹窗.显示中 {
+			bottom: 17vh;
+			}
+
+
+			.物品容器 {
+			flex: 1;
+			overflow-y: auto;
+			padding: 5px;
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+			gap: 8px;
+			overflow-anchor: none;
+			}
+
+
+			.物品条目 {
+			position: relative;
+			border-radius: 8px;
+			padding: 12px;
+			cursor: pointer;
+			transition: background 0.2s, transform 0.2s;
+			background: rgba(255, 255, 255, 0.03);
+			transform: translateZ(0);
+			backface-visibility: hidden;
+			min-height: 80px;
+			}
+
+
+			.材质角标 {
+			    position: absolute;
+			    top: 3px;
+			    right: 3px;
+			    background: rgba(0, 0, 0, 0.75);
+			    color: #cccccc;
+			    padding: 1px 5px;
+			    border-radius: 4px;
+			    font-size: 0.7em;
+			    font-family: "Microsoft YaHei", sans-serif;
+			    font-weight: bold;
+			    z-index: 2;
+			    pointer-events: none;
+			    transition: opacity 0.2s ease-in-out;
+			}
+
+
+			.物品条目:hover .材质角标,
+			.物品条目.active .材质角标 {
+			    opacity: 0;
+			}
+
+
+			.物品图标 {
+			font-family: "color-emoji";
+			font-size: 2em;
+			text-align: center;
+			margin-bottom: 8px;
+			filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+			transition: transform 0.3s;
+			}
+
+
+			.hover:hover .物品图标 {
+			transform: scale(1.2) rotate(-15deg);
+			}
+
+
+			.物品名称 {
+			font-size: 0.9em;
+			text-align: center;
+			color: #fff;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			}
+
+
+			.物品堆叠 {
+			position: absolute;
+			bottom: 5px;
+			right: 5px;
+			background: linear-gradient(45deg,
+			rgba(0, 0, 0, 0.6),
+			rgba(50, 50, 50, 0.8));
+			color: #fff;
+			padding: 2px 6px;
+			border-radius: 10px;
+			font-size: 0.7em;
+			font-weight: bold;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+			}
+
+
+			.装备按钮,
+			.上屏按钮,
+			.丢弃按钮,
+			.使用按钮 {
+			font-family: "color-emoji";
+			position: absolute;
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			border: none;
+			color: white;
+			cursor: pointer;
+			opacity: 0;
+			transition: all 0.3s;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 16px;
+			padding: 0;
+			z-index: 2;
+			pointer-events: none;
+			}
+
+
+			.物品条目:hover .装备按钮,
+			.物品条目:hover .丢弃按钮,
+			.物品条目:hover .上屏按钮,
+			.物品条目:hover .使用按钮,
+			.物品条目.active .装备按钮,
+			.物品条目.active .丢弃按钮,
+			.物品条目.active .上屏按钮,
+			.物品条目.active .使用按钮 {
+			opacity: 1;
+			pointer-events: auto;
+			}
+
+
+			.装备按钮 {
+			bottom: 3px;
+			left: 3px;
+			background: linear-gradient(145deg, #ffb74d, #ff9800);
+			/* 橙色渐变 */
+			}
+
+
+			.装备按钮:hover {
+			background: linear-gradient(145deg, #ffa726, #fb8c00);
+			box-shadow: 0 2px 6px rgba(255, 152, 0, 0.4);
+			}
+
+
+			.上屏按钮 {
+			bottom: 3px;
+			right: 3px;
+			background: linear-gradient(145deg, #4fc3f7, #29b6f6);
+			}
+
+
+			.丢弃按钮 {
+			top: 3px;
+			right: 3px;
+			background: linear-gradient(145deg, #bdbdbd, #9e9e9e);
+			/* 灰色渐变 */
+			}
+
+
+			.丢弃按钮:hover {
+			background: linear-gradient(145deg, #aeaeae, #8e8e8e);
+			box-shadow: 0 2px 6px rgba(158, 158, 158, 0.4);
+			}
+
+
+			.使用按钮 {
+			top: 3px;
+			left: 3px;
+			background: linear-gradient(145deg, #81c784, #4caf50);
+			/* 绿色渐变 */
+			}
+
+
+			.使用按钮:hover {
+			background: linear-gradient(145deg, #66bb6a, #43a047);
+			box-shadow: 0 2px 6px rgba(76, 175, 80, 0.4);
+			}
+
+
+			.物品条目:hover .装备按钮,
+			.物品条目:hover .丢弃按钮,
+			.物品条目:hover .上屏按钮,
+			.物品条目:hover .使用按钮 {
+			opacity: 1;
+			}
+
+
+			.物品条目.active .物品图标 {
+			transform: scale(1.2) rotate(-15deg);
+			}
+
+
+			.冷却标签 {
+			position: absolute;
+			bottom: 2px;
+			background: rgba(0, 0, 0, 0.7);
+			color: #fff;
+			padding: 2px 5px;
+			border-radius: 3px;
+			font-size: 0.8em;
+			}
+
+
+			.耐久标签 {
+			position: absolute;
+			bottom: 2px;
+			background: rgba(0, 0, 0, 0.7);
+			color: #fff;
+			padding: 2px 5px;
+			border-radius: 3px;
+			font-size: 0.8em;
+			z-index: 2;
+			white-space: nowrap;
+			}
+
+
+			/* 添加点击态样式 */
+			.物品条目.active {
+			background: rgba(255, 255, 255, 0.2) !important;
+			transform: translateY(-2px) !important;
+			}
+
+
+			.物品条目.active .装备按钮,
+			.物品条目.active .丢弃按钮,
+			.物品条目.active .上屏按钮,
+			.物品条目.active .使用按钮 {
+			opacity: 1 !important;
+			}
+
+
+			.物品条目[data-quality="1"] {
+			border: 1px solid #00ff00;
+			}
+
+
+			.物品条目[data-quality="2"] {
+			border: 1px solid #0000ff;
+			}
+
+
+			.物品条目[data-quality="3"] {
+			border: 1px solid #ffff00;
+			}
+
+
+			.物品条目[data-quality="4"] {
+			animation: 紫光脉动 2s infinite;
+			}
+
+
+			.物品条目[data-quality="5"] {
+			animation: 红光脉动 2s infinite;
+			}
+
+
+			.装备栏 {
+			position: fixed;
+			bottom: 10px;
+			width: 30%;
+			min-width: 400px;
+			background: rgba(0, 0, 0, 0.7);
+			padding: 10px;
+			border-radius: 12px;
+			display: flex;
+			justify-content: center;
+			gap: 1vw;
+			z-index: 1000;
+			transition: opacity 0.3s ease;
+			}
+
+
+			/* 修改 .装备槽 规则，为描边动画做准备 */
+.装备槽 {
+	flex: 1;
+	aspect-ratio: 1 / 1;
+	max-width: 80px;
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 8px;
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	
+	border: 2px solid transparent; /* 添加透明边框以防止布局跳动 */
+	transition: all 0.2s, border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* 平滑过渡效果 */
+}
+
+
+			.冷却遮罩 {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.7);
+			clip-path: inset(0 0 100% 0);
+			transition: clip-path 0.22s linear;
+			pointer-events: none;
+			}
+
+
+			.装备槽 .物品条目 {
+			transform: scale(0.65);
+			margin: -5px 0;
+			}
+
+
+			.装备槽:hover {
+			background: rgba(255, 255, 255, 0.2);
+			}
+
+
+			.交易物品条目 {
+			background: rgba(255, 255, 255, 0.05);
+			padding: 15px;
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 8px;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			}
+
+
+			.交易物品条目 .物品头 {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			font-weight: bold;
+			}
+
+
+			.交易物品条目 .物品描述 {
+			font-size: 0.85em;
+			color: #aaa;
+			line-height: 1.4;
+			}
+
+
+			.交易物品条目:hover {
+			border-color: #4caf50;
+			background: rgba(76, 175, 80, 0.15);
+			transform: translateY(-2px);
+			box-shadow: 0 3px 10px rgba(76, 175, 80, 0.2);
+			}
+
+
+			.收购需求条目 .需求图标,
+			.玩家可售条目 .物品图标 {
+			font-size: 1.8em;
+			display: block;
+			margin-bottom: 5px;
+			font-family: "color-emoji";
+			}
+
+
+			.玩家可售条目 .物品图标 {
+			text-shadow: 0 0 5px currentColor;
+			}
+
+
+			.收购需求条目 .需求名称,
+			.玩家可售条目 .物品名称 {
+			font-size: 0.85em;
+			display: block;
+			margin-bottom: 5px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			}
+
+
+			.可附魔:hover .物品图标 {
+			animation: 装备浮动 1.5s ease-in-out infinite;
+			}
+
+
+			.重铸台耐久标签 {
+			font-size: 0.8em;
+			color: #888;
+			}
+
+
+			.宠物装备槽位名 {
+			position: relative;
+			top: 4px;
+			left: 10px;
+			padding: 0 5px;
+			font-size: 0.8em;
+			color: #aaa;
+			}
+
+
+			.可装备物品容器 {
+			max-height: 60vh;
+			overflow-y: auto;
+			/* 滚动 */
+			padding: 10px;
+			}
+
+
+			.可装备物品容器 {
+			max-height: 65vh;
+			overflow-y: auto;
+			padding: 10px;
+			margin-bottom: 10px;
+			}

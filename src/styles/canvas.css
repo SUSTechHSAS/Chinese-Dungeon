@@ -1,0 +1,75 @@
+
+			/* Dungeon Canvas */
+			#dungeonCanvas {
+			border: 2px solid #2e2e2e;
+			border-radius: 8px;
+			box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+			margin-bottom: 5vh;
+			transition: transform 0.15s ease-out;
+			filter: contrast(1.1) brightness(1.1);
+			}
+
+
+            #dungeonCanvas {
+				position: relative; /* 确保伪元素可以正确定位 */
+			}
+
+
+
+			#dungeonCanvas::after {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				pointer-events: none;
+				box-shadow: inset 0 0 150px rgba(0,0,0,0.65);
+				
+				
+				opacity: 0.15;
+			}
+
+
+			/* --- 主菜单 --- */
+			/* --- 动态背景样式 --- */
+#backgroundCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10004; /* 比主菜单低一层 */
+    pointer-events: none; /* 确保不影响鼠标交互 */
+}
+
+
+			/* --- 游戏状态控制 --- */
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) #dungeonCanvas,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) .hud,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) .control-pad,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) .装备栏,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) #小地图容器,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) .control-row,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) #怪物指示器容器,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) #浮动提示框,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) .背包弹窗,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) #日志面板,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) #交易窗口,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) .附魔弹窗,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) .宠物遮罩,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) #教程提示窗口,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) #跳过教程按钮,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) #回放教程按钮,
+			body:not(.游戏进行中):not(.地图编辑器模式):not(.编辑器游玩模式) #设置菜单 {
+			display: none;
+			opacity: 0;
+			pointer-events: none;
+			}
+
+
+
+			body.death-display-active #dungeonCanvas {
+			    filter: grayscale(80%) brightness(0.7);
+			    transition: filter 0.5s ease-in-out;
+			}

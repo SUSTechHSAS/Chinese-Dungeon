@@ -1,0 +1,112 @@
+		
+			/*或哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈*/
+			/* General Styles */
+			/* Welcome to Chinese Dungeon 这里是中文世界*/
+			body {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: flex-start;
+			height: 100vh;
+			margin: 0;
+			padding-top: 5vh;
+			background: linear-gradient(160deg, #0a0a0a 0%, #1a1a1a 100%);
+			background-color: #1a1a1a;
+			overflow: hidden;
+			justify-content: flex-start;
+			}
+
+
+			/*隐藏滚轮*/
+			::-webkit-scrollbar {
+			display: none;
+			}
+
+
+
+			/* 防止长按选中文本 */
+			body {
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			-webkit-touch-callout: none;
+			}
+
+
+.不可选中 {
+			/* 允许选中 */
+			user-select: text; 
+			-webkit-user-select: text;
+			}
+
+
+
+.info-version-tag {
+    background: #4caf50;
+    color: #1a1a1a;
+    font-size: 0.7em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+
+			body.初始化 {
+			display: none;
+			opacity: 0;
+			pointer-events: none;
+			}
+
+
+			body:not(.编辑器游玩模式) #返回编辑器按钮 {
+			display: none;
+			}
+
+
+			body:is(.地图编辑器模式, .编辑器游玩模式) #跳过教程按钮 {
+			display: none !important
+			}
+
+
+
+			body.death-display-active #death-display-overlay {
+			    opacity: 1;
+			    animation: death-pulse 1.5s infinite ease-in-out;
+			}
+
+
+			canvas {
+			mix-blend-mode: lighten;
+			}
+
+
+			/* 滚动条样式 */
+			.日志内容::-webkit-scrollbar {
+			width: 6px;
+			}
+
+
+			.日志内容::-webkit-scrollbar-track {
+			background: #2a2a2a;
+			}
+
+
+			.日志内容::-webkit-scrollbar-thumb {
+			background: #4caf50;
+			border-radius: 3px;
+			}
+
+
+			#effectsContainer {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			pointer-events: none;
+			overflow: hidden;
+			z-index: 997;
+			}

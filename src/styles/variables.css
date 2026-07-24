@@ -1,0 +1,156 @@
+
+			.重铸弹窗,
+			#设置窗口,
+			#编辑器属性面板,
+			#全局设置窗口 {
+			--ui-bg-color: #333;
+			--ui-border-color: #4a4a4a;
+			--ui-text-color: #e0e0e0;
+			--ui-accent-color: #4caf50;
+			--ui-accent-glow: rgba(76, 175, 80, 0.5);
+			--ui-label-color: #aaa;
+			}
+
+
+			#种子筛选器按钮 {
+			flex-shrink:0;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    font-size: 1.5em;
+    font-family: "color-emoji";
+    border-radius: 6px;
+    border: 1px solid var(--ui-border-color);
+    background-color: var(--ui-bg-color);
+    color: var(--ui-text-color);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+			#每日挑战按钮 {
+			flex-shrink: 0;
+			width: 42px;
+			height: 42px;
+			padding: 0;
+			font-size: 1.5em;
+			font-family: "color-emoji";
+			border-radius: 6px;
+			border: 1px solid var(--ui-border-color);
+			background-color: var(--ui-bg-color);
+			color: var(--ui-text-color);
+			cursor: pointer;
+			transition: all 0.2s ease-in-out;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			}
+
+
+			#每日挑战按钮:hover {
+			border-color: var(--ui-accent-color);
+			box-shadow: 0 0 10px var(--ui-accent-glow);
+			}
+
+
+			.重铸弹窗 input,
+			.重铸弹窗 select,
+			.重铸弹窗 textarea,
+			#编辑器属性面板 input,
+			#编辑器属性面板 select,
+			#编辑器属性面板 textarea,
+			#全局设置窗口 input,
+			#全局设置窗口 select,
+			#全局设置窗口 textarea {
+			background-color: var(--ui-bg-color);
+			border: 1px solid var(--ui-border-color);
+			color: var(--ui-text-color);
+			padding: 10px 12px;
+			border-radius: 6px;
+			font-family: inherit;
+			font-size: 1em;
+			width: 100%;
+			box-sizing: border-box;
+			transition: all 0.2s ease-in-out;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			appearance: none;
+			}
+
+
+			.重铸弹窗 input:focus,
+			.重铸弹窗 select:focus,
+			.重铸弹窗 textarea:focus,
+			#编辑器属性面板 input:focus,
+			#编辑器属性面板 select:focus,
+			#编辑器属性面板 textarea:focus,
+			#全局设置窗口 input:focus,
+			#全局设置窗口 select:focus,
+			#全局设置窗口 textarea:focus {
+			border-color: var(--ui-accent-color);
+			box-shadow: 0 0 10px var(--ui-accent-glow);
+			outline: none;
+			}
+
+
+			.重铸弹窗 .设置项目 label,
+			#编辑器属性面板 .设置项目 label,
+			#全局设置窗口 .设置项目 label {
+			flex-shrink: 0;
+			color: var(--ui-label-color);
+			font-size: 0.95em;
+			}
+
+
+			.重铸弹窗 input[type="checkbox"]::before,
+			#编辑器属性面板 input[type="checkbox"]::before,
+			#全局设置窗口 input[type="checkbox"]::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: var(--ui-bg-color);
+			border: 1px solid var(--ui-border-color);
+			border-radius: 4px;
+			transition: all 0.2s ease-in-out;
+			}
+
+
+			.重铸弹窗 input[type="checkbox"]:checked::before,
+			#编辑器属性面板 input[type="checkbox"]:checked::before,
+			#全局设置窗口 input[type="checkbox"]:checked::before {
+			background-color: var(--ui-accent-color);
+			border-color: var(--ui-accent-color);
+			}
+
+
+
+#大地图窗口 {
+    background: linear-gradient(160deg, #181818 0%, #282828 100%);
+    border: 1px solid var(--ui-accent-color);
+    border-radius: 16px;
+    width: 95vw;
+    height: 90vh;
+    max-width: 1600px;
+    max-height: 900px;
+    box-shadow: 0 10px 60px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+
+
+.大地图头部 h2 {
+    margin: 0;
+    font-size: 1.5em;
+    color: var(--ui-accent-color);
+    text-shadow: 0 0 8px var(--ui-accent-glow);
+}

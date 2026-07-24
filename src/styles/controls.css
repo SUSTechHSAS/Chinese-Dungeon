@@ -1,0 +1,90 @@
+
+			/* --- Control Panel --- */
+			.control-pad {
+    position: fixed;
+    pointer-events: none;
+    left: 2vw;
+    bottom: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+			#方向键容器 {
+			position: fixed;
+			left: 20px;
+			top: 50%;
+			display: flex;
+			gap: 1rem;
+			}
+
+
+			.control-row {
+			display: flex;
+			justify-content: center;
+			margin: 5px 0;
+			gap: 1.2rem;
+			}
+
+
+			.control-btn {
+			font-family: "color-emoji";
+			pointer-events: auto;
+			width: 13vmin;
+			height: 13vmin;
+			border-radius: 3vmin;
+			margin: 0 2px;
+			font-size: 3vmin;
+			background: linear-gradient(145deg,
+			rgba(76, 175, 80, 0.9) 30%,
+			rgba(67, 160, 71, 0.9) 100%);
+			transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+			box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+			color: white;
+			border: 2px solid #fff;
+			opacity: 0.95;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			}
+
+
+			.control-btn:active {
+			background: #45a049;
+			transform: scale(0.9);
+			box-shadow: 0 0 5px rgba(76, 175, 80, 0.8);
+			}
+
+
+.control-pad-actions {
+    position: fixed;
+    pointer-events: none;
+    left: 9vw;
+    bottom: 100px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.settings-container {
+    position: fixed;
+    right: 23px;
+    bottom: 80px;
+    display: flex;
+}
+
+
+
+
+body.手机模式启用 .control-pad,
+body.手机模式启用 .control-pad-actions,
+body.手机模式启用 .settings-container {
+    display: flex;
+}
+
+
+body.方向键隐藏 .control-pad {
+    display: none !important;
+}

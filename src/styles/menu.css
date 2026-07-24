@@ -1,0 +1,123 @@
+
+
+/* --- 主菜单容器 --- */
+#主菜单容器 {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background: transparent;
+			display: nonr;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			z-index: 10005;
+			opacity: 1;
+			transition: opacity 0.5s ease-out;
+			color: #e0e0e0;
+			font-family: "HarmonyOS Sans SC", "MiSans", system-ui,
+			"color-emoji";
+			overflow: scroll;
+			}
+
+
+			#菜单选项 {
+			display: flex;
+			flex-direction: column;
+			gap: 1.5rem;
+			}
+
+
+			.菜单按钮 {
+			padding: 1rem 2.5rem;
+			font-size: 1.4rem;
+			border: 2px solid #4caf50;
+			border-radius: 8px;
+			background: linear-gradient(145deg,
+			rgba(76, 175, 80, 0.2),
+			rgba(67, 160, 71, 0.1));
+			color: #e0e0e0;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			text-align: center;
+			font-family: inherit;
+			}
+
+
+			.菜单按钮:hover {
+			background: linear-gradient(145deg,
+			rgba(76, 175, 80, 0.4),
+			rgba(67, 160, 71, 0.3));
+			transform: translateY(-3px);
+			box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+			border-color: #66bb6a;
+			}
+
+
+			.菜单按钮:active {
+			transform: translateY(1px);
+			box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+			}
+
+
+			.菜单按钮:disabled {
+			background: rgba(100, 100, 100, 0.2);
+			border-color: #666;
+			color: #888;
+			cursor: not-allowed;
+			transform: none;
+			box-shadow: none;
+			}
+
+
+			#版本信息 {
+			position: fixed;
+			bottom: 10px;
+			right: 10px;
+			font-size: 0.8rem;
+			color: #555;
+			}
+
+
+			body.游戏进行中 #主菜单容器,
+			body.地图编辑器模式 #主菜单容器,
+			body.编辑器游玩模式 #主菜单容器 {
+			opacity: 0;
+			pointer-events: none;
+			}
+
+
+			#游戏模式选择菜单 {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background: linear-gradient(160deg, #0a0a0a 0%, #1a1a1a 100%);
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			z-index: 10004;
+			opacity: 0;
+			transition: opacity 0.5s ease-out;
+			color: #e0e0e0;
+			font-family: "HarmonyOS Sans SC", "MiSans", system-ui, "color-emoji";
+			pointer-events: auto;
+			}
+
+
+			#游戏模式标题 {
+			font-size: 3.5rem;
+			margin-bottom: 3rem;
+			color: #e0e0e0;
+			text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+			}
+
+
+			#游戏模式选项 {
+			display: flex;
+			flex-direction: column;
+			gap: 1.5rem;
+			}
